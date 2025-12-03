@@ -121,7 +121,6 @@
     @include('landing_page.layout.footer')
 
 
-
     <script>
         //MENU MOBILE
         const mobileMenuButton = document.getElementById('mobile-menu-button');

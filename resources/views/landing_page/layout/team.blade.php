@@ -10,7 +10,7 @@
             <!-- Team Member 1 -->
             <div class="card-hover bg-white rounded-xl p-6 text-center">
                 <div class="mb-5 relative">
-                    <img src="{{ asset('asset/dadan.jpeg') }}" alt="Team Member" class="w-32 h-32 rounded-full mx-auto object-cover border-4 border-white shadow-lg">
+                    <img src="{{ asset('Ramdan.jpg') }}" alt="Team Member" class="w-32 h-32 rounded-full mx-auto object-cover border-4 border-white shadow-lg">
                     <div class="absolute bottom-0 right-1/3 transform translate-x-1/2 bg-blue-600 text-white rounded-full p-2">
                         <i class="fas fa-code text-sm"></i>
                     </div>
@@ -47,7 +47,7 @@
                     <a href="#" class="text-gray-400 hover:text-purple-600 transition-colors">
                          <i class="fab fa-github"></i>
                     </a>
-                    <a href="#" class="text-gray-400 hover:text-purple-600 transition-colors">
+                    <a href="" class="text-gray-400 hover:text-purple-600 transition-colors">
                       <i class="fas fa-envelope"></i>
                     </a>
                 </div>
@@ -56,7 +56,7 @@
             <!-- Team Member 3 -->
             <div class="card-hover bg-white rounded-xl p-6 text-center">
                 <div class="mb-5 relative">
-                    <img src="https://randomuser.me/api/portraits/men/67.jpg" alt="Team Member" class="w-32 h-32 rounded-full mx-auto object-cover border-4 border-white shadow-lg">
+                    <img src="{{ asset('image/anisa.jpg') }}" alt="Team Member" class="w-32 h-32 rounded-full mx-auto object-cover border-4 border-white shadow-lg">
                     <div class="absolute bottom-0 right-1/3 transform translate-x-1/2 bg-green-600 text-white rounded-full p-2">
                         <i class="fas fa-chart-line text-sm"></i>
                     </div>
@@ -79,7 +79,7 @@
             <!-- Team Member 4 -->
             <div class="card-hover bg-white rounded-xl p-6 text-center">
                 <div class="mb-5 relative">
-                    <img src="https://randomuser.me/api/portraits/women/63.jpg" alt="Team Member" class="w-32 h-32 rounded-full mx-auto object-cover border-4 border-white shadow-lg">
+                    <img src="{{ asset('public/asset/Ramdan.jpg') }}" class="w-32 h-32 rounded-full mx-auto object-cover border-4 border-white shadow-lg">
                     <div class="absolute bottom-0 right-1/3 transform translate-x-1/2 bg-red-600 text-white rounded-full p-2">
                        <i class="fas fa-chart-line text-sm"></i>
                     </div>
