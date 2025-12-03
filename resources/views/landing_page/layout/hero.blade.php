@@ -21,32 +21,50 @@
             </div>
 
             <div class="relative">
-                <div class="device-mockup">
-                    <div class="dashboard-preview">
+                <div class="device-mockup bg-white rounded-3xl shadow-2xl overflow-hidden border-8 border-gray-800 transform rotate-1 hover:rotate-0 transition-transform duration-500">
+                    <div class="h-6 bg-gray-800 flex items-center justify-center relative">
+                        <div class="w-16 h-1 bg-gray-700 rounded-full"></div>
+                        <div class="absolute left-3 w-1 h-1 bg-gray-600 rounded-full"></div>
+                        <div class="absolute right-3 flex space-x-1">
+                            <div class="w-1 h-1 bg-gray-600 rounded-full"></div>
+                            <div class="w-1 h-1 bg-gray-600 rounded-full"></div>
+                            <div class="w-1 h-1 bg-gray-600 rounded-full"></div>
+                        </div>
+                    </div>
+                    <div class="dashboard-preview p-5 bg-gray-50">
                         <div class="flex items-center justify-between mb-6">
                             <div class="flex items-center space-x-3">
-                                <div class="w-10 h-10 bg-linear-to-br from-blue-500 to-purple-500 rounded-full">
+                                <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                                    <span class="text-white font-bold text-sm">E</span>
                                 </div>
                                 <div>
                                     <div class="h-3 w-24 bg-gray-300 rounded mb-1"></div>
                                     <div class="h-2 w-16 bg-gray-200 rounded"></div>
                                 </div>
                             </div>
-                            <div class="w-8 h-8 bg-gray-200 rounded-lg"></div>
+                            <div class="w-8 h-8 bg-gray-200 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                                </svg>
+                            </div>
                         </div>
 
                         <div class="grid grid-cols-2 gap-3 mb-4">
-                            <div class="mini-card">
+                            <div class="mini-card bg-white rounded-xl p-4 shadow-sm border border-gray-100">
                                 <div class="flex items-center justify-between mb-2">
-                                    <i class="fas fa-calendar-check text-blue-600"></i>
+                                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                    </svg>
                                     <span class="text-xs text-gray-500">Hari Ini</span>
                                 </div>
                                 <div class="h-4 w-12 bg-blue-100 rounded mb-1"></div>
                                 <div class="h-2 w-20 bg-gray-200 rounded"></div>
                             </div>
-                            <div class="mini-card">
+                            <div class="mini-card bg-white rounded-xl p-4 shadow-sm border border-gray-100">
                                 <div class="flex items-center justify-between mb-2">
-                                    <i class="fas fa-users text-green-600"></i>
+                                    <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                                    </svg>
                                     <span class="text-xs text-gray-500">Hadir</span>
                                 </div>
                                 <div class="h-4 w-12 bg-green-100 rounded mb-1"></div>
@@ -54,22 +72,24 @@
                             </div>
                         </div>
 
-                        <div class="mini-card">
+                        <div class="mini-card bg-white rounded-xl p-4 shadow-sm border border-gray-100">
                             <div class="flex items-center justify-between mb-3">
                                 <span class="text-sm font-semibold text-gray-700">Tugas Terbaru</span>
-                                <i class="fas fa-ellipsis-h text-gray-400"></i>
+                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z"></path>
+                                </svg>
                             </div>
                             <div class="space-y-3">
                                 <div>
                                     <div class="h-3 w-32 bg-gray-300 rounded mb-2"></div>
-                                    <div class="progress-bar">
-                                        <div class="progress-fill" style="width: 75%"></div>
+                                    <div class="progress-bar h-2 w-full bg-gray-200 rounded-full overflow-hidden">
+                                        <div class="progress-fill h-full bg-blue-500 rounded-full" style="width: 75%"></div>
                                     </div>
                                 </div>
                                 <div>
                                     <div class="h-3 w-28 bg-gray-300 rounded mb-2"></div>
-                                    <div class="progress-bar">
-                                        <div class="progress-fill" style="width: 45%"></div>
+                                    <div class="progress-bar h-2 w-full bg-gray-200 rounded-full overflow-hidden">
+                                        <div class="progress-fill h-full bg-blue-500 rounded-full" style="width: 45%"></div>
                                     </div>
                                 </div>
                             </div>
@@ -78,12 +98,16 @@
                 </div>
 
                 <div
-                    class="absolute -top-6 -right-6 w-20 h-20 bg-blue-100 rounded-2xl items-center justify-center shadow-lg lg:flex hidden">
-                    <i class="fas fa-check-circle text-blue-600 text-3xl"></i>
+                    class="absolute -top-6 -right-6 w-20 h-20 bg-blue-100 rounded-2xl flex items-center justify-center shadow-lg lg:flex hidden animate-bounce">
+                    <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
                 </div>
                 <div
-                    class="absolute -bottom-6 -left-6 w-16 h-16 bg-purple-100 rounded-2xl items-center justify-center shadow-lg lg:flex hidden">
-                    <i class="fas fa-bell text-purple-600 text-2xl"></i>
+                    class="absolute -bottom-6 -left-6 w-16 h-16 bg-purple-100 rounded-2xl flex items-center justify-center shadow-lg lg:flex hidden animate-pulse">
+                    <svg class="w-7 h-7 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                    </svg>
                 </div>
             </div>
         </div>

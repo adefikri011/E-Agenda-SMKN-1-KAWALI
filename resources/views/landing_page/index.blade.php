@@ -111,6 +111,8 @@
 <body class="font-sans text-gray-900 overflow-x-hidden bg-white">
 
     @include('landing_page.layout.navbar')
+    <x-notification />
+
     @include('landing_page.layout.hero')
 
     <!-- Bagian lain masih dimatikan dulu -->
@@ -150,7 +152,10 @@
                 const target = document.querySelector(this.getAttribute('href'));
 
                 if (target) {
-                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
                 }
 
                 // Tutup menu mobile kalau sedang terbuka
@@ -166,7 +171,9 @@
                     entry.target.style.transform = 'translateY(0)';
                 }
             });
-        }, { threshold: 0.1 });
+        }, {
+            threshold: 0.1
+        });
 
         document.querySelectorAll('.card-hover').forEach(card => {
             card.style.opacity = '0';

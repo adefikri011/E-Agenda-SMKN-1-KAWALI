@@ -16,7 +16,7 @@
                 </div>
                 <h3 class="text-xl font-bold text-gray-900 mb-3">Agenda Harian</h3>
                 <p class="text-gray-600 leading-relaxed">
-                    Catat dan kelola jadwal mengajar, materi pembelajaran, dan aktivitas kelas secara terstruktur.
+                    Guru dan Sekretaris dapat membuat, mengubah, dan menghapus agenda harian kelas. Admin dapat memantau seluruh agenda kelas yang tercatat.
                 </p>
             </div>
 
@@ -26,7 +26,7 @@
                 </div>
                 <h3 class="text-xl font-bold text-gray-900 mb-3">Absensi Digital</h3>
                 <p class="text-gray-600 leading-relaxed">
-                    Pencatatan kehadiran siswa secara real-time dengan laporan dan grafik kehadiran otomatis.
+                    Guru dapat mencatat kehadiran siswa secara real-time. Wali Kelas mengakses rekap absensi dan mengunduh laporan bulanan. Admin mengelola laporan absensi semua kelas.
                 </p>
             </div>
 
@@ -34,9 +34,9 @@
                 <div class="w-14 h-14 bg-purple-100 rounded-xl flex items-center justify-center mb-5 feature-icon">
                     <i class="fas fa-tasks text-purple-600 text-2xl"></i>
                 </div>
-                <h3 class="text-xl font-bold text-gray-900 mb-3">Manajemen Tugas</h3>
+                <h3 class="text-xl font-bold text-gray-900 mb-3">Manajemen Nilai</h3>
                 <p class="text-gray-600 leading-relaxed">
-                    Buat, distribusikan, dan nilai tugas siswa dengan sistem pengumpulan terintegrasi.
+                    Guru dapat membuat, mengubah, dan menghapus nilai siswa. Wali Kelas dapat melihat laporan nilai dan kehadiran siswa di kelas binaannya.
                 </p>
             </div>
 
@@ -44,9 +44,9 @@
                 <div class="w-14 h-14 bg-yellow-100 rounded-xl flex items-center justify-center mb-5 feature-icon">
                     <i class="fas fa-bullhorn text-yellow-600 text-2xl"></i>
                 </div>
-                <h3 class="text-xl font-bold text-gray-900 mb-3">Pengumuman</h3>
+                <h3 class="text-xl font-bold text-gray-900 mb-3">Kegiatan Sebelum KBM</h3>
                 <p class="text-gray-600 leading-relaxed">
-                    Sampaikan informasi penting kepada siswa dan orang tua dengan notifikasi langsung.
+                    Sekretaris dapat mengelola kegiatan sebelum KBM. Guru dan Wali Kelas dapat melihat laporan kegiatan sebelum KBM.
                 </p>
             </div>
 
@@ -56,17 +56,17 @@
                 </div>
                 <h3 class="text-xl font-bold text-gray-900 mb-3">Laporan & Analitik</h3>
                 <p class="text-gray-600 leading-relaxed">
-                    Visualisasi data pembelajaran dan performa siswa dengan dashboard yang mudah dipahami.
+                    Wali Kelas mengunduh laporan absensi bulanan. Admin mengelola laporan absensi dari semua kelas. Guru melihat laporan kegiatan sebelum KBM.
                 </p>
             </div>
 
             <div class="card-hover bg-white p-6 lg:p-8 rounded-xl">
                 <div class="w-14 h-14 bg-indigo-100 rounded-xl flex items-center justify-center mb-5 feature-icon">
-                    <i class="fas fa-comments text-indigo-600 text-2xl"></i>
+                    <i class="fas fa-cogs text-indigo-600 text-2xl"></i>
                 </div>
-                <h3 class="text-xl font-bold text-gray-900 mb-3">Komunikasi Terpadu</h3>
+                <h3 class="text-xl font-bold text-gray-900 mb-3">Pengaturan Sistem</h3>
                 <p class="text-gray-600 leading-relaxed">
-                    Hubungkan guru, siswa, dan orang tua dalam satu platform komunikasi yang efektif.
+                    Admin mengelola data pengguna, struktur kelas, jadwal pelajaran, dan mata pelajaran. Semua pengguna memiliki akses login dan logout.
                 </p>
             </div>
         </div>
