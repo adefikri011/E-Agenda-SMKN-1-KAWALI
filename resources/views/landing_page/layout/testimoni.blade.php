@@ -12,7 +12,8 @@
             <!-- Contact Form -->
             <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100">
                 <h3 class="text-xl font-semibold text-gray-900 mb-6">Kirim Pesan</h3>
-                <form class="space-y-6">
+                <form class="space-y-6" action="send_message.php" method="POST">
+
                     <div>
                         <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
                         <input type="text" id="name" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
@@ -79,21 +80,24 @@
                     </div>
                 </div>
 
-                <!-- Social Media -->
-                <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100">
-                    <h3 class="text-xl font-semibold text-gray-900 mb-6">Ikuti Kami</h3>
-                    <div class="flex space-x-4">
-                      <a href="https://www.tiktok.com/@smkn1kawali?_r=1&_t=ZS-91u1ORVghm6" class="w-10 h-10 bg-black rounded-lg flex items-center justify-center text-white hover:bg-gray-900 transition-all">
-                            <i class="fa-brands fa-tiktok text-lg"></i>
-                        </a>
-                        <a href="https://www.instagram.com/smkn1kawali?igsh=bDMxdGx5NmxwaGp6" class="w-10 h-10 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg flex items-center justify-center text-white hover:opacity-90 transition-all">
-                            <i class="fab fa-instagram"></i>
-                        </a>
-                        <a href="https://youtube.com/@smkn1kawaliofficial?si=q8piWgP-iRvTTDks" class="w-10 h-10 bg-red-600 rounded-lg flex items-center justify-center text-white hover:bg-red-700 transition-all">
-                            <i class="fab fa-youtube"></i>
-                        </a>
+            <!-- Social Media -->
+            <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100">
+                <h3 class="text-xl font-semibold text-gray-900 mb-6">Ikuti Kami</h3>
+
+                <div class="flex items-start">
+                    <div class="flex-shrink-0 w-10 h-10 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg flex items-center justify-center mr-4 text-white">
+                        <i class="fab fa-instagram"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-medium text-gray-900">Instagram</h4>
+                        <a href="https://www.instagram.com/agenda.k_one?igsh=MXJra21pZmR3ZzB3MQ=="
+                           class="text-gray-600 mt-1 hover:text-pink-600 transition">
+                           @agenda.k_one
+                       </a>
                     </div>
                 </div>
+            </div>
+
             </div>
         </div>
     </div>

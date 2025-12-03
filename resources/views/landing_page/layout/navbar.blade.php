@@ -1,6 +1,6 @@
 <!-- Navbar -->
 <nav class="fixed w-full bg-white/95 backdrop-blur-lg shadow-sm z-50 transition-all duration-300" id="navbar">
-    <div class="container mx-auto px-4 lg:px-8 py-4">
+    <div class="container mx-auto px-4 lg:px-4 py-2">
         <div class="flex justify-between items-center">
             <!-- Bagian Logo yang Diperbaiki -->
             <div class="flex items-center space-x-2 group">
@@ -35,7 +35,7 @@
 
             <!-- Buttons -->
             <div class="flex items-center space-x-3">
-                <a href="{{ route('login.index') }}"
+                <a href="{{ route('login') }}"
                     class="hidden sm:block px-4 py-2 text-sm text-gray-700 hover:text-blue-600 font-medium transition-colors rounded-lg hover:bg-gray-50">
                     Masuk
                 </a>

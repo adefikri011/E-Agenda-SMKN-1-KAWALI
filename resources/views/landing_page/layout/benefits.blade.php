@@ -86,12 +86,12 @@
             <div>
                 <div class="inline-flex items-center px-4 py-2 bg-green-50 rounded-full mb-6">
                     <i class="fas fa-graduation-cap text-green-600 mr-2"></i>
-                    <span class="text-sm font-medium text-green-700">Untuk Siswa & Orang Tua</span>
+                    <span class="text-sm font-medium text-green-700">Untuk Siswa </span>
                 </div>
                 <h3 class="text-3xl lg:text-4xl font-bold text-gray-900 mb-6">Pantau Perkembangan Belajar Secara
                     Real-time</h3>
                 <p class="text-lg text-gray-600 mb-8 leading-relaxed">
-                    Orang tua dapat memantau kehadiran, tugas, dan perkembangan akademik anak secara langsung. Siswa
+                     Siswa
                     mendapat pengingat otomatis untuk tugas dan jadwal.
                 </p>
                 <ul class="space-y-4">

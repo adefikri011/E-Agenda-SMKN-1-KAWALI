@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 class HakAksesController extends Controller
 {
     function admin() {
-
+        return view('admin.dashboard');
     }
 
     function guru() {
@@ -19,6 +19,6 @@ class HakAksesController extends Controller
     }
 
     function sekretaris() {
-        
+
     }
 }
