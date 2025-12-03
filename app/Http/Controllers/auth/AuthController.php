@@ -14,22 +14,38 @@ class AuthController extends Controller
         return view('auth.login');
     }
 
-    public function authenticate(Request $request): RedirectResponse
+    public function authenticate(Request $request)
     {
         $credentials = $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required'],
         ]);
 
+        // Deteksi apakah permintaan dilakukan via AJAX / fetch
+        $isAjax = $request->ajax() || $request->wantsJson() || $request->header('X-Requested-With') === 'XMLHttpRequest';
+
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
 
             // Arahkan sesuai role → /dashboard-ROLE
-            return redirect('/dashboard-' . Auth::user()->role);
+            $redirectUrl = '/dashboard-' . Auth::user()->role;
+
+            if ($isAjax) {
+                return response()->json(['success' => true, 'redirect' => $redirectUrl], 200);
+            }
+
+            return redirect($redirectUrl);
+        }
+
+        // Gagal autentikasi
+        $errorMessage = 'The provided credentials do not match our records.';
+
+        if ($isAjax) {
+            return response()->json(['success' => false, 'errors' => ['email' => $errorMessage]], 422);
         }
 
         return back()->withErrors([
-            'email' => 'The provided credentials do not match our records.',
+            'email' => $errorMessage,
         ])->onlyInput('email');
     }
 

@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - E-Agenda</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" type="image/png" href="{{ asset('image/logoo.png') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
@@ -186,9 +187,11 @@
             0% {
                 transform: scale(1);
             }
+
             50% {
                 transform: scale(1.05);
             }
+
             100% {
                 transform: scale(1);
             }
@@ -247,10 +250,10 @@
                     </div>
 
                     <!-- Error Message -->
-                    @if(session('error'))
-                    <div class="mb-4 p-3 bg-red-50 text-red-700 rounded-lg text-sm">
-                        <i class="fas fa-exclamation-circle mr-2"></i>{{ session('error') }}
-                    </div>
+                    @if (session('error'))
+                        <div class="mb-4 p-3 bg-red-50 text-red-700 rounded-lg text-sm">
+                            <i class="fas fa-exclamation-circle mr-2"></i>{{ session('error') }}
+                        </div>
                     @endif
 
                     <!-- Form -->
@@ -267,7 +270,7 @@
                                     placeholder="nama@sekolah.ac.id" />
                             </div>
                             @error('email')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
 
@@ -287,7 +290,7 @@
                                 </button>
                             </div>
                             @error('password')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
 
@@ -359,43 +362,38 @@
 
             // Kirim data dengan fetch
             fetch(this.action, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
-            .then(response => {
-                // Cek jika response redirect (berhasil login)
-                if (response.redirected) {
-                    // Tampilkan animasi sukses
-                    button.classList.add('success-animation');
-                    buttonText.innerHTML = '<i class="fas fa-check-circle mr-2"></i>Login Berhasil!';
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Tampilkan animasi sukses
+                        button.classList.add('success-animation');
+                        buttonText.innerHTML = '<i class="fas fa-check-circle mr-2"></i>Login Berhasil!';
 
-                    // Tunggu 2 detik untuk animasi sukses selesai
-                    setTimeout(() => {
-                        // Redirect ke halaman tujuan
-                        window.location.href = response.url;
-                    }, 2000);
-                } else {
-                    // Jika tidak redirect, berarti ada error
-                    return response.text().then(html => {
-                        // Tampilkan error dari response
-                        const parser = new DOMParser();
-                        const doc = parser.parseFromString(html, 'text/html');
-                        const errorElement = doc.querySelector('.bg-red-50');
+                        // Tunggu 2 detik untuk animasi sukses selesai
+                        setTimeout(() => {
+                            // Redirect ke halaman tujuan
+                            window.location.href = data.redirect;
+                        }, 2000);
+                    } else {
+                        // Jika tidak berhasil, tampilkan error
+                        // Hapus error lama jika ada
+                        const oldError = document.querySelector('.bg-red-50');
+                        if (oldError) {
+                            oldError.remove();
+                        }
 
-                        if (errorElement) {
-                            // Hapus error lama jika ada
-                            const oldError = document.querySelector('.bg-red-50');
-                            if (oldError) {
-                                oldError.remove();
-                            }
-
+                        // Cari pesan error
+                        if (data.errors && data.errors.email) {
                             // Tampilkan error baru
                             const errorContainer = document.createElement('div');
                             errorContainer.className = 'mb-4 p-3 bg-red-50 text-red-700 rounded-lg text-sm';
-                            errorContainer.innerHTML = errorElement.innerHTML;
+                            errorContainer.innerHTML = '<i class="fas fa-exclamation-circle mr-2"></i>' + data.errors.email;
 
                             // Sisipkan error sebelum form
                             this.parentNode.insertBefore(errorContainer, this);
@@ -404,15 +402,14 @@
                         // Kembalikan tombol ke keadaan semula
                         button.disabled = false;
                         buttonText.innerHTML = 'Masuk ke Dashboard';
-                    });
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                // Kembalikan tombol ke keadaan semula jika terjadi error
-                button.disabled = false;
-                buttonText.innerHTML = 'Masuk ke Dashboard';
-            });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    // Kembalikan tombol ke keadaan semula jika terjadi error
+                    button.disabled = false;
+                    buttonText.innerHTML = 'Masuk ke Dashboard';
+                });
         });
     </script>
 </body>
