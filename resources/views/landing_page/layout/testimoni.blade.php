@@ -46,7 +46,7 @@
                             </div>
                             <div>
                                 <h4 class="font-medium text-gray-900">Alamat</h4>
-                                <p class="text-gray-600 mt-1">Jl. Pendidikan No. 123, Jakarta Selatan, DKI Jakarta 12345</p>
+                                <p class="text-gray-600 mt-1">Jl. Poronggol Raya No. 9, Kawali, Kabupaten Ciamis, Jawa Barat.</p>
                             </div>
                         </div>
                         <div class="flex items-start">
@@ -55,7 +55,7 @@
                             </div>
                             <div>
                                 <h4 class="font-medium text-gray-900">Telepon</h4>
-                                <p class="text-gray-600 mt-1">(021) 1234-5678</p>
+                                <p class="text-gray-600 mt-1">+62-265-791727</p>
                             </div>
                         </div>
                         <div class="flex items-start">
@@ -64,7 +64,7 @@
                             </div>
                             <div>
                                 <h4 class="font-medium text-gray-900">Email</h4>
-                                <p class="text-gray-600 mt-1">info@e-agenda.com</p>
+                                <p class="text-gray-600 mt-1">smkn1kawali@gmail.com</p>
                             </div>
                         </div>
                         <div class="flex items-start">
@@ -73,7 +73,7 @@
                             </div>
                             <div>
                                 <h4 class="font-medium text-gray-900">Jam Operasional</h4>
-                                <p class="text-gray-600 mt-1">Senin - Jumat: 08.00 - 17.00 WIB</p>
+                                <p class="text-gray-600 mt-1">Senin - Jumat: 06.30 - 15.05 WIB</p>
                             </div>
                         </div>
                     </div>
@@ -83,16 +83,13 @@
                 <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100">
                     <h3 class="text-xl font-semibold text-gray-900 mb-6">Ikuti Kami</h3>
                     <div class="flex space-x-4">
-                        <a href="#" class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center text-white hover:bg-blue-700 transition-all">
-                            <i class="fab fa-facebook-f"></i>
+                      <a href="https://www.tiktok.com/@smkn1kawali?_r=1&_t=ZS-91u1ORVghm6" class="w-10 h-10 bg-black rounded-lg flex items-center justify-center text-white hover:bg-gray-900 transition-all">
+                            <i class="fa-brands fa-tiktok text-lg"></i>
                         </a>
-                        <a href="#" class="w-10 h-10 bg-blue-400 rounded-lg flex items-center justify-center text-white hover:bg-blue-500 transition-all">
-                            <i class="fab fa-twitter"></i>
-                        </a>
-                        <a href="#" class="w-10 h-10 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg flex items-center justify-center text-white hover:opacity-90 transition-all">
+                        <a href="https://www.instagram.com/smkn1kawali?igsh=bDMxdGx5NmxwaGp6" class="w-10 h-10 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg flex items-center justify-center text-white hover:opacity-90 transition-all">
                             <i class="fab fa-instagram"></i>
                         </a>
-                        <a href="#" class="w-10 h-10 bg-red-600 rounded-lg flex items-center justify-center text-white hover:bg-red-700 transition-all">
+                        <a href="https://youtube.com/@smkn1kawaliofficial?si=q8piWgP-iRvTTDks" class="w-10 h-10 bg-red-600 rounded-lg flex items-center justify-center text-white hover:bg-red-700 transition-all">
                             <i class="fab fa-youtube"></i>
                         </a>
                     </div>

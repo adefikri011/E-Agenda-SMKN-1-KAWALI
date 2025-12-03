@@ -116,9 +116,10 @@
     <!-- Bagian lain masih dimatikan dulu -->
     @include('landing_page.layout.fitur')
     @include('landing_page.layout.benefits')
-    @include('landing_page.layout.cta')
     @include('landing_page.layout.team')
     @include('landing_page.layout.testimoni')
+    @include('landing_page.layout.footer')
+
 
 
     <script>
