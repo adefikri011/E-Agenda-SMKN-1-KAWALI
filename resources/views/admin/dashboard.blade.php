@@ -55,7 +55,7 @@
                 </svg>
             </div>
             <div class="stat-title">Jurusan</div>
-            <div class="stat-value text-yellow-500">8</div>
+            <div class="stat-value text-yellow-500">7</div>
             <div class="stat-desc">Total jurusan</div>
         </div>
 
@@ -79,7 +79,7 @@
                 </svg>
             </div>
             <div class="stat-title">Agenda</div>
-            <div class="stat-value text-indigo-500">142</div>
+            <div class="stat-value text-indigo-500">36</div>
             <div class="stat-desc">Total agenda aktif</div>
         </div>
     </div>
@@ -91,7 +91,7 @@
             <h2 class="text-xl font-bold mb-4">Progress Agenda</h2>
             <div class="flex items-center justify-between mb-2">
                 <span class="text-gray-600">Agenda Selesai</span>
-                <span class="font-bold">118 / 142</span>
+                <span class="font-bold">24 / 36</span>
             </div>
             <div class="w-full bg-gray-200 rounded-full h-4">
                 <div class="bg-blue-500 h-4 rounded-full" style="width: 83%"></div>

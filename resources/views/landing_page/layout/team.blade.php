@@ -18,10 +18,10 @@
                 <h3 class="text-xl font-bold mb-1">Ade Fikri Amirudin Amsyar</h3>
                 <p class="text-blue-600 mb-3">Lead Developer</p>
                 <div class="flex justify-center space-x-3 mt-4">
-                    <a href="#" class="text-gray-400 hover:text-blue-600 transition-colors">
+                    <a href="https://www.linkedin.com/in/ade-fikri-a335632b6?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" class="text-gray-400 hover:text-blue-600 transition-colors">
                         <i class="fab fa-linkedin"></i>
                     </a>
-                    <a href="#" class="text-gray-400 hover:text-blue-600 transition-colors">
+                    <a href="https://github.com/adefikri011" class="text-gray-400 hover:text-blue-600 transition-colors">
                         <i class="fab fa-github"></i>
                     </a>
                 </div>
@@ -61,7 +61,7 @@
                     <a href="https://www.linkedin.com/in/annisa-nasywa-ayuni-43b64038a?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" class="text-gray-400 hover:text-green-600 transition-colors">
                         <i class="fab fa-linkedin"></i>
                     </a>
-                    <a href="#" class="text-gray-400 hover:text-green-600 transition-colors">
+                    <a href="https://github.com/annisaayuni" class="text-gray-400 hover:text-green-600 transition-colors">
                         <i class="fab fa-github"></i>
                     </a>
                 </div>
@@ -98,10 +98,10 @@
                 <h3 class="text-xl font-bold mb-1">Ade Doni Ramadani</h3>
                 <p class="text-yellow-600 mb-3">Database Management</p>
                 <div class="flex justify-center space-x-3 mt-4">
-                    <a href="#" class="text-gray-400 hover:text-yellow-600 transition-colors">
+                    <a href="https://www.linkedin.com/in/ade-doni-ramadani-a7263738a?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" class="text-gray-400 hover:text-yellow-600 transition-colors">
                         <i class="fab fa-linkedin"></i>
                     </a>
-                    <a href="#" class="text-gray-400 hover:text-yellow-600 transition-colors">
+                    <a href="https://github.com/DoniRamadanni" class="text-gray-400 hover:text-yellow-600 transition-colors">
                         <i class="fab fa-github"></i>
                     </a>
                 </div>
@@ -121,7 +121,7 @@
                     <a href="https://www.linkedin.com/in/hasna-istiqomah-24561438a?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" class="text-gray-400 hover:text-indigo-600 transition-colors">
                         <i class="fab fa-linkedin"></i>
                     </a>
-                    <a href="#" class="text-gray-400 hover:text-indigo-600 transition-colors">
+                    <a href="https://github.com/Hasna-istiqomah" class="text-gray-400 hover:text-indigo-600 transition-colors">
                          <i class="fab fa-github"></i>
                     </a>
                 </div>

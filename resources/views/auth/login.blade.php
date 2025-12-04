@@ -312,14 +312,6 @@
                             <span id="buttonText">Masuk ke Dashboard</span>
                         </button>
                     </form>
-
-                    <!-- Sign Up -->
-                    <p class="text-center mt-8 text-sm text-gray-600">
-                        Belum punya akun?
-                        <a href="#"
-                            class="font-bold text-blue-600 hover:text-purple-600 transition-colors ml-1">Daftar
-                            Sekarang</a>
-                    </p>
                 </div>
             </div>
         </div>
@@ -413,5 +405,4 @@
         });
     </script>
 </body>
-
 </html>

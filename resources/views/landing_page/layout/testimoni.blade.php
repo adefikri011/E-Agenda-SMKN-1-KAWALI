@@ -95,7 +95,7 @@
                         </div>
                         <div>
                             <h4 class="font-medium text-gray-900">Instagram</h4>
-                            <a href="https://www.instagram.com/agenda.k_one?igsh=MXJra21pZmR3ZzB3MQ=="
+                            <a href="https://www.instagram.com/agenda.k_one?igsh=MTAyeTM2NWoyb3luNg=="
                                class="text-gray-600 mt-1 hover:text-pink-600 transition font-medium">
                                @agenda.k_one
                            </a>

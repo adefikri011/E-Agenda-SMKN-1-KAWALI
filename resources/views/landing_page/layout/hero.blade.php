@@ -8,16 +8,65 @@
                     <span class="text-sm font-medium text-blue-700">SMKN 1 KAWALI</span>
                 </div>
 
-                <h1 class="hero-title text-4xl lg:text-5xl xl:text-6xl font-bold text-gray-900 leading-tight mb-6">
-                    Kelola Agenda <br> dan Absensi <br> Kelas dengan <br> <span class="text-gradient">Lebih
-                        Efisien</span>
-                </h1>
+                <div class="relative mb-6">
+                    <h1 class="hero-title text-4xl lg:text-5xl xl:text-6xl font-bold text-gray-900 leading-tight mb-6">
+                        <span class="relative inline-block">
+                            Kelola Agenda
+                            <span class="absolute bottom-0 left-0 w-full h-1 bg-blue-500 rounded-full transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></span>
+                        </span>
+                        <br>
+                        <span class="relative inline-block">
+                            dan Absensi
+                            <span class="absolute bottom-0 left-0 w-full h-1 bg-purple-500 rounded-full transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></span>
+                        </span>
+                        <br>
+                        <span class="relative inline-block">
+                            Kelas dengan
+                            <span class="absolute bottom-0 left-0 w-full h-1 bg-green-500 rounded-full transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></span>
+                        </span>
+                        <br>
+                        <span class="text-gradient relative inline-block group">
+                            Lebih Efisien
+                            <svg class="absolute -top-4 -right-6 w-8 h-8 text-yellow-400 animate-bounce" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                            </svg>
+                        </span>
+                    </h1>
+
+                    <!-- Tambahkan elemen dekoratif -->
+                    <div class="absolute -top-4 -left-4 w-12 h-12 rounded-full bg-blue-100 opacity-50 blur-xl"></div>
+                    <div class="absolute top-8 right-0 w-16 h-16 rounded-full bg-purple-100 opacity-50 blur-xl"></div>
+                    <div class="absolute bottom-4 left-1/4 w-10 h-10 rounded-full bg-green-100 opacity-50 blur-xl"></div>
+                </div>
+
                 <p class="hero-subtitle text-lg lg:text-xl text-gray-600 mb-8 leading-relaxed max-w-xl">
                     Sistem manajemen pembelajaran terintegrasi yang membantu guru, siswa, dan orang tua tetap terhubung
                     dalam satu platform.
                     Kelola jadwal, kehadiran, dan tugas dengan mudah sambil memantau perkembangan akademis secara
                     real-time.
                 </p>
+
+                <!-- Tambahkan badge fitur -->
+                <div class="flex flex-wrap gap-3 mb-8">
+                    <span class="inline-flex items-center px-3 py-1.5 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">
+                        <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        Jadwal Otomatis
+                    </span>
+                    <span class="inline-flex items-center px-3 py-1.5 bg-purple-50 text-purple-700 rounded-full text-sm font-medium">
+                        <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        Notifikasi Real-time
+                    </span>
+                    <span class="inline-flex items-center px-3 py-1.5 bg-green-50 text-green-700 rounded-full text-sm font-medium">
+                        <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        Laporan Interaktif
+                    </span>
+                </div>
             </div>
 
             <div class="relative">
