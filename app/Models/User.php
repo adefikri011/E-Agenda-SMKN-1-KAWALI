@@ -9,7 +9,18 @@ class User extends Authenticatable
 {
     use Notifiable;
 
-    protected $fillable = ['name','email','password','role'];
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+        'role',
+        'nip',
+        'no_hp',
+        'alamat'
+    ];
 
-    // TIDAK ADA relasi siswa di sini
+    public function siswa()
+    {
+        return $this->hasOne(Siswa::class, 'users_id');
+    }
 }

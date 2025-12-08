@@ -113,7 +113,7 @@
                         </svg>
                     </div>
                     <div>
-                        <p class="font-medium">Agenda "Ujian Mid Semester" selesai</p>
+                        <p class="font-medium">Agenda "Ujian Tengah Semester" selesai</p>
                         <p class="text-sm text-gray-500">2 jam yang lalu</p>
                     </div>
                 </div>

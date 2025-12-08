@@ -17,6 +17,7 @@ return new class extends Migration
             $table->integer('nis')->nullable();
             $table->foreignId('kelas_id')->constrained('kelas');
             $table->enum('jenkel' , ['laki-laki' , 'perempuan']);
+            $table->foreignId('users_id')->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });
     }

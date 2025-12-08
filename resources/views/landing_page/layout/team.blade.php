@@ -2,7 +2,7 @@
 <section id="tim" class="py-20 bg-gray-50">
     <div class="container mx-auto px-4 lg:px-8">
         <div class="text-center max-w-3xl mx-auto mb-16">
-            <h2 class="text-3xl md:text-4xl font-bold mb-4">Tim Profesional Kami</h2>
+            <h2 class="text-3xl md:text-4xl font-bold mb-4">Tim Kami</h2>
             <p class="text-gray-600 text-lg">Dikembangkan oleh tim yang berdedikasi untuk meningkatkan pengalaman pendidikan digital</p>
         </div>
 

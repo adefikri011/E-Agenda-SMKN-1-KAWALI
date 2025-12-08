@@ -11,7 +11,7 @@ class HakAksesController extends Controller
     }
 
     function guru() {
-
+return view('guru.dashboard');
     }
 
     function walikelas() {
