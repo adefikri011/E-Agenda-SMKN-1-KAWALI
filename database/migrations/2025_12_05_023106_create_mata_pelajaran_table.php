@@ -13,7 +13,9 @@ return new class extends Migration
     {
         Schema::create('mata_pelajaran', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_mapel');
+            $table->string('nama'); // Nama mata pelajaran
+            $table->string('kode')->unique(); // Kode unik untuk mata pelajaran
+            $table->string('kelompok'); // Kelompok mata pelajaran (contoh: A, B, C)
             $table->timestamps();
         });
     }

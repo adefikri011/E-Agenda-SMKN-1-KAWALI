@@ -11,14 +11,8 @@ class Guru extends Model
     protected $fillable = [
         'users_id',
         'nama',
-        'nik',
         'nip',
-        'email',
-        'tempat_lahir',
-        'tanggal_lahir',
-        'jenis_kelamin',
-        'alamat',
-        'no_hp',
+        'jenis_kelamin'
     ];
 
     /**
@@ -31,11 +25,46 @@ class Guru extends Model
     }
 
     /**
-     * Contoh relasi tambahan (opsional):
-     * Jika guru menjadi wali kelas → kelas_id bisa ditambah nanti
+     * Relasi ke GuruMapel (guru - kelas - mata pelajaran)
      */
-    // public function kelas()
-    // {
-    //     return $this->hasOne(Kelas::class, 'wali_kelas_id');
-    // }
+    public function guruMapel()
+    {
+        return $this->hasMany(GuruMapel::class, 'guru_id');
+    }
+
+    /**
+     * Relasi ke kelas melalui GuruMapel
+     */
+    public function kelas()
+    {
+        return $this->belongsToMany(Kelas::class, 'guru_mapel', 'guru_id', 'kelas_id')
+            ->withPivot('mapel_id')
+            ->withTimestamps();
+    }
+
+    /**
+     * Relasi ke mata pelajaran melalui GuruMapel
+     */
+    public function mataPelajaran()
+    {
+        return $this->belongsToMany(MataPelajaran::class, 'guru_mapel', 'guru_id', 'mapel_id')
+            ->withPivot('kelas_id')
+            ->withTimestamps();
+    }
+
+    /**
+     * Relasi ke agenda yang dibuat oleh guru ini
+     */
+    public function agendas()
+    {
+        return $this->hasMany(Agenda::class, 'users_id');
+    }
+
+    /**
+     * Relasi ke agenda yang ditandatangani oleh guru ini
+     */
+    public function signedAgendas()
+    {
+        return $this->hasMany(Agenda::class, 'guru_ttd_id');
+    }
 }

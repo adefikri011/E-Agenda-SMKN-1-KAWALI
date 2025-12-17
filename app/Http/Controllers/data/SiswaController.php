@@ -35,6 +35,13 @@ class SiswaController extends Controller
         return view('admin.data.siswa.index', compact('siswa', 'kelas'));
     }
 
+    // Tambahkan method create
+    public function create()
+    {
+        $kelas = Kelas::all();
+        return view('admin.data.siswa.create', compact('kelas'));
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -47,7 +54,16 @@ class SiswaController extends Controller
         // Simpan siswa
         Siswa::create($validated);
 
-        return back()->with('success', 'Data siswa berhasil ditambahkan!');
+        // Perbaiki redirect ke index
+        return redirect()->route('siswa.index')->with('success', 'Data siswa berhasil ditambahkan!');
+    }
+
+    // Tambahkan method edit
+    public function edit($id)
+    {
+        $siswa = Siswa::findOrFail($id);
+        $kelas = Kelas::all();
+        return view('admin.data.siswa.edit', compact('siswa', 'kelas'));
     }
 
     public function update(Request $request, $id)
@@ -64,15 +80,18 @@ class SiswaController extends Controller
         // Update siswa
         $siswa->update($validated);
 
-        return back()->with('success', 'Data siswa berhasil diperbarui!');
+        // Perbaiki redirect ke index
+        return redirect()->route('siswa.index')->with('success', 'Data siswa berhasil diperbarui!');
     }
 
-    public function delete($id)
+    // Ubah delete menjadi destroy untuk konsistensi
+    public function destroy($id)
     {
         $siswa = Siswa::findOrFail($id);
         $siswa->delete();
 
-        return back()->with('success', 'Data siswa berhasil dihapus!');
+        // Perbaiki redirect ke index
+        return redirect()->route('siswa.index')->with('success', 'Data siswa berhasil dihapus!');
     }
 
     public function import(Request $request)

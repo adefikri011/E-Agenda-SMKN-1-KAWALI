@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - E-Agenda</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="icon" type="image/png" href="{{ asset('image/logoo.png') }}">
+    <link rel="icon" type="image/png" href="{{ asset('image/smk.png') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
@@ -210,7 +210,7 @@
                     <!-- Logo & Badge -->
                     <div>
                         <div class="flex items-center gap-3 mb-5">
-                            <img src="{{ asset('image/logoo.png') }}" alt="Logo E-Agenda"
+                            <img src="{{ asset('image/smk.png') }}" alt="Logo E-Agenda"
                                 class="w-14 h-14 object-contain rounded-2xl shadow-xl">
                             <span class="text-3xl font-bold text-gray-900">E-Agenda</span>
                         </div>

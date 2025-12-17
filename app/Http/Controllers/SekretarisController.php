@@ -19,35 +19,30 @@ class SekretarisController extends Controller
             ->whereHas('siswa')
             ->paginate(10);
 
-        return view('admin.data.sekretaris.index', compact('sekretaris', 'kelas' , 'users'));
+        return view('admin.data.sekretaris.index', compact('sekretaris', 'kelas', 'users'));
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name'      => 'required|string|max:255',
-            'email'     => 'required|email|unique:users,email',
-            'kelas_id'  => 'required|exists:kelas,id',
-            'nis'       => 'required|numeric|unique:siswa,nis',
-            'jenkel'    => 'required|in:laki-laki,perempuan',
+            'siswa_id' => 'required|exists:siswa,id',
+            'email' => 'required|email|unique:users,email',
         ]);
 
-        // 1. Buat user sekretaris
+        // Ambil data siswa
+        $siswa = Siswa::find($validated['siswa_id']);
+
+        // Buat user sekretaris
         $user = User::create([
-            'name'     => $validated['name'],
-            'email'    => $validated['email'],
+            'name' => $siswa->nama_siswa,
+            'email' => $validated['email'],
             'password' => Hash::make('12345678'),
-            'role'     => 'sekretaris',
+            'role' => 'sekretaris',
         ]);
 
-        // 2. Buat data siswa yang terhubung ke user
-        Siswa::create([
-            'nama_siswa' => $validated['name'],
-            'nis'        => $validated['nis'],
-            'kelas_id'   => $validated['kelas_id'],
-            'jenkel'     => $validated['jenkel'],
-            'users_id'   => $user->id,
-        ]);
+        // Update siswa dengan user_id
+        $siswa->users_id = $user->id;
+        $siswa->save();
 
         return back()->with('success', 'Data sekretaris berhasil ditambahkan!');
     }
@@ -70,25 +65,25 @@ class SekretarisController extends Controller
         $user = User::where('role', 'sekretaris')->findOrFail($id);
 
         $validated = $request->validate([
-            'name'      => 'required|string|max:255',
-            'email'     => 'required|email|unique:users,email,' . $user->id,
-            'kelas_id'  => 'required|exists:kelas,id',
-            'nis'       => 'required|numeric|unique:siswa,nis,' . $user->siswa->id,
-            'jenkel'    => 'required|in:laki-laki,perempuan',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'kelas_id' => 'required|exists:kelas,id',
+            'nis' => 'required|numeric|unique:siswa,nis,' . $user->siswa->id,
+            'jenkel' => 'required|in:laki-laki,perempuan',
         ]);
 
         // Update user
         $user->update([
-            'name'  => $validated['name'],
+            'name' => $validated['name'],
             'email' => $validated['email'],
         ]);
 
         // Update siswa
         $user->siswa->update([
             'nama_siswa' => $validated['name'],
-            'nis'        => $validated['nis'],
-            'kelas_id'   => $validated['kelas_id'],
-            'jenkel'     => $validated['jenkel'],
+            'nis' => $validated['nis'],
+            'kelas_id' => $validated['kelas_id'],
+            'jenkel' => $validated['jenkel'],
         ]);
 
         return back()->with('success', 'Data sekretaris berhasil diperbarui!');
@@ -106,5 +101,14 @@ class SekretarisController extends Controller
         } catch (\Exception $e) {
             return back()->with('error', 'Terjadi kesalahan saat mengimpor: ' . $e->getMessage());
         }
+    }
+
+    public function getSiswaByKelas($kelas_id)
+    {
+        $siswa = Siswa::where('kelas_id', $kelas_id)
+            ->whereDoesntHave('user') // Hanya siswa yang belum punya akun
+            ->get(['id', 'nama_siswa', 'nis', 'jenkel']);
+
+        return response()->json($siswa);
     }
 }

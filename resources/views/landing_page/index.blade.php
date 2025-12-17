@@ -115,7 +115,6 @@
 
     @include('landing_page.layout.hero')
 
-    <!-- Bagian lain masih dimatikan dulu -->
     @include('landing_page.layout.fitur')
     @include('landing_page.layout.benefits')
     @include('landing_page.layout.team')

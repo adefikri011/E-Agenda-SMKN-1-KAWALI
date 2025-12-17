@@ -6,19 +6,23 @@ use Illuminate\Http\Request;
 
 class HakAksesController extends Controller
 {
-    function admin() {
+    function admin()
+    {
         return view('admin.dashboard');
     }
 
-    function guru() {
-return view('guru.dashboard');
+    function guru()
+    {
+        return view('guru.dashboard');
     }
 
-    function walikelas() {
-
+    function walikelas()
+    {
+        return view('walikelas.dashboard');
     }
 
-    function sekretaris() {
-
+    function sekretaris()
+    {
+        return view('sekretaris.dashboard');
     }
 }

@@ -14,13 +14,15 @@ class GuruController extends Controller
     {
         $search = $request->input('search');
 
-        $query = Guru::with('user'); // relasi ke user
+        $query = Guru::with('user');
 
         if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('nama', 'like', "%$search%")
                   ->orWhere('nip', 'like', "%$search%")
-                  ->orWhere('email', 'like', "%$search%");
+                  ->orWhereHas('user', function ($u) use ($search) {
+                      $u->where('email', 'like', "%$search%");
+                  });
             });
         }
 
@@ -29,21 +31,17 @@ class GuruController extends Controller
         return view('admin.data.guru.index', compact('guru'));
     }
 
+
     public function store(Request $request)
     {
         $validated = $request->validate([
             'nama'          => 'required|string|max:255',
             'email'         => 'required|email|unique:users,email',
             'nip'           => 'required|string|max:50|unique:guru,nip',
-            'nik'           => 'nullable|string|max:50',
-            'tempat_lahir'  => 'nullable|string|max:100',
-            'tanggal_lahir' => 'nullable|date',
-            'jenis_kelamin' => 'nullable|string|max:20',
-            'alamat'        => 'nullable|string|max:255',
-            'no_hp'         => 'nullable|string|max:20',
+            'jenis_kelamin' => 'required|in:laki-laki,perempuan',
         ]);
 
-        // 1. Buat akun user
+        // 1. Buat user
         $user = User::create([
             'name'     => $validated['nama'],
             'email'    => $validated['email'],
@@ -55,14 +53,8 @@ class GuruController extends Controller
         Guru::create([
             'users_id'      => $user->id,
             'nama'          => $validated['nama'],
-            'nik'           => $validated['nik'] ?? null,
             'nip'           => $validated['nip'],
-            'email'         => $validated['email'],
-            'tempat_lahir'  => $validated['tempat_lahir'] ?? null,
-            'tanggal_lahir' => $validated['tanggal_lahir'] ?? null,
-            'jenis_kelamin' => $validated['jenis_kelamin'] ?? null,
-            'alamat'        => $validated['alamat'] ?? null,
-            'no_hp'         => $validated['no_hp'] ?? null,
+            'jenis_kelamin' => $validated['jenis_kelamin'],
         ]);
 
         return back()->with('success', 'Guru berhasil ditambahkan!');
@@ -77,31 +69,20 @@ class GuruController extends Controller
             'nama'          => 'required|string|max:255',
             'email'         => 'required|email|unique:users,email,' . $guru->users_id,
             'nip'           => 'required|string|max:50|unique:guru,nip,' . $id,
-            'nik'           => 'nullable|string|max:50',
-            'tempat_lahir'  => 'nullable|string|max:100',
-            'tanggal_lahir' => 'nullable|date',
-            'jenis_kelamin' => 'nullable|string|max:20',
-            'alamat'        => 'nullable|string|max:255',
-            'no_hp'         => 'nullable|string|max:20',
+            'jenis_kelamin' => 'required|in:laki-laki,perempuan',
         ]);
 
-        // Update tabel user
+        // Update user
         $guru->user->update([
             'name'  => $validated['nama'],
             'email' => $validated['email'],
         ]);
 
-        // Update tabel guru
+        // Update data guru
         $guru->update([
             'nama'          => $validated['nama'],
-            'nik'           => $validated['nik'] ?? null,
             'nip'           => $validated['nip'],
-            'email'         => $validated['email'],
-            'tempat_lahir'  => $validated['tempat_lahir'] ?? null,
-            'tanggal_lahir' => $validated['tanggal_lahir'] ?? null,
-            'jenis_kelamin' => $validated['jenis_kelamin'] ?? null,
-            'alamat'        => $validated['alamat'] ?? null,
-            'no_hp'         => $validated['no_hp'] ?? null,
+            'jenis_kelamin' => $validated['jenis_kelamin'],
         ]);
 
         return back()->with('success', 'Data guru berhasil diperbarui!');
@@ -112,10 +93,10 @@ class GuruController extends Controller
     {
         $guru = Guru::findOrFail($id);
 
-        // hapus user juga
+        // Hapus user
         User::where('id', $guru->users_id)->delete();
 
-        // hapus guru
+        // Hapus guru
         $guru->delete();
 
         return back()->with('success', 'Data guru berhasil dihapus!');
