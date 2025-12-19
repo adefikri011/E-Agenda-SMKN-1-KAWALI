@@ -49,7 +49,7 @@
                                     required>
                                     <option value="">Pilih Jam</option>
                                     @foreach ($jampel as $item)
-                                        <option value="{{ $item->id }}">
+                                        <option value="{{ $item->id }}" data-hari="{{ $item->hari_tipe }}">
                                             {{ $item->nama_jam }} ({{ $item->rentang_waktu }})
                                         </option>
                                     @endforeach
@@ -71,11 +71,13 @@
                                         <option value="{{ $item->id }}">{{ $item->nama_kelas }}</option>
                                     @endforeach
                                 </select>
-                                <p class="text-xs text-gray-500 mt-1">Pilih kelas terlebih dahulu untuk melihat mata pelajaran</p>
+                                <p class="text-xs text-gray-500 mt-1">Pilih kelas terlebih dahulu untuk melihat mata
+                                    pelajaran</p>
                             </div>
                             <div>
                                 <label class="block text-sm font-semibold text-gray-900 mb-2">
-                                    <i class="fas fa-book text-blue-600 mr-2"></i>Mata Pelajaran <span class="text-red-500">*</span>
+                                    <i class="fas fa-book text-blue-600 mr-2"></i>Mata Pelajaran <span
+                                        class="text-red-500">*</span>
                                 </label>
                                 <select name="mata_pelajaran_id" id="mapelSelect"
                                     class="input-field w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
@@ -722,7 +724,8 @@
                             });
                             mapelSelect.disabled = false;
                         } else {
-                            mapelSelect.innerHTML = '<option value="">Tidak ada mata pelajaran untuk kelas ini</option>';
+                            mapelSelect.innerHTML =
+                                '<option value="">Tidak ada mata pelajaran untuk kelas ini</option>';
                             mapelSelect.disabled = true;
                         }
 
@@ -733,7 +736,8 @@
 
                     } catch (error) {
                         console.error('Error fetching mapel:', error);
-                        mapelSelect.innerHTML = '<option value="">Terjadi kesalahan saat memuat mata pelajaran</option>';
+                        mapelSelect.innerHTML =
+                            '<option value="">Terjadi kesalahan saat memuat mata pelajaran</option>';
                         mapelSelect.disabled = true;
                         alert('Terjadi kesalahan: ' + error.message);
                     }
@@ -872,6 +876,75 @@
                 // Example redirect:
                 window.location.href = `/agenda/${id}`;
             }
+
+            document.addEventListener('DOMContentLoaded', function() {
+                // Fungsi untuk memfilter Jam Pelajaran berdasarkan tanggal
+                function filterJamPelajaran(basedOnDate = null) {
+                    const jampelSelect = document.querySelector('select[name="jampel_id"]');
+                    if (!jampelSelect) return;
+
+                    // Tentukan tanggal yang akan dicek (gunakan input tanggal atau hari ini)
+                    const dateToCheck = basedOnDate ? new Date(basedOnDate) : new Date();
+                    const dayOfWeek = dateToCheck.getDay(); // 0 = Minggu, 1 = Senin, dst.
+
+                    // Mapping hari (JavaScript) ke tipe hari (Database)
+                    let hariTipe;
+                    switch (dayOfWeek) {
+                        case 1: // Senin
+                            hariTipe = 'senin';
+                            break;
+                        case 2: // Selasa
+                        case 3: // Rabu
+                        case 4: // Kamis
+                            hariTipe = 'selasa_rabu_kamis';
+                            break;
+                        case 5: // Jumat
+                            hariTipe = 'jumat';
+                            break;
+                        default: // Sabtu (6) & Minggu (0)
+                            // Default ke jadwal Senin jika hari tidak ada di database
+                            hariTipe = 'senin';
+                            break;
+                    }
+
+                    // Dapatkan semua opsi jam pelajaran
+                    const options = jampelSelect.querySelectorAll('option');
+
+                    options.forEach(option => {
+                        // Lewati opsi placeholder "Pilih Jam"
+                        if (option.value === '') {
+                            return;
+                        }
+
+                        const optionHariTipe = option.getAttribute('data-hari');
+
+                        // Tampilkan opsi jika sesuai dengan hari, sembunyikan jika tidak
+                        if (optionHariTipe === hariTipe) {
+                            option.style.display = 'block';
+                        } else {
+                            option.style.display = 'none';
+                        }
+                    });
+
+                    // Reset pilihan jika pilihan sebelumnya tidak lagi valid
+                    if (jampelSelect.value && jampelSelect.querySelector(`option[value="${jampelSelect.value}"]`).style
+                        .display === 'none') {
+                        jampelSelect.value = '';
+                    }
+                }
+
+                // Jalankan filter saat pertama kali halaman dimuat (berdasarkan hari ini)
+                filterJamPelajaran();
+
+                // Tambahkan event listener pada input tanggal
+                // agar filter berjalan saat user mengganti tanggal
+                const tanggalInput = document.querySelector('input[name="tanggal"]');
+                if (tanggalInput) {
+                    tanggalInput.addEventListener('change', function() {
+                        filterJamPelajaran(this.value);
+                    });
+                }
+            });
         </script>
     @endpush
 @endsection

@@ -87,7 +87,7 @@
                                 <div class="flex items-center">
                                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm6 8v-1a4 4 0 00-4-4H10a4 4 0 00-4 4v1m11-9l1 2 2 .3-1.5 1.4.4 2-1.9-1-1.9 1 .4-2L14 13.3l2-.3z" />
+                                          d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm6 8v-1a4 4 0 00-4-4H10a4 4 0 00-4 4v1M4 4h16v6H4z"/>
                                     </svg>
                                     Wali Kelas
                                 </div>
@@ -99,7 +99,17 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm6 8v-1a4 4 0 00-4-4H10a4 4 0 00-4 4v1m11-9l1 2 2 .3-1.5 1.4.4 2-1.9-1-1.9 1 .4-2L14 13.3l2-.3z" />
                                     </svg>
-                                    Guru Mapel
+                                    Guru Mapel (Legacy)
+                                </div>
+                            </a>
+                            <a href="{{ route('admin.guru-schedule') }}"
+                                class="{{ request()->routeIs('admin.guru-schedule') ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-50' }} block px-4 py-2 text-sm font-medium transition-colors">
+                                <div class="flex items-center">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                    📚 Kelola Jadwal Guru
                                 </div>
                             </a>
                         </div>
@@ -107,16 +117,40 @@
                 @endif
 
                 @if (in_array(auth()->user()->role, ['guru', 'sekretaris']))
-                    <a href="{{ route('agenda.index') }}"
-                        class="{{ request()->routeIs('agenda.*') ? 'text-blue-600 border-b-2 border-blue-600 pb-1' : 'text-gray-700 hover:text-blue-600' }} font-medium transition-colors">
-                        Agenda
-                    </a>
+                    <div class="relative group">
+                        <a href="{{ route('agenda.index') }}"
+                            class="{{ request()->routeIs('agenda.*') ? 'text-blue-600 border-b-2 border-blue-600 pb-1' : 'text-gray-700 hover:text-blue-600' }} font-medium transition-colors flex items-center gap-1">
+                            Agenda
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                            </svg>
+                        </a>
+                        <div
+                            class="absolute left-0 mt-0 w-48 bg-white rounded-lg shadow-lg border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+                            <a href="{{ route('agenda.index') }}"
+                                class="block px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 first:rounded-t-lg last:rounded-b-lg font-medium transition-colors">
+                                📋 Daftar Agenda
+                            </a>
+                        </div>
+                    </div>
                 @endif
 
                 @if (auth()->user()->role == 'guru')
+                    <a href="{{ route('guru.jadwal-saya') }}"
+                        class="{{ request()->routeIs('guru.jadwal-saya') ? 'text-blue-600 border-b-2 border-blue-600 pb-1' : 'text-gray-700 hover:text-blue-600' }} font-medium transition-colors">
+                        Jadwal Saya
+                    </a>
                     <a href="{{ route('absensi.index') }}"
                         class="{{ request()->routeIs('absensi.*') ? 'text-blue-600 border-b-2 border-blue-600 pb-1' : 'text-gray-700 hover:text-blue-600' }} font-medium transition-colors">
                         Absensi
+                    </a>
+                @endif
+
+                @if (auth()->user()->role == 'walikelas')
+                    <a href="{{ route('rekap.index') }}"
+                        class="{{ request()->routeIs('rekap.index') ? 'text-blue-600 border-b-2 border-blue-600 pb-1' : 'text-gray-700 hover:text-blue-600' }} font-medium transition-colors">
+                        Rekap
                     </a>
                 @endif
             </div>
@@ -127,7 +161,7 @@
                 <div class="hidden md:flex items-center space-x-3">
                     <div class="hidden sm:block text-right">
                         <div class="text-sm font-semibold text-gray-900">{{ auth()->user()->name }}</div>
-                            <div class="text-xs text-gray-600">{{auth()->user()->role}}</div>
+                        <div class="text-xs text-gray-600">{{ auth()->user()->role }}</div>
                     </div>
 
                     <!-- Profile Dropdown -->
@@ -349,18 +383,20 @@
 
             <!-- Agenda Link (Guru & Sekretaris) -->
             @if (in_array(auth()->user()->role, ['guru', 'sekretaris']))
-                <a href="{{ route('agenda.index') }}"
-                    class="{{ request()->routeIs('agenda.*') ? 'bg-blue-50 text-blue-600 border-l-4 border-blue-600' : 'text-gray-700 hover:bg-gray-50 hover:text-blue-600' }} block px-4 py-3 rounded-lg font-medium transition-colors">
-                    <div class="flex items-center">
-                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
-                            </path>
-                        </svg>
-                        Agenda
-                    </div>
-                </a>
+                <div class="space-y-1">
+                    <a href="{{ route('agenda.index') }}"
+                        class="{{ request()->routeIs('agenda.index') ? 'bg-blue-50 text-blue-600 border-l-4 border-blue-600' : 'text-gray-700 hover:bg-gray-50 hover:text-blue-600' }} block px-4 py-3 rounded-lg font-medium transition-colors">
+                        <div class="flex items-center">
+                            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                            📋 Daftar Agenda
+                        </div>
+                    </a>
+                </div>
             @endif
+
 
             <!-- Divider -->
             <div class="md:hidden border-t border-gray-200 my-4"></div>
@@ -371,6 +407,7 @@
                     class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-blue-600 rounded-lg transition-colors">
                     <svg class="w-5 h-5 mr-3 text-gray-400" fill="none" stroke="currentColor"
                         viewBox="0 0 24 24">
+
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z">
                         </path>

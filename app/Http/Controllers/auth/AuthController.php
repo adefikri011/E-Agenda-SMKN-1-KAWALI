@@ -38,7 +38,7 @@ class AuthController extends Controller
         }
 
         // Gagal autentikasi
-        $errorMessage = 'The provided credentials do not match our records.';
+        $errorMessage = 'Email atau Password yang anda masukan salah.';
 
         if ($isAjax) {
             return response()->json(['success' => false, 'errors' => ['email' => $errorMessage]], 422);

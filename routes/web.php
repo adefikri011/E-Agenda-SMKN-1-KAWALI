@@ -5,22 +5,21 @@ use App\Http\Controllers\AgendaController;
 use App\Http\Controllers\auth\AuthController;
 use App\Http\Controllers\data\GuruController;
 use App\Http\Controllers\data\SiswaController;
+use App\Http\Controllers\GuruMapelController;
+use App\Http\Controllers\Admin\GuruScheduleController;
 use App\Http\Controllers\HakAksesController;
 use App\Http\Controllers\data\KelasController;
 use App\Http\Controllers\KegiatanSebelumKBMController;
 use App\Http\Controllers\NilaiController;
 use App\Http\Controllers\PesanController;
+use App\Http\Controllers\RekapController;
 use App\Http\Controllers\SekretarisController;
 use App\Http\Controllers\data\MapelController;
 use App\Http\Controllers\data\WaliKelasController;
-use App\Http\Controllers\GuruMapelController;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Mail;
 
 Route::get('/', function () {
     return view('landing_page.index');
 });
-
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/dashboard-admin', [HakAksesController::class, 'admin'])->name('dashboard.admin');
@@ -61,20 +60,14 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::post('/sekretaris/import', [SekretarisController::class, 'import'])->name('sekretaris.import');
     Route::get('/sekretaris/get-siswa-by-kelas/{kelas_id}', [SekretarisController::class, 'getSiswaByKelas']);
 
-    // Rute untuk Mata Pelajaran
-    // Rute untuk menampilkan daftar semua mata pelajaran (index)
     Route::get('/mapel', [MapelController::class, 'index'])->name('mapel.index');
 
-    // Rute untuk menampilkan form tambah mata pelajaran baru (create)
     Route::get('/mapel/create', [MapelController::class, 'create'])->name('mapel.create');
 
-    // Rute untuk menyimpan data mata pelajaran baru ke database (store)
     Route::post('/mapel', [MapelController::class, 'store'])->name('mapel.store');
 
-    // Rute untuk menampilkan detail satu mata pelajaran (show)
     Route::get('/mapel/{mapel}', [MapelController::class, 'show'])->name('mapel.show');
 
-    // Rute untuk menampilkan form edit mata pelajaran (edit)
     Route::get('/mapel/{mapel}/edit', [MapelController::class, 'edit'])->name('mapel.edit');
 
     // Rute untuk memperbarui data mata pelajaran di database (update)
@@ -89,11 +82,19 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     // Rute untuk mengunduh template impor Excel
     Route::get('/mapel/template', [MapelController::class, 'downloadTemplate'])->name('mapel.template');
 
-    // Rute untuk menugaskan guru ke mata pelajaran tertentu
+    // Rute untuk mengassign guru ke mata pelajaran tertentu
     Route::post('/mapel/{mapel}/assign-guru', [MapelController::class, 'assignGuru'])->name('mapel.assignGuru');
 
+    // ===== MANAGE JADWAL GURU (ADMIN) =====
+    Route::get('/manage-jadwal-guru', [GuruScheduleController::class, 'index'])->name('admin.guru-schedule');
+    Route::get('/api/guru-schedules', [GuruScheduleController::class, 'getSchedules']);
+    Route::get('/api/guru-schedules/{id}', [GuruScheduleController::class, 'getSchedule']);
+    Route::post('/api/guru-schedules', [GuruScheduleController::class, 'store']);
+    Route::put('/api/guru-schedules/{id}', [GuruScheduleController::class, 'update']);
+    Route::delete('/api/guru-schedules/{id}', [GuruScheduleController::class, 'destroy']);
+    Route::get('/jampel-grouped', [GuruScheduleController::class, 'getGroupedByDay']);
+    Route::get('/api/guru-schedule/{kelasId}/{mapelId}', [GuruScheduleController::class, 'getScheduleByKelasMapel']);
 
-    // Rute untuk Wali Kelas
     Route::get('/wali-kelas', [WaliKelasController::class, 'index'])->name('wali_kelas.index');
     // Route::get('/wali-kelas/create', ...) -> RUTE INI SUDAH TIDAK DIPERLUKAN
     Route::post('/wali-kelas', [WaliKelasController::class, 'store'])->name('wali_kelas.store');
@@ -117,6 +118,10 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
 Route::middleware(['auth', 'role:guru'])->group(function () {
     Route::get('/dashboard-guru', [HakAksesController::class, 'guru'])->name('dashboard.guru');
+
+    Route::get('/jadwal-saya', function() {
+        return view('guru.jadwal-saya');
+    })->name('guru.jadwal-saya');
 
     Route::get('/absensi', [AbsensiController::class, 'index'])->name('absensi.index');
     Route::get('/absensi/create', [AbsensiController::class, 'create'])->name('absensi.create');
@@ -142,243 +147,14 @@ Route::middleware(['auth', 'role:sekretaris'])->group(function () {
     Route::get('/dashboard-sekretaris', [HakAksesController::class, 'sekretaris']);
 });
 
-<?php
+Route::middleware(['auth', 'role:walikelas'])->group(function () {
+    Route::get('/dashboard-walikelas', [HakAksesController::class, 'walikelas']);
 
-namespace App\Http\Controllers\data;
+    Route::get('/rekap' , [RekapController::class , 'index'])->name('rekap.index');
+    Route::get('/api/rekap-data', [RekapController::class, 'getRekapData']);
+    Route::get('/rekap/download/{format}', [RekapController::class, 'download'])->name('rekap.download');
 
-use App\Http\Controllers\Controller;
-use App\Models\Guru;
-use App\Models\Kelas;
-use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\DB;
-use Maatwebsite\Excel\Facades\Excel; // Tambahkan ini untuk import
-use App\Imports\WaliKelasImport; // Tambahkan ini untuk import
-
-class WaliKelasController extends Controller
-{
-/**
- * Display the dashboard for the currently logged-in wali kelas.
- */
-public function dashboard()
-{
-    // Mendapatkan user yang sedang login
-    $user = Auth::user();
-
-    // Mendapatkan kelas yang diampu oleh wali kelas ini
-    $kelas = Kelas::where('wali_kelas_id', $user->id)->first();
-
-    // Jika tidak ada kelas yang diampu, tampilkan pesan error atau redirect
-    if (!$kelas) {
-        return redirect()->route('home')->with('error', 'Anda belum ditugaskan sebagai wali kelas.');
-    }
-
-    // Mendapatkan jumlah siswa di kelas tersebut
-    $jumlahSiswa = $kelas->siswa()->count();
-
-    // Mendapatkan jumlah mata pelajaran di kelas tersebut
-    $jumlahMapel = $kelas->mataPelajaran()->count();
-
-    // Data kehadiran (sesuaikan dengan model kehadiran Anda)
-    // Jika Anda punya model Kehadiran, Anda bisa query seperti ini:
-    // $kehadiranHariIni = Kehadiran::where('kelas_id', $kelas->id)
-    //                             ->whereDate('created_at', now()->today())
-    //                             ->where('status', 'hadir')
-    //                             ->count();
-
-    // Untuk contoh, kita gunakan data dinamis sederhana:
-    $kehadiranHariIni = $jumlahSiswa > 0 ? $jumlahSiswa - 2 : 0; // Sebagian besar siswa hadir
-    $kehadiranIzin = $jumlahSiswa > 0 ? 1 : 0; // 1 siswa izin
-    $kehadiranSakit = 0; // Tidak ada yang sakit
-    $kehadiranAlpha = $jumlahSiswa > 0 ? 1 : 0; // 1 siswa alpha
-
-    // Menghitung jumlah siswa yang tidak hadir
-    $siswaTidakHadir = $jumlahSiswa - $kehadiranHariIni;
-
-    // Kirim data ke view
-    return view('wali_kelas.dashboard', compact(
-        'user',
-        'kelas',
-        'jumlahSiswa',
-        'jumlahMapel',
-        'kehadiranHariIni',
-        'kehadiranIzin',
-        'kehadiranSakit',
-        'kehadiranAlpha',
-        'siswaTidakHadir'
-    ));
-
-
-}
-    /**
-     * Display a listing of the resource.
-     * Menampilkan daftar guru yang ditugaskan sebagai wali kelas.
-     * Juga menyediakan data untuk modal Tambah Wali Kelas.
-     */
-    public function index(Request $request)
-    {
-        // Query untuk mengambil user yang role-nya 'guru' dan memiliki relasi kelasAsWali
-        $query = User::where('role', 'guru')->has('kelasAsWali')->with('kelasAsWali', 'guru');
-
-
-
-        // Filter berdasarkan pencarian (nama atau NIP guru)
-        if ($request->has('search') && $request->search != '') {
-            $search = $request->search;
-            $query->whereHas('guru', function($q) use ($search) {
-                $q->where('nama', 'like', '%' . $search . '%')
-                  ->orWhere('nip', 'like', '%' . $search . '%');
-            });
-        }
-
-        // Dapatkan data wali kelas dengan paginasi
-        $waliKelas = $query->paginate(10);
-
-        // --- LOGIKA UNTUK MODAL TAMBAH ---
-        // Ambil semua guru yang BELUM menjadi wali kelas
-        $guruAvailable = Guru::whereDoesntHave('user', function ($query) {
-            $query->whereHas('kelasAsWali');
-        })->get();
-
-        // Ambil semua kelas yang BELUM memiliki wali kelas
-        $kelasAvailable = Kelas::whereNull('wali_kelas_id')->get();
-        // --- AKHIR LOGIKA MODAL ---
-
-        return view('admin.data.wali_kelas.index', compact('waliKelas', 'guruAvailable', 'kelasAvailable'));
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     * Menyimpan penugasan wali kelas dari modal di halaman index.
-     */
-    public function store(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'guru_id' => 'required|exists:guru,id',
-            'kelas_id' => 'required|exists:kelas,id',
-        ]);
-
-        if ($validator->fails()) {
-            return redirect()->back()
-                ->withErrors($validator)
-                ->withInput();
-        }
-
-        $guru = Guru::find($request->guru_id);
-        $kelas = Kelas::find($request->kelas_id);
-
-        // Update tabel kelas dengan ID user dari guru yang dipilih
-        $kelas->wali_kelas_id = $guru->users_id;
-        $kelas->save();
-
-        return redirect()->route('wali_kelas.index')
-            ->with('success', 'Wali kelas berhasil ditugaskan');
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     * Menampilkan form untuk mengubah penugasan wali kelas.
-     */
-    public function edit(string $id) // PERBAIKAN: 'function string' diubah menjadi 'function edit'
-    {
-        // Temukan user yang merupakan wali kelas
-        $user = User::findOrFail($id);
-        $user->load('kelasAsWali', 'guru');
-
-        // Ambil semua guru yang tersedia (kecuali guru ini sendiri)
-        $guruAvailable = Guru::where('id', '!=', $user->guru->id)
-            ->whereDoesntHave('user', function($query) {
-                $query->whereHas('kelasAsWali');
-            })->get();
-
-        // Ambil semua kelas yang tersedia (kecuali kelas ini sendiri)
-        $kelasAvailable = Kelas::where('id', '!=', $user->kelasAsWali->id)
-            ->whereNull('wali_kelas_id')->get();
-
-        return view('admin.data.wali_kelas.edit', compact('user', 'guruAvailable', 'kelasAvailable'));
-    }
-
-    /**
-     * Update the specified resource in storage.
-     * Memperbarui penugasan wali kelas.
-     */
-    public function update(Request $request, string $id)
-    {
-        $validator = Validator::make($request->all(), [
-            'guru_id' => 'required|exists:guru,id',
-            'kelas_id' => 'required|exists:kelas,id',
-        ]);
-
-        if ($validator->fails()) {
-            return redirect()->back()
-                ->withErrors($validator)
-                ->withInput();
-        }
-
-        // Hapus penugasan lama
-        $oldUser = User::findOrFail($id);
-        $oldKelas = $oldUser->kelasAsWali;
-        if ($oldKelas) {
-            $oldKelas->wali_kelas_id = null;
-            $oldKelas->save();
-        }
-
-        // Buat penugasan baru
-        $newGuru = Guru::find($request->guru_id);
-        $newKelas = Kelas::find($request->kelas_id);
-        $newKelas->wali_kelas_id = $newGuru->users_id;
-        $newKelas->save();
-
-        return redirect()->route('wali_kelas.index')
-            ->with('success', 'Penugasan wali kelas berhasil diperbarui');
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     * Mencabut penugasan wali kelas.
-     */
-    public function destroy(string $id)
-    {
-        $user = User::findOrFail($id);
-        $kelas = $user->kelasAsWali;
-
-        if ($kelas) {
-            $kelas->wali_kelas_id = null;
-            $kelas->save();
-        }
-
-        return redirect()->route('wali_kelas.index')
-            ->with('success', 'Penugasan wali kelas berhasil dicabut');
-    }
-
-    /**
-     * Import data wali kelas dari Excel
-     */
-    public function import(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'file' => 'required|mimes:xlsx,xls|max:10240', // Maksimal 10MB
-        ]);
-
-        if ($validator->fails()) {
-            return redirect()->back()
-                ->withErrors($validator)
-                ->withInput();
-        }
-
-        try {
-            Excel::import(new WaliKelasImport, $request->file('file'));
-
-            return redirect()->route('wali_kelas.index')
-                ->with('success', 'Data wali kelas berhasil diimpor');
-        } catch (\Exception $e) {
-            return redirect()->back()
-                ->with('error', 'Terjadi kesalahan saat mengimpor data: ' . $e->getMessage());
-        }
-    }
-}
-
+});
 
 Route::middleware(['auth', 'role:guru,sekretaris,walikelas'])->group(function () {
     // Route Agenda
@@ -409,6 +185,17 @@ Route::middleware(['auth', 'role:guru,sekretaris,walikelas'])->group(function ()
     Route::put('/kegiatan-sebelum-kbm/{id}', [KegiatanSebelumKBMController::class, 'update'])->name('kegiatan-sebelum-kbm.update');
     Route::delete('/kegiatan-sebelum-kbm/{id}', [KegiatanSebelumKBMController::class, 'destroy'])->name('kegiatan-sebelum-kbm.destroy');
     Route::get('/test-mapel', [AgendaController::class, 'testMapel'])->name('agenda.test-mapel');
+});
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/api/jampel', [AgendaController::class, 'getJampel']);
+    Route::get('/api/agendas/{date}', [AgendaController::class, 'getAgendaByDate']);
+    Route::get('/api/agendas/{id}', [AgendaController::class, 'getAgenda']);
+    Route::post('/api/agendas', [AgendaController::class, 'storeApi']);
+    Route::put('/api/agendas/{id}', [AgendaController::class, 'updateApi']);
+    Route::delete('/api/agendas/{id}', [AgendaController::class, 'destroyApi']);
+
+    Route::get('/api/my-schedules', [AgendaController::class, 'getMySchedules']);
 });
 
 Route::get('/login', [AuthController::class, 'index'])->name('login');

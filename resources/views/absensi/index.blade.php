@@ -2,14 +2,20 @@
 
 @section('title', 'Input Absensi')
 
+@php
+    // CHECK AUTO_LOAD MODE
+    $isAutoLoad = request()->has('auto_load') && request('auto_load') == '1'
+        && request('kelas_id') && request('mapel_id') && request('tanggal');
+@endphp
+
 @section('content')
     <div class="mb-6">
         <h1 class="text-3xl font-bold text-gray-900 mb-2">Input Absensi Siswa</h1>
         <p class="text-gray-500">Catat kehadiran siswa per mata pelajaran</p>
     </div>
 
-    <!-- Filter Section -->
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
+    <!-- Filter Section - HIDDEN IN AUTO-LOAD MODE -->
+    <div id="filterSection" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6" @if($isAutoLoad)style="display:none"@endif>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
 
             <!-- Tanggal -->
@@ -171,7 +177,9 @@
             tanggal: null,
             kelas_id: null,
             mapel_id: null,
-            jampel_id: null
+            jampel_id: null,
+            start_jampel_id: null,
+            end_jampel_id: null
         };
         let students = [];
         let attendance = {};
@@ -182,8 +190,63 @@
             \App\Models\GuruMapel::where('guru_id', \App\Models\Guru::where('users_id', auth()->id())->first()?->id)->get(['kelas_id', 'mapel_id'])->groupBy('kelas_id')->map(fn($items) => $items->pluck('mapel_id')->toArray())->toArray(),
         ) !!};
 
+        // ============ AUTO-LOAD DARI JADWAL-SAYA ============
+        @if($isAutoLoad)
+        console.log('🚀 AUTO-LOAD MODE: Langsung ke siswa');
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                // Set formData dari parameter URL
+                formData.kelas_id = "{{ request('kelas_id') }}";
+                formData.mapel_id = "{{ request('mapel_id') }}";
+                formData.tanggal = "{{ request('tanggal') }}";
+                formData.start_jampel_id = "{{ request('start_jampel_id') ?? '' }}";
+                formData.end_jampel_id = "{{ request('end_jampel_id') ?? '' }}";
+                // If a single jampel_id was passed, use it as fallback
+                formData.jampel_id = "{{ request('jampel_id') ?? request('start_jampel_id') ?? '' }}";
+
+                // Fetch siswa and render info
+                autoLoadSiswa();
+            }, 200);
+        });
+        @else
         // Set today as default date
         document.getElementById('tanggal').valueAsDate = new Date();
+        @endif
+
+        // ============ AUTO-LOAD FUNCTION ============
+        function autoLoadSiswa() {
+            if (!formData.kelas_id) {
+                console.error('❌ kelas_id kosong');
+                return;
+            }
+
+            console.log('📥 Fetch siswa untuk kelas:', formData.kelas_id);
+
+            fetch(`/absensi/siswa/${formData.kelas_id}`)
+                .then(res => res.ok ? res.json() : Promise.reject('HTTP ' + res.status))
+                .then(data => {
+                    console.log('✅ SUCCESS:', data.length, 'siswa');
+
+                    students = data;
+                    attendance = {};
+                    data.forEach(s => {
+                        attendance[s.id] = 'hadir';
+                        nilai[s.id] = { jenis: '', nilai: '' };
+                    });
+
+                    // Render dan tampilkan
+                    renderStudents();
+                    updateStats();
+                    const section = document.getElementById('studentSection');
+                    if (section) section.classList.remove('hidden');
+                })
+                .catch(err => {
+                    console.error('❌ ERROR:', err);
+                    alert('Gagal memuat siswa');
+                });
+        }
+
+        // Mapping guru_mapel untuk filter mapel per kelas
 
         // Event Listeners
         document.getElementById('tanggal').addEventListener('change', validateForm);
@@ -476,7 +539,9 @@
             const data = {
                 kelas_id: parseInt(formData.kelas_id),
                 mapel_id: parseInt(formData.mapel_id),
-                jampel_id: parseInt(formData.jampel_id),
+                jampel_id: formData.jampel_id ? parseInt(formData.jampel_id) : 0,
+                start_jampel_id: formData.start_jampel_id ? parseInt(formData.start_jampel_id) : 0,
+                end_jampel_id: formData.end_jampel_id ? parseInt(formData.end_jampel_id) : 0,
                 tanggal: formData.tanggal,
                 pertemuan: 0,
                 absensi: Object.keys(attendance).map(siswa_id => ({

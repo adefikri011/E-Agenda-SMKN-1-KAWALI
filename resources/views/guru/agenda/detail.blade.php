@@ -59,68 +59,14 @@
                     </div>
 
                     <!-- Siswa Tidak Hadir -->
-                    <div class="mb-8">
-                        <h2 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                            <i class="fas fa-user-times text-red-600 mr-2"></i>Siswa Tidak Hadir
-                        </h2>
-                        <div class="bg-red-50 border border-red-200 rounded-lg p-4 max-h-60 overflow-y-auto">
-                            @if ($siswaTidakHadir->count() > 0)
-                                <p class="text-sm text-gray-500 mb-2">Jumlah siswa: {{ $siswaTidakHadir->count() }}</p>
-                                <ul class="space-y-2">
-                                    @foreach ($siswaTidakHadir as $siswa)
-                                        <li class="py-2 border-b border-red-100 last:border-0">
-                                            <div class="flex justify-between items-start mb-1">
-                                                <div>
-                                                    <p class="font-medium text-gray-900">{{ $siswa['nama'] }}</p>
-                                                    <p class="text-xs text-gray-500">{{ $siswa['nis'] }}</p>
-                                                </div>
-                                                @php
-                                                    switch ($siswa['status']) {
-                                                        case 'sakit':
-                                                            $badgeClass = 'bg-yellow-100 text-yellow-800';
-                                                            $statusText = 'Sakit';
-                                                            break;
-                                                        case 'izin':
-                                                            $badgeClass = 'bg-blue-100 text-blue-800';
-                                                            $statusText = 'Izin';
-                                                            break;
-                                                        case 'alpha':
-                                                            $badgeClass = 'bg-red-100 text-red-800';
-                                                            $statusText = 'Alpha';
-                                                            break;
-                                                        case 'belum_input':
-                                                            $badgeClass = 'bg-gray-100 text-gray-800';
-                                                            $statusText = 'Belum Input';
-                                                            break;
-                                                        default:
-                                                            $badgeClass = 'bg-gray-100 text-gray-800';
-                                                            $statusText = 'Tidak Diketahui';
-                                                    }
-                                                @endphp
-                                                <span
-                                                    class="px-2 py-1 text-xs rounded-full {{ $badgeClass }}">{{ $statusText }}</span>
-                                            </div>
-                                            @if (isset($siswa['mapel']) && $siswa['mapel'] !== '-')
-                                                <div class="mt-1 text-xs">
-                                                    <span class="text-gray-500">Mapel: </span>
-                                                    <span class="font-medium">{{ $siswa['mapel'] }}</span>
-                                                </div>
-                                            @endif
-                                            @if (isset($siswa['keterangan']) && $siswa['keterangan'] && $siswa['keterangan'] !== '-')
-                                                <div class="mt-1 text-xs">
-                                                    <span class="text-gray-500">Keterangan: </span>
-                                                    <span
-                                                        class="font-medium text-gray-700">{{ $siswa['keterangan'] }}</span>
-                                                </div>
-                                            @endif
-                                        </li>
-                                    @endforeach
-                                </ul>
-                            @else
-                                <p class="text-sm text-gray-500">Tidak ada siswa yang tidak hadir</p>
-                                <p class="text-xs text-gray-400 mt-1">Debug: siswaTidakHadir count =
-                                    {{ $siswaTidakHadir->count() }}</p>
-                            @endif
+                    <div>
+                        <h4 class="font-semibold text-gray-900 mb-2 flex items-center">
+                            <i class="fas fa-user-times mr-2 text-red-600"></i>Siswa Tidak Hadir
+                        </h4>
+                        <div class="bg-red-50 border border-red-200 rounded-lg p-3 max-h-40 overflow-y-auto">
+                            <div id="siswaTidakHadirContainer">
+                                <p class="text-sm text-gray-500">Memuat data...</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -350,11 +296,11 @@
                     <span class="font-medium">${siswa.mapel}</span>
                 </div>
                 ${siswa.keterangan && siswa.keterangan !== '-' ? `
-                            <div class="mt-1 text-xs">
-                                <span class="text-gray-500">Keterangan: </span>
-                                <span class="font-medium text-gray-700">${siswa.keterangan}</span>
-                            </div>
-                        ` : ''}
+                        <div class="mt-1 text-xs">
+                            <span class="text-gray-500">Keterangan: </span>
+                            <span class="font-medium text-gray-700">${siswa.keterangan}</span>
+                        </div>
+                    ` : ''}
             </li>
         `;
             });

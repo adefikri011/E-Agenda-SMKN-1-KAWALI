@@ -16,6 +16,9 @@ class Absensi extends Model
         'guru_id',
         'mapel_id',
         'jampel_id',
+        'start_jampel_id',
+        'end_jampel_id',
+        'jam',
         'tanggal',
         'pertemuan',
     ];
@@ -53,4 +56,12 @@ class Absensi extends Model
         return $this->hasMany(DetailAbsensi::class);
     }
 
+    /**
+     * Relasi langsung ke siswa melalui tabel detail_absensi
+     * Memudahkan penggunaan whereHas('siswa', ...) pada query Absensi
+     */
+    public function siswa()
+    {
+        return $this->belongsToMany(Siswa::class, 'detail_absensi', 'absensi_id', 'siswa_id');
+    }
 }

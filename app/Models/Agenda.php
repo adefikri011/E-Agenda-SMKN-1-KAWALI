@@ -64,6 +64,22 @@ class Agenda extends Model
     }
 
     /**
+     * Relasi ke mata pelajaran
+     */
+    public function mapel()
+    {
+        return $this->belongsTo(MataPelajaran::class, 'mapel_id');
+    }
+
+    /**
+     * Relasi ke guru-mapel
+     */
+    public function guruMapel()
+    {
+        return $this->hasMany(GuruMapel::class, 'kelas_id', 'kelas_id');
+    }
+
+    /**
      * Accessor untuk status tanda tangan
      */
     public function getStatusTtdAttribute($value)

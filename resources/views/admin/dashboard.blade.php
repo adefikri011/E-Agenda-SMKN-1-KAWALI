@@ -19,7 +19,8 @@
                 </svg>
             </div>
             <div class="stat-title">Siswa</div>
-            <div class="stat-value text-blue-500">1,245</div>
+            <!-- ANGKA DINAMIS -->
+            <div class="stat-value text-blue-500">{{ $totalSiswa }}</div>
             <div class="stat-desc">Total siswa terdaftar</div>
         </div>
 
@@ -31,7 +32,8 @@
                 </svg>
             </div>
             <div class="stat-title">Guru</div>
-            <div class="stat-value text-green-500">87</div>
+            <!-- ANGKA DINAMIS -->
+            <div class="stat-value text-green-500">{{ $totalGuru }}</div>
             <div class="stat-desc">Total guru aktif</div>
         </div>
 
@@ -43,7 +45,8 @@
                 </svg>
             </div>
             <div class="stat-title">Kelas</div>
-            <div class="stat-value text-purple-500">36</div>
+            <!-- ANGKA DINAMIS -->
+            <div class="stat-value text-purple-500">{{ $totalKelas }}</div>
             <div class="stat-desc">Total kelas</div>
         </div>
 
@@ -55,7 +58,8 @@
                 </svg>
             </div>
             <div class="stat-title">Jurusan</div>
-            <div class="stat-value text-yellow-500">7</div>
+            <!-- ANGKA DINAMIS -->
+            <div class="stat-value text-yellow-500">{{ $totalJurusan }}</div>
             <div class="stat-desc">Total jurusan</div>
         </div>
 
@@ -67,7 +71,8 @@
                 </svg>
             </div>
             <div class="stat-title">Mapel</div>
-            <div class="stat-value text-red-500">24</div>
+            <!-- ANGKA DINAMIS -->
+            <div class="stat-value text-red-500">{{ $totalMapel }}</div>
             <div class="stat-desc">Total mata pelajaran</div>
         </div>
 
@@ -79,7 +84,8 @@
                 </svg>
             </div>
             <div class="stat-title">Agenda</div>
-            <div class="stat-value text-indigo-500">36</div>
+            <!-- ANGKA DINAMIS -->
+            <div class="stat-value text-indigo-500">{{ $totalAgenda }}</div>
             <div class="stat-desc">Total agenda aktif</div>
         </div>
     </div>

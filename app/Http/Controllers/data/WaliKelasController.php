@@ -14,123 +14,79 @@ use App\Imports\WaliKelasImport; // Tambahkan ini untuk import
 
 class WaliKelasController extends Controller
 {
-/**
- * Display the dashboard for the currently logged-in wali kelas.
+  /**
+ * Display a listing of the resource.
+ * Menampilkan daftar guru yang ditugaskan sebagai wali kelas.
  */
-public function dashboard()
+public function index(Request $request)
 {
-    // Mendapatkan user yang sedang login
-    $user = Auth::user();
+    // Query untuk mengambil user yang role-nya 'walikelas' dan memiliki relasi kelasAsWali
+    $query = User::where('role', 'walikelas')->has('kelasAsWali')->with('kelasAsWali', 'guru');
 
-    // Mendapatkan kelas yang diampu oleh wali kelas ini
-    $kelas = Kelas::where('wali_kelas_id', $user->id)->first();
-
-    // Jika tidak ada kelas yang diampu, tampilkan pesan error atau redirect
-    if (!$kelas) {
-        return redirect()->route('home')->with('error', 'Anda belum ditugaskan sebagai wali kelas.');
+    // Filter berdasarkan pencarian (nama atau NIP guru)
+    if ($request->has('search') && $request->search != '') {
+        $search = $request->search;
+        $query->whereHas('guru', function($q) use ($search) {
+            $q->where('nama', 'like', '%' . $search . '%')
+              ->orWhere('nip', 'like', '%' . $search . '%');
+        });
     }
 
-    // Mendapatkan jumlah siswa di kelas tersebut
-    $jumlahSiswa = $kelas->siswa()->count();
+    // Dapatkan data wali kelas dengan paginasi
+    $waliKelas = $query->paginate(10);
 
-    // Mendapatkan jumlah mata pelajaran di kelas tersebut
-    $jumlahMapel = $kelas->mataPelajaran()->count();
+    // --- LOGIKA UNTUK MODAL TAMBAH (VERSI YANG BENAR DAN SEDERHANA) ---
+    // 1. Ambil semua ID user yang sudah menjadi wali kelas
+    $assignedWaliKelasIds = Kelas::whereNotNull('wali_kelas_id')->pluck('wali_kelas_id');
 
-    // Data kehadiran (sesuaikan dengan model kehadiran Anda)
-    // Jika Anda punya model Kehadiran, Anda bisa query seperti ini:
-    // $kehadiranHariIni = Kehadiran::where('kelas_id', $kelas->id)
-    //                             ->whereDate('created_at', now()->today())
-    //                             ->where('status', 'hadir')
-    //                             ->count();
+    // 2. Cari semua guru yang users_id-nya TIDAK ADA dalam daftar di atas
+    $guruAvailable = Guru::whereNotIn('users_id', $assignedWaliKelasIds)->get();
 
-    // Untuk contoh, kita gunakan data dinamis sederhana:
-    $kehadiranHariIni = $jumlahSiswa > 0 ? $jumlahSiswa - 2 : 0; // Sebagian besar siswa hadir
-    $kehadiranIzin = $jumlahSiswa > 0 ? 1 : 0; // 1 siswa izin
-    $kehadiranSakit = 0; // Tidak ada yang sakit
-    $kehadiranAlpha = $jumlahSiswa > 0 ? 1 : 0; // 1 siswa alpha
+    // 3. Ambil semua kelas yang BELUM memiliki wali kelas
+    $kelasAvailable = Kelas::whereNull('wali_kelas_id')->get();
+    // --- AKHIR LOGIKA MODAL ---
 
-    // Menghitung jumlah siswa yang tidak hadir
-    $siswaTidakHadir = $jumlahSiswa - $kehadiranHariIni;
-
-    // Kirim data ke view
-    return view('wali_kelas.dashboard', compact(
-        'user',
-        'kelas',
-        'jumlahSiswa',
-        'jumlahMapel',
-        'kehadiranHariIni',
-        'kehadiranIzin',
-        'kehadiranSakit',
-        'kehadiranAlpha',
-        'siswaTidakHadir'
-    ));
-
-
+    return view('admin.data.wali_kelas.index', compact('waliKelas', 'guruAvailable', 'kelasAvailable'));
 }
-    /**
-     * Display a listing of the resource.
-     * Menampilkan daftar guru yang ditugaskan sebagai wali kelas.
-     * Juga menyediakan data untuk modal Tambah Wali Kelas.
-     */
-    public function index(Request $request)
-    {
-        // Query untuk mengambil user yang role-nya 'guru' dan memiliki relasi kelasAsWali
-        $query = User::where('role', 'guru')->has('kelasAsWali')->with('kelasAsWali', 'guru');
-
-
-
-        // Filter berdasarkan pencarian (nama atau NIP guru)
-        if ($request->has('search') && $request->search != '') {
-            $search = $request->search;
-            $query->whereHas('guru', function($q) use ($search) {
-                $q->where('nama', 'like', '%' . $search . '%')
-                  ->orWhere('nip', 'like', '%' . $search . '%');
-            });
-        }
-
-        // Dapatkan data wali kelas dengan paginasi
-        $waliKelas = $query->paginate(10);
-
-        // --- LOGIKA UNTUK MODAL TAMBAH ---
-        // Ambil semua guru yang BELUM menjadi wali kelas
-        $guruAvailable = Guru::whereDoesntHave('user', function ($query) {
-            $query->whereHas('kelasAsWali');
-        })->get();
-
-        // Ambil semua kelas yang BELUM memiliki wali kelas
-        $kelasAvailable = Kelas::whereNull('wali_kelas_id')->get();
-        // --- AKHIR LOGIKA MODAL ---
-
-        return view('admin.data.wali_kelas.index', compact('waliKelas', 'guruAvailable', 'kelasAvailable'));
-    }
 
     /**
-     * Store a newly created resource in storage.
-     * Menyimpan penugasan wali kelas dari modal di halaman index.
-     */
-    public function store(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'guru_id' => 'required|exists:guru,id',
-            'kelas_id' => 'required|exists:kelas,id',
-        ]);
+ * Store a newly created resource in storage.
+ * Menyimpan penugasan wali kelas dari modal di halaman index.
+ */
+public function store(Request $request)
+{
+    $validator = Validator::make($request->all(), [
+        'guru_id' => 'required|exists:guru,id',
+        'kelas_id' => 'required|exists:kelas,id',
+    ]);
 
-        if ($validator->fails()) {
-            return redirect()->back()
-                ->withErrors($validator)
-                ->withInput();
-        }
-
-        $guru = Guru::find($request->guru_id);
-        $kelas = Kelas::find($request->kelas_id);
-
-        // Update tabel kelas dengan ID user dari guru yang dipilih
-        $kelas->wali_kelas_id = $guru->users_id;
-        $kelas->save();
-
-        return redirect()->route('wali_kelas.index')
-            ->with('success', 'Wali kelas berhasil ditugaskan');
+    if ($validator->fails()) {
+        return redirect()->back()
+            ->withErrors($validator)
+            ->withInput();
     }
+
+    $guru = Guru::find($request->guru_id);
+    $kelas = Kelas::find($request->kelas_id);
+
+    // Update tabel kelas dengan ID user dari guru yang dipilih
+    $kelas->wali_kelas_id = $guru->users_id;
+    $kelas->save();
+
+    // --- TAMBAHKAN BAGIAN INI ---
+    // Cari user berdasarkan users_id dari model Guru
+    $user = User::find($guru->users_id);
+
+    // Jika user ditemukan, ubah rolenya menjadi 'walikelas'
+    if ($user) {
+        $user->role = 'walikelas';
+        $user->save();
+    }
+    // --- AKHIR BAGIAN TAMBAHAN ---
+
+    return redirect()->route('wali_kelas.index')
+        ->with('success', 'Wali kelas berhasil ditugaskan dan role user telah diperbarui.');
+}
 
     /**
      * Show the form for editing the specified resource.
@@ -191,22 +147,31 @@ public function dashboard()
     }
 
     /**
-     * Remove the specified resource from storage.
-     * Mencabut penugasan wali kelas.
-     */
-    public function destroy(string $id)
-    {
-        $user = User::findOrFail($id);
-        $kelas = $user->kelasAsWali;
+ * Remove the specified resource from storage.
+ * Mencabut penugasan wali kelas.
+ */
+public function destroy(string $id)
+{
+    $user = User::findOrFail($id);
+    $kelas = $user->kelasAsWali;
 
-        if ($kelas) {
-            $kelas->wali_kelas_id = null;
-            $kelas->save();
+    if ($kelas) {
+        // Hapus penugasan wali kelas
+        $kelas->wali_kelas_id = null;
+        $kelas->save();
+
+        // --- TAMBAHKAN BAGIAN INI ---
+        // Kembalikan role user ke 'guru'
+        if ($user->role === 'walikelas') { // Pastikan hanya mengubah jika role-nya walikelas
+            $user->role = 'guru';
+            $user->save();
         }
-
-        return redirect()->route('wali_kelas.index')
-            ->with('success', 'Penugasan wali kelas berhasil dicabut');
+        // --- AKHIR BAGIAN TAMBAHAN ---
     }
+
+    return redirect()->route('wali_kelas.index')
+        ->with('success', 'Penugasan wali kelas berhasil dicabut dan role user telah dikembalikan.');
+}
 
     /**
      * Import data wali kelas dari Excel

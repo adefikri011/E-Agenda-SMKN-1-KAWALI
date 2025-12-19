@@ -42,6 +42,11 @@ class AbsensiController extends Controller
         $selectedKelas = request()->input('kelas_id');
         $selectedTanggal = request()->input('tanggal', now()->format('Y-m-d'));
         $selectedMapel = request()->input('mapel_id');
+        $autoLoad = request()->input('auto_load'); // Flag untuk auto-load dari jadwal-saya
+
+        // Jika ada parameter start_jampel_id dan end_jampel_id, ambil range jam
+        $startJampelId = request()->input('start_jampel_id');
+        $endJampelId = request()->input('end_jampel_id');
 
         return view('absensi.index', compact(
             'kelas',
@@ -49,7 +54,10 @@ class AbsensiController extends Controller
             'jampel',
             'selectedKelas',
             'selectedTanggal',
-            'selectedMapel'
+            'selectedMapel',
+            'autoLoad',
+            'startJampelId',
+            'endJampelId'
         ));
     }
 
@@ -124,16 +132,40 @@ class AbsensiController extends Controller
     public function store(Request $request)
     {
         try {
-            // Validate the request
+            // Validate the request - support both jampel_id and start/end jampel_id
             $validated = $request->validate([
                 'kelas_id' => 'required|exists:kelas,id',
                 'mapel_id' => 'required|exists:mata_pelajaran,id',
-                'jampel_id' => 'required|exists:jam_pelajaran,id',
+                'jampel_id' => 'nullable|integer',
+                'start_jampel_id' => 'nullable|integer',
+                'end_jampel_id' => 'nullable|integer',
                 'tanggal' => 'required|date',
                 'pertemuan' => 'required|integer|min:0',
                 'absensi.*.siswa_id' => 'required|exists:siswa,id',
                 'absensi.*.status' => 'required|in:hadir,izin,sakit,alpha',
             ]);
+
+            // Prioritize start/end jampel, fallback to jampel_id
+            $startJampelId = $validated['start_jampel_id'];
+            $endJampelId = $validated['end_jampel_id'];
+
+            // Jika hanya jampel_id yang ada
+            if (!$startJampelId && !$endJampelId && $validated['jampel_id']) {
+                $startJampelId = $validated['jampel_id'];
+                $endJampelId = $validated['jampel_id'];
+            }
+
+            // Jika semua kosong, gunakan default
+            if (!$startJampelId && !$endJampelId) {
+                $defaultJampel = \App\Models\Jampel::first();
+                $startJampelId = $defaultJampel ? $defaultJampel->id : 1;
+                $endJampelId = $defaultJampel ? $defaultJampel->id : 1;
+            }
+
+            // For backward compatibility, set jampel_id sebagai start jampel
+            $validated['jampel_id'] = $startJampelId;
+            $validated['start_jampel_id'] = $startJampelId;
+            $validated['end_jampel_id'] = $endJampelId;
 
             $tanggal = Carbon::parse($validated['tanggal'])->format('Y-m-d');
 
@@ -177,13 +209,40 @@ class AbsensiController extends Controller
                 ], 409); // 409 Conflict status
             }
 
-            // Get the time slot to extract the time value
-            $jampel = Jampel::find($validated['jampel_id']);
-            if (!$jampel) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Jam pelajaran tidak ditemukan'
-                ], 404);
+            // Determine jam value based on provided start/end jampel or single jampel
+            $jamValue = '00:00';
+            // Prefer start/end range if provided
+            if (!empty($validated['start_jampel_id']) && !empty($validated['end_jampel_id'])) {
+                $startJ = Jampel::find($validated['start_jampel_id']);
+                $endJ = Jampel::find($validated['end_jampel_id']);
+                if ($startJ && $endJ) {
+                    // Use jam_mulai of start and jam_selesai of end (formatted H:i)
+                    $startTime = $startJ->jam_mulai ? (is_string($startJ->jam_mulai) ? $startJ->jam_mulai : $startJ->jam_mulai->format('H:i')) : null;
+                    $endTime = $endJ->jam_selesai ? (is_string($endJ->jam_selesai) ? $endJ->jam_selesai : $endJ->jam_selesai->format('H:i')) : null;
+                    if ($startTime && $endTime) {
+                        $jamValue = $startTime . ' - ' . $endTime;
+                    } elseif ($startJ->rentang_waktu) {
+                        $jamValue = $startJ->rentang_waktu;
+                    }
+                }
+            }
+
+            // Fallback to single jampel if range not available
+            if ($jamValue === '00:00' && !empty($validated['jampel_id'])) {
+                $singleJ = Jampel::find($validated['jampel_id']);
+                if ($singleJ) {
+                    if (!empty($singleJ->rentang_waktu)) {
+                        $jamValue = $singleJ->rentang_waktu;
+                    } else {
+                        $startTime = $singleJ->jam_mulai ? (is_string($singleJ->jam_mulai) ? $singleJ->jam_mulai : $singleJ->jam_mulai->format('H:i')) : null;
+                        $endTime = $singleJ->jam_selesai ? (is_string($singleJ->jam_selesai) ? $singleJ->jam_selesai : $singleJ->jam_selesai->format('H:i')) : null;
+                        if ($startTime && $endTime) {
+                            $jamValue = $startTime . ' - ' . $endTime;
+                        } elseif ($startTime) {
+                            $jamValue = $startTime;
+                        }
+                    }
+                }
             }
 
             // Use database transaction
@@ -195,10 +254,12 @@ class AbsensiController extends Controller
                     'kelas_id' => $validated['kelas_id'],
                     'mapel_id' => $validated['mapel_id'],
                     'jampel_id' => $validated['jampel_id'],
+                    'start_jampel_id' => $validated['start_jampel_id'],
+                    'end_jampel_id' => $validated['end_jampel_id'],
                     'tanggal' => $tanggal,
                     'guru_id' => $guru->id,
                     'pertemuan' => $validated['pertemuan'],
-                    'jam' => $jampel->jam, // Add this line to include the jam value
+                    'jam' => $jamValue, // Use default if jampel not found
                 ]);
 
                 // Save attendance details for each student

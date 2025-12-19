@@ -11,7 +11,10 @@ class GuruMapel extends Model
     protected $fillable = [
         'guru_id',
         'kelas_id',
-        'mapel_id'
+        'mapel_id',
+        'start_jampel_id',
+        'end_jampel_id',
+        'hari_tipe'
     ];
 
     /**
@@ -36,5 +39,21 @@ class GuruMapel extends Model
     public function mapel()
     {
         return $this->belongsTo(MataPelajaran::class, 'mapel_id');
+    }
+
+    /**
+     * Relasi ke jam pelajaran mulai
+     */
+    public function startJampel()
+    {
+        return $this->belongsTo(Jampel::class, 'start_jampel_id');
+    }
+
+    /**
+     * Relasi ke jam pelajaran selesai
+     */
+    public function endJampel()
+    {
+        return $this->belongsTo(Jampel::class, 'end_jampel_id');
     }
 }

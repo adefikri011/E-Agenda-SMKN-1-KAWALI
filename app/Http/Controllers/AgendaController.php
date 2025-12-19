@@ -915,4 +915,186 @@ class AgendaController extends Controller
 
         return $siswaTidakHadir;
     }
+    // API: Get all jampel
+    public function getJampel()
+    {
+        $jampel = Jampel::all();
+        return response()->json($jampel);
+    }
+
+    // API: Get agendas by date
+    public function getAgendaByDate($date)
+    {
+        $guru = Guru::where('users_id', auth()->id())->first();
+        if (!$guru) {
+            return response()->json([]);
+        }
+
+        $agendas = Agenda::where('tanggal', $date)
+            ->whereHas('guruMapel', function ($q) use ($guru) {
+                $q->where('guru_id', $guru->id);
+            })
+            ->with(['kelas', 'mapel'])
+            ->get()
+            ->map(fn($a) => [
+                'id' => $a->id,
+                'kelas_id' => $a->kelas_id,
+                'mapel_id' => $a->mapel_id ?? null,
+                'materi' => $a->materi ?? $a->mata_pelajaran,
+                'kegiatan' => $a->kegiatan,
+                'catatan' => $a->catatan,
+                'kelas_name' => $a->kelas->nama_kelas,
+                'mapel_name' => $a->mapel->nama ?? $a->mata_pelajaran
+            ]);
+
+        return response()->json($agendas);
+    }
+
+    // API: Get single agenda
+    public function getAgenda($id)
+    {
+        $agenda = Agenda::findOrFail($id);
+        return response()->json($agenda);
+    }
+
+    // API: Store agenda
+    public function storeApi(Request $request)
+    {
+        $validated = $request->validate([
+            'kelas_id' => 'required|exists:kelas,id',
+            'mapel_id' => 'required|exists:mata_pelajaran,id',
+            'jampel_id' => 'required|exists:jam_pelajaran,id',
+            'tanggal' => 'required|date',
+            'materi' => 'required|string',
+            'kegiatan' => 'required|string',
+            'catatan' => 'nullable|string'
+        ]);
+
+        $guru = Guru::where('users_id', auth()->id())->first();
+
+        // Check if guru teaches this class-mapel
+        $guruMapel = GuruMapel::where('guru_id', $guru->id)
+            ->where('kelas_id', $validated['kelas_id'])
+            ->where('mapel_id', $validated['mapel_id'])
+            ->firstOrFail();
+
+        $mapel = MataPelajaran::find($validated['mapel_id']);
+
+        $agenda = Agenda::create([
+            'kelas_id' => $validated['kelas_id'],
+            'jampel_id' => $validated['jampel_id'],
+            'mata_pelajaran' => $mapel->nama,
+            'materi' => $validated['materi'],
+            'kegiatan' => $validated['kegiatan'],
+            'catatan' => $validated['catatan'],
+            'tanggal' => $validated['tanggal'],
+            'jampel_id' => 1, // Default
+            'users_id' => auth()->id(),
+            'pembuat' => 'guru',
+            'status_ttd' => 'belum',
+            'sudah_ttd' => false
+        ]);
+
+        return response()->json(['success' => true, 'data' => $agenda]);
+    }
+
+    // API: Update agenda
+    public function updateApi(Request $request, $id)
+    {
+        $agenda = Agenda::findOrFail($id);
+
+        $validated = $request->validate([
+            'materi' => 'required|string',
+            'kegiatan' => 'required|string',
+            'catatan' => 'nullable|string'
+        ]);
+
+        $agenda->update($validated);
+
+        return response()->json(['success' => true, 'data' => $agenda]);
+    }
+
+    // API: Delete agenda
+    public function destroyApi($id)
+    {
+        $agenda = Agenda::findOrFail($id);
+        $agenda->delete();
+
+        return response()->json(['success' => true]);
+    }
+    // API: Get my schedules (untuk guru view jadwal mereka)
+    public function getMySchedules()
+    {
+        try {
+            $guru = Guru::where('users_id', auth()->id())->first();
+
+            if (!$guru) {
+                return response()->json([]);
+            }
+
+            $schedules = GuruMapel::where('guru_id', $guru->id)
+                ->with(['kelas', 'mapel', 'startJampel', 'endJampel'])
+                ->get()
+                ->map(function($item) {
+                    // Ambil info jam mulai dan selesai
+                    $startJampel = $item->startJampel;
+                    $endJampel = $item->endJampel;
+
+                    // Buat display name untuk jampel
+                    $jampelDisplay = '';
+                    if ($startJampel && $endJampel) {
+                        $jampelDisplay = "Jam {$startJampel->jam_ke} - Jam {$endJampel->jam_ke}";
+                    } elseif ($startJampel) {
+                        $jampelDisplay = "Jam {$startJampel->jam_ke}";
+                    }
+
+                    // Cek apakah ada absensi untuk hari ini
+                    $today = now()->format('Y-m-d');
+                    $absensiHariIni = \App\Models\Absensi::where('kelas_id', $item->kelas_id)
+                        ->where('mapel_id', $item->mapel_id)
+                        ->where('tanggal', $today)
+                        ->first();
+
+                    // Hitung jumlah siswa dan absensi jika ada
+                    $totalSiswa = 0;
+                    $siswaTidakHadir = 0;
+
+                    if ($absensiHariIni) {
+                        // Ambil total siswa di kelas
+                        $totalSiswa = \App\Models\Siswa::where('kelas_id', $item->kelas_id)->count();
+
+                        // Hitung siswa tidak hadir (alpha, sakit, izin)
+                        $siswaTidakHadir = \App\Models\DetailAbsensi::where('absensi_id', $absensiHariIni->id)
+                            ->whereIn('status', ['alpha', 'sakit', 'izin'])
+                            ->count();
+                    }
+
+                    return [
+                        'id' => $item->id,
+                        'kelas_id' => $item->kelas_id,
+                        'kelas_name' => $item->kelas?->nama_kelas ?? 'Unknown',
+                        'mapel_id' => $item->mapel_id,
+                        'mapel_name' => $item->mapel?->nama ?? 'Unknown',
+                        'jampel_name' => $jampelDisplay,
+                        'start_jampel_id' => $item->start_jampel_id,
+                        'end_jampel_id' => $item->end_jampel_id,
+                        'hari_tipe' => $item->hari_tipe,
+                        // Data absensi
+                        'has_absensi_today' => $absensiHariIni ? true : false,
+                        'total_siswa' => $totalSiswa,
+                        'siswa_tidak_hadir' => $siswaTidakHadir,
+                        'siswa_hadir' => $totalSiswa - $siswaTidakHadir,
+                        'absensi_id' => $absensiHariIni?->id,
+                    ];
+                });
+
+            return response()->json($schedules);
+        } catch (\Exception $e) {
+            \Log::error('Error in getMySchedules', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
 }
