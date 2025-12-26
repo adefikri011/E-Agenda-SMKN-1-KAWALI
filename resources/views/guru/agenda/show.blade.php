@@ -13,7 +13,7 @@
         <div class="flex flex-wrap justify-between items-start gap-4 mb-8">
             <div>
                 <h2 class="text-xl font-bold text-gray-900">{{ $agenda->mata_pelajaran }}</h2>
-                <p class="text-gray-600 mt-1">{{ $agenda->kelas->nama_kelas }} - {{ $agenda->jampel->nama_jam }}</p>
+                <p class="text-gray-600 mt-1">{{ $agenda->kelas->nama_kelas }} - {{ $agenda->startJampel?->nama_jam ?? 'Jam -' }} s/d {{ $agenda->endJampel?->nama_jam ?? '-' }}</p>
             </div>
             <div class="flex flex-wrap gap-2">
                 @if ($agenda->pembuat === 'guru')
@@ -49,7 +49,7 @@
                     </div>
                     <div class="flex">
                         <span class="w-32 text-gray-500">Jam Pelajaran</span>
-                        <span class="font-medium">{{ $agenda->jampel->nama_jam }} ({{ $agenda->jampel->rentang_waktu }})</span>
+                        <span class="font-medium">{{ $agenda->startJampel?->nama_jam ?? 'Jam -' }} ({{ $agenda->startJampel?->rentang_waktu ?? '-' }}) s/d {{ $agenda->endJampel?->nama_jam ?? '-' }} ({{ $agenda->endJampel?->rentang_waktu ?? '-' }})</span>
                     </div>
                     <div class="flex">
                         <span class="w-32 text-gray-500">Kelas</span>

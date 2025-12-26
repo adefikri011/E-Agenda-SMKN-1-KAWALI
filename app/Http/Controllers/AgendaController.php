@@ -9,6 +9,7 @@ use App\Models\Guru;
 use App\Models\KegiatanSebelumKBM;
 use App\Models\GuruMapel;
 use App\Models\MataPelajaran;
+use App\Traits\CanManageAbsensi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use PDF;
@@ -19,30 +20,39 @@ use Illuminate\Support\Facades\Auth;
 
 class AgendaController extends Controller
 {
-    // Mendapatkan daftar kelas yang diampu oleh guru
+    use CanManageAbsensi;
+    // Mendapatkan daftar kelas yang diampu oleh guru/walikelas
     private function getGuruKelas()
     {
-        if (auth()->user()->hasRole('guru')) {
-            return GuruMapel::where('guru_id', auth()->user()->guru->id)
-                ->with(['kelas', 'mapel'])
-                ->get()
-                ->unique('kelas_id')
-                ->pluck('kelas');
+        if (auth()->user()->hasRole('guru') || auth()->user()->hasRole('walikelas')) {
+            $guru = $this->getGuruFromUser();
+            if ($guru) {
+                return GuruMapel::where('guru_id', $guru->id)
+                    ->with(['kelas', 'mapel'])
+                    ->get()
+                    ->unique('kelas_id')
+                    ->pluck('kelas');
+            }
+            return collect();
         } else {
             // Untuk siswa, dapatkan kelas siswa tersebut
             return Kelas::where('id', auth()->user()->siswa->kelas_id)->get();
         }
     }
 
-    // Mendapatkan daftar mata pelajaran yang diampu oleh guru di kelas tertentu
+    // Mendapatkan daftar mata pelajaran yang diampu oleh guru/walikelas di kelas tertentu
     private function getGuruMapel($kelasId)
     {
-        if (auth()->user()->hasRole('guru')) {
-            return GuruMapel::where('guru_id', auth()->user()->guru->id)
-                ->where('kelas_id', $kelasId)
-                ->with('mapel')
-                ->get()
-                ->pluck('mapel');
+        if (auth()->user()->hasRole('guru') || auth()->user()->hasRole('walikelas')) {
+            $guru = $this->getGuruFromUser();
+            if ($guru) {
+                return GuruMapel::where('guru_id', $guru->id)
+                    ->where('kelas_id', $kelasId)
+                    ->with('mapel')
+                    ->get()
+                    ->pluck('mapel');
+            }
+            return collect();
         } else {
             // Untuk siswa, dapatkan semua mata pelajaran di kelasnya
             return MataPelajaran::all();
@@ -60,8 +70,8 @@ class AgendaController extends Controller
         $kegiatanSebelumKBM = KegiatanSebelumKBM::orderBy('hari')->get();
 
         // Query berdasarkan role user
-        if (auth()->user()->hasRole('guru')) {
-            // Guru hanya bisa melihat agenda untuk kelas dan mapel yang diampu
+        if (auth()->user()->hasRole('guru') || auth()->user()->hasRole('walikelas')) {
+            // Guru/Walikelas hanya bisa melihat agenda untuk kelas dan mapel yang diampu
             $agendas = Agenda::with(['kelas', 'jampel', 'user', 'guruTtd'])
                 ->whereIn('kelas_id', $kelasIds)
                 ->orderBy('tanggal', 'desc')
@@ -88,8 +98,8 @@ class AgendaController extends Controller
         // Ambil data siswa tidak hadir (pastikan ini selalu terdefinisi)
         $siswaTidakHadir = collect(); // Default collection kosong
 
-        // Hanya untuk role guru
-        if (auth()->user()->hasRole('guru')) {
+        // Untuk role guru dan walikelas
+        if (auth()->user()->hasRole('guru') || auth()->user()->hasRole('walikelas')) {
             $siswaTidakHadir = $this->getSiswaTidakHadir();
         }
 
@@ -98,7 +108,23 @@ class AgendaController extends Controller
 
     public function create()
     {
-        $jampel = Jampel::all();
+        // Tentukan hari saat ini
+        $englishDay = now()->format('l');
+        $dayMap = [
+            'Monday' => 'senin',
+            'Tuesday' => 'selasa_rabu_kamis',
+            'Wednesday' => 'selasa_rabu_kamis',
+            'Thursday' => 'selasa_rabu_kamis',
+            'Friday' => 'jumat',
+            'Saturday' => 'senin',
+            'Sunday' => 'senin',
+        ];
+        $todayHariTipe = $dayMap[$englishDay] ?? 'senin';
+
+        // Ambil jampel hanya untuk hari hari ini
+        $jampel = Jampel::where('hari_tipe', $todayHariTipe)
+            ->orderBy('jam_ke')
+            ->get();
 
         // Get kelas yang diampu oleh guru atau kelas siswa
         $kelas = $this->getGuruKelas();
@@ -121,7 +147,8 @@ class AgendaController extends Controller
     {
         $validated = $request->validate([
             'tanggal' => 'required|date',
-            'jampel_id' => 'required|exists:jam_pelajaran,id',
+            'start_jampel_id' => 'required|exists:jam_pelajaran,id',
+            'end_jampel_id' => 'required|exists:jam_pelajaran,id',
             'kelas_id' => 'required|exists:kelas,id',
             'mata_pelajaran_id' => 'required|exists:mata_pelajaran,id',
             'guru_id' => 'required|exists:guru,id',
@@ -130,11 +157,12 @@ class AgendaController extends Controller
             'catatan' => 'nullable|string',
         ]);
 
-        // Cek hak akses kelas
-        if (auth()->user()->hasRole('guru')) {
-            $allowed = GuruMapel::where('guru_id', auth()->user()->guru->id)
+        // Cek hak akses kelas untuk guru/walikelas
+        if (auth()->user()->hasRole('guru') || auth()->user()->hasRole('walikelas')) {
+            $guru = $this->getGuruFromUser();
+            $allowed = $guru ? GuruMapel::where('guru_id', $guru->id)
                 ->where('kelas_id', $validated['kelas_id'])
-                ->exists();
+                ->exists() : false;
 
             if (!$allowed) {
                 return back()->withInput()->with('error', '❌ Anda tidak memiliki akses ke kelas ini.');
@@ -160,14 +188,15 @@ class AgendaController extends Controller
         // Siapkan data untuk disimpan
         $data = [
             'tanggal' => $validated['tanggal'],
-            'jampel_id' => $validated['jampel_id'],
+            'start_jampel_id' => $validated['start_jampel_id'],
+            'end_jampel_id' => $validated['end_jampel_id'],
             'kelas_id' => $validated['kelas_id'],
             'mata_pelajaran' => $mapel->nama, // Simpan nama mapel
             'materi' => $validated['materi'],
             'kegiatan' => $validated['kegiatan'],
             'catatan' => $validated['catatan'] ?? null,
             'users_id' => auth()->id(),
-            'pembuat' => auth()->user()->hasRole('guru') ? 'guru' : 'siswa',
+            'pembuat' => (auth()->user()->hasRole('guru') || auth()->user()->hasRole('walikelas')) ? 'guru' : 'siswa',
         ];
 
         // Status tanda tangan
@@ -212,11 +241,12 @@ class AgendaController extends Controller
         $agenda = Agenda::with(['kelas', 'jampel', 'user', 'guruTtd'])->findOrFail($id);
 
         // Cek apakah user berhak melihat agenda ini
-        if (auth()->user()->hasRole('guru')) {
-            // Guru hanya bisa melihat agenda untuk kelas yang diampu
-            $guruKelas = GuruMapel::where('guru_id', auth()->user()->guru->id)
+        if (auth()->user()->hasRole('guru') || auth()->user()->hasRole('walikelas')) {
+            // Guru/Walikelas hanya bisa melihat agenda untuk kelas yang diampu
+            $guru = $this->getGuruFromUser();
+            $guruKelas = $guru ? GuruMapel::where('guru_id', $guru->id)
                 ->where('kelas_id', $agenda->kelas_id)
-                ->exists();
+                ->exists() : false;
 
             if (!$guruKelas) {
                 abort(403, 'Unauthorized action.');
@@ -236,11 +266,12 @@ class AgendaController extends Controller
         $agenda = Agenda::findOrFail($id);
 
         // Cek apakah user berhak mengedit agenda ini
-        if (auth()->user()->hasRole('guru')) {
-            // Guru hanya bisa mengedit agenda untuk kelas yang diampu
-            $guruKelas = GuruMapel::where('guru_id', auth()->user()->guru->id)
+        if (auth()->user()->hasRole('guru') || auth()->user()->hasRole('walikelas')) {
+            // Guru/Walikelas hanya bisa mengedit agenda untuk kelas yang diampu
+            $guru = $this->getGuruFromUser();
+            $guruKelas = $guru ? GuruMapel::where('guru_id', $guru->id)
                 ->where('kelas_id', $agenda->kelas_id)
-                ->exists();
+                ->exists() : false;
 
             if (!$guruKelas) {
                 abort(403, 'Unauthorized action.');
@@ -265,11 +296,12 @@ class AgendaController extends Controller
         $agenda = Agenda::findOrFail($id);
 
         // Cek apakah user berhak mengupdate agenda ini
-        if (auth()->user()->hasRole('guru')) {
-            // Guru hanya bisa mengupdate agenda untuk kelas yang diampu
-            $guruKelas = GuruMapel::where('guru_id', auth()->user()->guru->id)
+        if (auth()->user()->hasRole('guru') || auth()->user()->hasRole('walikelas')) {
+            // Guru/Walikelas hanya bisa mengupdate agenda untuk kelas yang diampu
+            $guru = $this->getGuruFromUser();
+            $guruKelas = $guru ? GuruMapel::where('guru_id', $guru->id)
                 ->where('kelas_id', $agenda->kelas_id)
-                ->exists();
+                ->exists() : false;
 
             if (!$guruKelas) {
                 return redirect()->back()
@@ -288,7 +320,8 @@ class AgendaController extends Controller
         // Validasi input
         $validated = $request->validate([
             'tanggal' => 'required|date',
-            'jampel_id' => 'required|exists:jam_pelajaran,id',
+            'start_jampel_id' => 'required|exists:jam_pelajaran,id',
+            'end_jampel_id' => 'required|exists:jam_pelajaran,id',
             'kelas_id' => 'required|exists:kelas,id',
             'mata_pelajaran' => 'required|string|max:255',
             'materi' => 'required|string|max:500',
@@ -330,11 +363,12 @@ class AgendaController extends Controller
         $agenda = Agenda::findOrFail($id);
 
         // Cek apakah user berhak menghapus agenda ini
-        if (auth()->user()->hasRole('guru')) {
-            // Guru hanya bisa menghapus agenda untuk kelas yang diampu
-            $guruKelas = GuruMapel::where('guru_id', auth()->user()->guru->id)
+        if (auth()->user()->hasRole('guru') || auth()->user()->hasRole('walikelas')) {
+            // Guru/Walikelas hanya bisa menghapus agenda untuk kelas yang diampu
+            $guru = $this->getGuruFromUser();
+            $guruKelas = $guru ? GuruMapel::where('guru_id', $guru->id)
                 ->where('kelas_id', $agenda->kelas_id)
-                ->exists();
+                ->exists() : false;
 
             if (!$guruKelas) {
                 return redirect()->back()
@@ -388,17 +422,18 @@ class AgendaController extends Controller
 
     public function signForm($id)
     {
-        // Hanya guru yang bisa mengakses
-        if (!auth()->user()->hasRole('guru')) {
+        // Hanya guru dan walikelas yang bisa mengakses
+        if (!auth()->user()->hasRole('guru') && !auth()->user()->hasRole('walikelas')) {
             abort(403, 'Unauthorized action.');
         }
 
         $agenda = Agenda::with(['user', 'kelas', 'jampel'])->findOrFail($id);
 
-        // Cek apakah guru berhak menandatangani agenda ini
-        $guruKelas = GuruMapel::where('guru_id', auth()->user()->guru->id)
+        // Cek apakah guru/walikelas berhak menandatangani agenda ini
+        $guru = $this->getGuruFromUser();
+        $guruKelas = $guru ? GuruMapel::where('guru_id', $guru->id)
             ->where('kelas_id', $agenda->kelas_id)
-            ->exists();
+            ->exists() : false;
 
         if (!$guruKelas) {
             return redirect()->route('agenda.need-signature')
@@ -466,17 +501,18 @@ class AgendaController extends Controller
 
     public function sign(Request $request, $id)
     {
-        // Hanya guru yang bisa mengakses
-        if (!auth()->user()->hasRole('guru')) {
+        // Hanya guru dan walikelas yang bisa mengakses
+        if (!auth()->user()->hasRole('guru') && !auth()->user()->hasRole('walikelas')) {
             abort(403, 'Unauthorized action.');
         }
 
         $agenda = Agenda::findOrFail($id);
 
-        // Cek apakah guru berhak menandatangani agenda ini
-        $guruKelas = GuruMapel::where('guru_id', auth()->user()->guru->id)
+        // Cek apakah guru/walikelas berhak menandatangani agenda ini
+        $guru = $this->getGuruFromUser();
+        $guruKelas = $guru ? GuruMapel::where('guru_id', $guru->id)
             ->where('kelas_id', $agenda->kelas_id)
-            ->exists();
+            ->exists() : false;
 
         if (!$guruKelas) {
             return redirect()->route('agenda.need-signature')
@@ -541,11 +577,14 @@ class AgendaController extends Controller
         $query = Agenda::with(['user', 'guruTtd', 'kelas', 'jampel']);
 
         // Filter berdasarkan role
-        if (auth()->user()->hasRole('guru')) {
-            // Guru hanya bisa melihat agenda untuk kelas yang diampu
-            $kelasIds = GuruMapel::where('guru_id', auth()->user()->guru->id)
-                ->pluck('kelas_id');
-            $query->whereIn('kelas_id', $kelasIds);
+        if (auth()->user()->hasRole('guru') || auth()->user()->hasRole('walikelas')) {
+            // Guru/Walikelas hanya bisa melihat agenda untuk kelas yang diampu
+            $guru = $this->getGuruFromUser();
+            if ($guru) {
+                $kelasIds = GuruMapel::where('guru_id', $guru->id)
+                    ->pluck('kelas_id');
+                $query->whereIn('kelas_id', $kelasIds);
+            }
         } elseif (auth()->user()->hasRole('siswa')) {
             // Siswa hanya bisa melihat agenda miliknya sendiri di kelasnya
             $query->where('users_id', auth()->id())
@@ -564,10 +603,11 @@ class AgendaController extends Controller
 
         // Filter berdasarkan kelas
         if ($request->filled('kelas_id')) {
-            // Untuk guru, pastikan kelas yang dipilih adalah kelas yang diampu
-            if (auth()->user()->hasRole('guru')) {
-                $kelasIds = GuruMapel::where('guru_id', auth()->user()->guru->id)
-                    ->pluck('kelas_id');
+            // Untuk guru/walikelas, pastikan kelas yang dipilih adalah kelas yang diampu
+            if (auth()->user()->hasRole('guru') || auth()->user()->hasRole('walikelas')) {
+                $guru = $this->getGuruFromUser();
+                $kelasIds = $guru ? GuruMapel::where('guru_id', $guru->id)
+                    ->pluck('kelas_id') : collect();
 
                 if (!in_array($request->kelas_id, $kelasIds->toArray())) {
                     return redirect()->back()
@@ -594,8 +634,9 @@ class AgendaController extends Controller
             ->paginate(10);
 
         // Data untuk filter
-        if (auth()->user()->hasRole('guru')) {
-            $kelas = Kelas::whereIn('id', GuruMapel::where('guru_id', auth()->user()->guru->id)->pluck('kelas_id'))->get();
+        if (auth()->user()->hasRole('guru') || auth()->user()->hasRole('walikelas')) {
+            $guru = $this->getGuruFromUser();
+            $kelas = $guru ? Kelas::whereIn('id', GuruMapel::where('guru_id', $guru->id)->pluck('kelas_id'))->get() : collect();
         } else {
             $kelas = Kelas::where('id', auth()->user()->siswa->kelas_id)->get();
         }
@@ -609,11 +650,14 @@ class AgendaController extends Controller
         $query = Agenda::with(['user', 'guruTtd', 'kelas', 'jampel']);
 
         // Filter berdasarkan role
-        if (auth()->user()->hasRole('guru')) {
-            // Guru hanya bisa melihat agenda untuk kelas yang diampu
-            $kelasIds = GuruMapel::where('guru_id', auth()->user()->guru->id)
-                ->pluck('kelas_id');
-            $query->whereIn('kelas_id', $kelasIds);
+        if (auth()->user()->hasRole('guru') || auth()->user()->hasRole('walikelas')) {
+            // Guru/Walikelas hanya bisa melihat agenda untuk kelas yang diampu
+            $guru = $this->getGuruFromUser();
+            if ($guru) {
+                $kelasIds = GuruMapel::where('guru_id', $guru->id)
+                    ->pluck('kelas_id');
+                $query->whereIn('kelas_id', $kelasIds);
+            }
         } elseif (auth()->user()->hasRole('siswa')) {
             // Siswa hanya bisa melihat agenda miliknya sendiri di kelasnya
             $query->where('users_id', auth()->id())
@@ -631,9 +675,10 @@ class AgendaController extends Controller
         }
 
         if ($request->filled('kelas_id')) {
-            if (auth()->user()->hasRole('guru')) {
-                $kelasIds = GuruMapel::where('guru_id', auth()->user()->guru->id)
-                    ->pluck('kelas_id');
+            if (auth()->user()->hasRole('guru') || auth()->user()->hasRole('walikelas')) {
+                $guru = $this->getGuruFromUser();
+                $kelasIds = $guru ? GuruMapel::where('guru_id', $guru->id)
+                    ->pluck('kelas_id') : collect();
 
                 if (!in_array($request->kelas_id, $kelasIds->toArray())) {
                     return redirect()->back()
@@ -724,7 +769,7 @@ class AgendaController extends Controller
 
         return response()->json([
             'id' => $agenda->id,
-            'tanggal' => $agenda->tanggal->format('d/m/Y'),
+            'tanggal' => \Carbon\Carbon::parse($agenda->tanggal)->format('d/m/Y'),
             'jam' => $agenda->jampel->nama_jam,
             'kelas' => $agenda->kelas->nama_kelas,
             'kelas_id' => $agenda->kelas_id,
@@ -751,11 +796,14 @@ class AgendaController extends Controller
         $query = Agenda::with(['user', 'guruTtd', 'kelas', 'jampel']);
 
         // Filter berdasarkan role
-        if (auth()->user()->hasRole('guru')) {
-            // Guru hanya bisa melihat agenda untuk kelas yang diampu
-            $kelasIds = GuruMapel::where('guru_id', auth()->user()->guru->id)
-                ->pluck('kelas_id');
-            $query->whereIn('kelas_id', $kelasIds);
+        if (auth()->user()->hasRole('guru') || auth()->user()->hasRole('walikelas')) {
+            // Guru/Walikelas hanya bisa melihat agenda untuk kelas yang diampu
+            $guru = $this->getGuruFromUser();
+            if ($guru) {
+                $kelasIds = GuruMapel::where('guru_id', $guru->id)
+                    ->pluck('kelas_id');
+                $query->whereIn('kelas_id', $kelasIds);
+            }
         } elseif (auth()->user()->hasRole('siswa')) {
             // Siswa hanya bisa melihat agenda miliknya sendiri di kelasnya
             $query->where('users_id', auth()->id())
@@ -773,9 +821,10 @@ class AgendaController extends Controller
         }
 
         if ($request->filled('kelas_id')) {
-            if (auth()->user()->hasRole('guru')) {
-                $kelasIds = GuruMapel::where('guru_id', auth()->user()->guru->id)
-                    ->pluck('kelas_id');
+            if (auth()->user()->hasRole('guru') || auth()->user()->hasRole('walikelas')) {
+                $guru = $this->getGuruFromUser();
+                $kelasIds = $guru ? GuruMapel::where('guru_id', $guru->id)
+                    ->pluck('kelas_id') : collect();
 
                 if (!in_array($request->kelas_id, $kelasIds->toArray())) {
                     return redirect()->back()
@@ -799,6 +848,7 @@ class AgendaController extends Controller
 
         return Excel::download(new AgendaExport($agendas), 'rekap-agenda-' . date('Y-m-d') . '.xlsx');
     }
+
 
 
 
@@ -877,13 +927,18 @@ class AgendaController extends Controller
     // Tambahkan method ini di AgendaController
     private function getSiswaTidakHadir()
     {
-        // Hanya untuk role guru
-        if (!auth()->user()->hasRole('guru')) {
+        // Untuk role guru dan walikelas
+        if (!auth()->user()->hasRole('guru') && !auth()->user()->hasRole('walikelas')) {
             return collect();
         }
 
-        // Ambil kelas yang diampu oleh guru
-        $kelasIds = GuruMapel::where('guru_id', auth()->user()->guru->id)
+        // Ambil kelas yang diampu oleh guru/walikelas
+        $guru = $this->getGuruFromUser();
+        if (!$guru) {
+            return collect();
+        }
+
+        $kelasIds = GuruMapel::where('guru_id', $guru->id)
             ->pluck('kelas_id');
 
         // Ambil tanggal hari ini
@@ -982,13 +1037,12 @@ class AgendaController extends Controller
 
         $agenda = Agenda::create([
             'kelas_id' => $validated['kelas_id'],
-            'jampel_id' => $validated['jampel_id'],
+            'jampel_id' => $validated['jampel_id'] ?? 1,
             'mata_pelajaran' => $mapel->nama,
             'materi' => $validated['materi'],
             'kegiatan' => $validated['kegiatan'],
             'catatan' => $validated['catatan'],
             'tanggal' => $validated['tanggal'],
-            'jampel_id' => 1, // Default
             'users_id' => auth()->id(),
             'pembuat' => 'guru',
             'status_ttd' => 'belum',
@@ -1095,6 +1149,71 @@ class AgendaController extends Controller
                 'trace' => $e->getTraceAsString()
             ]);
             return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Get schedule details for agenda input (validate schedule data)
+     */
+    public function validateScheduleForAgenda($kelasId, $mapelId, $startJampelId, $endJampelId)
+    {
+        try {
+            $guru = Guru::where('users_id', auth()->id())->first();
+
+            if (!$guru) {
+                return response()->json([
+                    'valid' => false,
+                    'message' => 'Guru tidak ditemukan'
+                ], 404);
+            }
+
+            // Cari jadwal yang sesuai dengan parameter
+            $schedule = GuruMapel::where('guru_id', $guru->id)
+                ->where('kelas_id', $kelasId)
+                ->where('mapel_id', $mapelId)
+                ->with(['kelas', 'mapel', 'startJampel', 'endJampel'])
+                ->first();
+
+            if (!$schedule) {
+                return response()->json([
+                    'valid' => false,
+                    'message' => 'Jadwal tidak sesuai dengan yang Anda ajar'
+                ], 404);
+            }
+
+            // Validasi jam pelajaran
+            if ($schedule->start_jampel_id != $startJampelId || $schedule->end_jampel_id != $endJampelId) {
+                return response()->json([
+                    'valid' => false,
+                    'message' => 'Jam pelajaran tidak sesuai dengan jadwal admin',
+                    'correct_schedule' => [
+                        'start_jampel_id' => $schedule->start_jampel_id,
+                        'end_jampel_id' => $schedule->end_jampel_id,
+                        'start_jampel_name' => $schedule->startJampel?->nama_jam,
+                        'end_jampel_name' => $schedule->endJampel?->nama_jam,
+                    ]
+                ], 422);
+            }
+
+            return response()->json([
+                'valid' => true,
+                'message' => 'Jadwal sesuai',
+                'schedule' => [
+                    'id' => $schedule->id,
+                    'kelas_id' => $schedule->kelas_id,
+                    'kelas_name' => $schedule->kelas?->nama_kelas,
+                    'mapel_id' => $schedule->mapel_id,
+                    'mapel_name' => $schedule->mapel?->nama,
+                    'start_jampel_id' => $schedule->start_jampel_id,
+                    'end_jampel_id' => $schedule->end_jampel_id,
+                    'hari_tipe' => $schedule->hari_tipe,
+                ]
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'valid' => false,
+                'message' => 'Error: ' . $e->getMessage()
+            ], 500);
         }
     }
 }

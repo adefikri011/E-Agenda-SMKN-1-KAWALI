@@ -1,5 +1,5 @@
 <!-- Hero Section - SMKN 1 Kawali Ultra Modern -->
-<section class="relative min-h-screen flex items-center overflow-hidden pt-20">
+<section id="beranda" class="relative min-h-screen flex items-center overflow-hidden pt-20">
 
     <!-- Full Background Image with Students & Building -->
     <div class="absolute inset-0 z-0">
@@ -59,6 +59,8 @@
                         <p class="text-2xl text-white/95 font-semibold leading-relaxed max-w-xl drop-shadow-lg">
                             Sistem manajemen pembelajaran digital yang menghubungkan seluruh ekosistem sekolah dalam satu platform modern.
                         </p>
+
+                       
                     </div>
 
                     <!-- Clean Feature Tags -->

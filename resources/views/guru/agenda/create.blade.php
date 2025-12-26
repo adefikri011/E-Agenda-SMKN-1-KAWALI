@@ -18,10 +18,7 @@
                         class="px-4 py-2 font-medium text-blue-600 border-b-2 border-blue-600 focus:outline-none">
                         <i class="fas fa-clipboard-list mr-2"></i>Agenda Mengajar
                     </button>
-                    <button type="button" id="kegiatanTab"
-                        class="px-4 py-2 font-medium text-gray-500 hover:text-gray-700 focus:outline-none">
-                        <i class="fas fa-calendar-day mr-2"></i>Kegiatan Sebelum KBM
-                    </button>
+                    <!-- Kegiatan dipindah ke halaman terpisah -->
                 </div>
 
                 <!-- Agenda Form -->
@@ -42,15 +39,30 @@
                             </div>
                             <div>
                                 <label class="block text-sm font-semibold text-gray-900 mb-2">
-                                    <i class="fas fa-clock text-blue-600 mr-2"></i>Jam Pelajaran
+                                    <i class="fas fa-hourglass-start text-green-600 mr-2"></i>Jam Mulai <span class="text-red-500">*</span>
                                 </label>
-                                <select name="jampel_id"
-                                    class="input-field w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                                <select name="start_jampel_id" id="startJampelSelect"
+                                    class="input-field w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none"
                                     required>
-                                    <option value="">Pilih Jam</option>
+                                    <option value="">Pilih Jam Mulai</option>
                                     @foreach ($jampel as $item)
                                         <option value="{{ $item->id }}" data-hari="{{ $item->hari_tipe }}">
-                                            {{ $item->nama_jam }} ({{ $item->rentang_waktu }})
+                                            Jam {{ $item->jam_ke }} - {{ $item->jam_mulai }} ({{ $item->nama_jam }})
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-900 mb-2">
+                                    <i class="fas fa-hourglass-end text-red-600 mr-2"></i>Jam Selesai <span class="text-red-500">*</span>
+                                </label>
+                                <select name="end_jampel_id" id="endJampelSelect"
+                                    class="input-field w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none"
+                                    required>
+                                    <option value="">Pilih Jam Selesai</option>
+                                    @foreach ($jampel as $item)
+                                        <option value="{{ $item->id }}" data-hari="{{ $item->hari_tipe }}">
+                                            Jam {{ $item->jam_ke }} - {{ $item->jam_selesai }} ({{ $item->nama_jam }})
                                         </option>
                                     @endforeach
                                 </select>
@@ -197,128 +209,7 @@
                     </div>
                 </form>
 
-                <!-- Kegiatan Sebelum KBM Form -->
-                <div class="space-y-6 hidden" id="kegiatanContent">
-                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4 mb-6">
-                        <h3 class="text-lg font-semibold text-blue-900 mb-2">
-                            <i class="fas fa-info-circle mr-2"></i>Informasi
-                        </h3>
-                        <p class="text-sm text-blue-800">
-                            Isi kegiatan rutin yang Anda lakukan sebelum kegiatan belajar mengajar (KBM) setiap harinya.
-                            Data ini akan membantu dokumentasi kegiatan sekolah.
-                        </p>
-                    </div>
 
-                    <!-- Tab Hari -->
-                    <div class="border-b border-gray-200">
-                        <nav class="-mb-px flex space-x-8">
-                            @foreach (['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'] as $hari)
-                                <button type="button"
-                                    class="hari-tab py-2 px-1 border-b-2 font-medium text-sm {{ $loop->first ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}"
-                                    data-hari="{{ $hari }}">
-                                    {{ $hari }}
-                                </button>
-                            @endforeach
-                        </nav>
-                    </div>
-
-                    <!-- Form Kegiatan -->
-                    <form action="{{ route('kegiatan-sebelum-kbm.store') }}" method="POST" id="kegiatanForm">
-                        @csrf
-                        <div class="space-y-4">
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-900 mb-2">
-                                    <i class="fas fa-calendar-day text-blue-600 mr-2"></i>Hari
-                                </label>
-                                <select name="hari" id="hariSelect"
-                                    class="input-field w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-                                    required>
-                                    @foreach (['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'] as $hari)
-                                        <option value="{{ $hari }}" {{ $loop->first ? 'selected' : '' }}>
-                                            {{ $hari }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-900 mb-2">
-                                    <i class="fas fa-tasks text-blue-600 mr-2"></i>Kegiatan Sebelum KBM
-                                </label>
-                                <textarea name="kegiatan" rows="5" placeholder="Jelaskan kegiatan yang dilakukan sebelum KBM..."
-                                    class="input-field w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none resize-none"
-                                    required></textarea>
-                            </div>
-
-                            <!-- Buttons -->
-                            <div class="flex flex-col sm:flex-row gap-3 pt-4">
-                                <button type="submit"
-                                    class="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-all shadow-md hover:shadow-lg flex items-center justify-center">
-                                    <i class="fas fa-save mr-2"></i>
-                                    Simpan Kegiatan
-                                </button>
-                                <button type="reset"
-                                    class="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg font-semibold hover:border-blue-600 hover:text-blue-600 transition-all flex items-center justify-center">
-                                    <i class="fas fa-times mr-2"></i>
-                                    Batal
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-
-                    <!-- Daftar Kegiatan -->
-                    <div class="mt-8">
-                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Daftar Kegiatan Sebelum KBM</h3>
-                        <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
-                            <table class="min-w-full divide-y divide-gray-300">
-                                <thead class="bg-gray-50">
-                                    <tr>
-                                        <th scope="col"
-                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Hari
-                                        </th>
-                                        <th scope="col"
-                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Kegiatan
-                                        </th>
-                                        <th scope="col" class="relative px-6 py-3">
-                                            <span class="sr-only">Aksi</span>
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody class="bg-white divide-y divide-gray-200">
-                                    @if (isset($kegiatanSebelumKBM) && count($kegiatanSebelumKBM) > 0)
-                                        @foreach ($kegiatanSebelumKBM as $kegiatan)
-                                            <tr>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                                    {{ $kegiatan->hari }}
-                                                </td>
-                                                <td class="px-6 py-4 text-sm text-gray-500">
-                                                    {{ $kegiatan->kegiatan }}
-                                                </td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                    <button type="button" onclick="editKegiatan({{ $kegiatan->id }})"
-                                                        class="text-indigo-600 hover:text-indigo-900 mr-3">
-                                                        <i class="fas fa-edit"></i>
-                                                    </button>
-                                                    <button type="button" onclick="deleteKegiatan({{ $kegiatan->id }})"
-                                                        class="text-red-600 hover:text-red-900">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    @else
-                                        <tr>
-                                            <td colspan="3" class="px-6 py-4 text-center text-sm text-gray-500">
-                                                Belum ada data kegiatan sebelum KBM
-                                            </td>
-                                        </tr>
-                                    @endif
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
 
@@ -376,6 +267,11 @@
         <script>
             document.addEventListener('DOMContentLoaded', function() {
                 console.log('DOM loaded, initializing signature pad...');
+
+                // Auto-populate jam mulai dan jam selesai
+                const jampelSelect = document.getElementById('jampelSelect');
+                const jamMulaiInput = document.getElementById('jamMulai');
+                const jamSelesaiInput = document.getElementById('jamSelesai');
 
                 // Inisialisasi variabel untuk tanda tangan
                 const canvas = document.getElementById('signatureCanvas');

@@ -3,42 +3,62 @@
 @section('title', 'Data Kelas')
 
 @section('content')
-    <div class="bg-white rounded-xl shadow-md p-5 mb-6">
+    <div class="bg-white rounded-xl shadow-md p-4 sm:p-5 mb-6">
         <div class="flex flex-col md:flex-row md:items-center justify-between mb-6">
             <div>
-                <h1 class="text-2xl font-bold text-gray-900 mb-1">Data Kelas</h1>
+                <h1 class="text-xl sm:text-2xl font-bold text-gray-900 mb-1">Data Kelas</h1>
                 <p class="text-gray-600 text-sm">Kelola informasi kelas sekolah</p>
             </div>
             <div class="mt-3 md:mt-0 flex flex-wrap gap-2">
-                <a href="#addModal" class="bg-blue-600 text-white px-5 py-2.5 rounded-lg text-sm font-medium">Tambah Kelas</a>
-
-                <a href="#importModal" class="bg-red-600 text-white px-5 py-2.5 rounded-lg text-sm font-medium">Import
-                    Excel</a>
+                <a href="#addModal"
+                    class="group bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-indigo-700 hover:to-blue-800 text-white px-4 py-2 sm:px-5 sm:py-2.5 rounded-lg flex items-center gap-2 shadow-md hover:shadow-lg transition-all duration-300 active:scale-95">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                        class="w-4 h-4 stroke-[2.5] group-hover:rotate-90 transition duration-300" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                    </svg>
+                    <span class="font-medium text-sm">Tambah Kelas</span>
+                </a>
+                <a href="#importModal"
+                    class="group bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white px-4 py-2 sm:px-5 sm:py-2.5 rounded-lg flex items-center gap-2 shadow-md hover:shadow-lg transition-all duration-300 active:scale-95">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
+                    </svg>
+                    <span class="font-medium text-sm">Import Excel</span>
+                </a>
             </div>
         </div>
 
         <!-- FILTER -->
-        <form action="{{ route('kelas.index') }}" method="GET">
+        <form id="filterForm" action="{{ route('kelas.index') }}" method="GET">
             <div class="bg-gray-50 rounded-lg p-3 mb-5">
                 <div class="flex flex-col md:flex-row gap-3">
                     <div class="flex-1">
                         <div class="relative">
-                            <input type="text" name="search" placeholder="Cari kelas..." value="{{ request('search') }}"
-                                class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 text-sm">
+                            <input type="text" name="search" id="searchInput" placeholder="Cari kelas..." value="{{ request('search') }}"
+                                class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm">
                             <i class="fas fa-search absolute left-3 top-3 text-gray-400 text-sm"></i>
                         </div>
                     </div>
 
                     <div class="flex gap-2">
-                        <button type="submit" class="px-4 py-2.5 bg-blue-600 text-white rounded-lg text-sm">Filter</button>
+                        <button type="submit"
+                            class="px-4 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">
+                            <i class="fas fa-filter mr-1"></i> Filter
+                        </button>
                         <a href="{{ route('kelas.index') }}"
-                            class="px-4 py-2.5 bg-gray-500 text-white rounded-lg text-sm">Reset</a>
+                            class="px-4 py-2.5 bg-gray-500 text-white rounded-lg text-sm font-medium hover:bg-gray-600 transition-colors inline-flex items-center">
+                            <i class="fas fa-redo mr-1"></i> Reset
+                        </a>
                     </div>
                 </div>
             </div>
         </form>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Desktop Grid View (Hidden on mobile) -->
+        <div class="hidden md:grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
             @forelse ($kelas as $item)
                 <div
                     class="group bg-white border-2 border-gray-100 rounded-2xl shadow-md hover:shadow-2xl p-6 transition-all duration-300 hover:-translate-y-2 relative overflow-hidden">
@@ -55,7 +75,7 @@
                                 <div
                                     class="inline-flex items-center gap-2 bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700 px-3 py-1.5 rounded-lg text-xs font-semibold mb-3 shadow-sm">
                                     <i class="fas fa-bookmark"></i>
-                                    <span>{{ $item->jurusan->jurusan ?? 'Umum' }}</span>
+                                    <span>{{ $item->jurusan->nama_jurusan ?? 'Umum' }}</span>
                                 </div>
 
                                 <!-- Nama Kelas -->
@@ -133,38 +153,155 @@
                 <!-- Empty State -->
                 <div class="col-span-full">
                     <div
-                        class="bg-gradient-to-br from-gray-50 to-blue-50 rounded-2xl shadow-md p-12 text-center border-2 border-dashed border-gray-300">
+                        class="bg-gradient-to-br from-gray-50 to-blue-50 rounded-2xl shadow-md p-8 sm:p-12 text-center border-2 border-dashed border-gray-300">
                         <!-- Icon -->
                         <div
-                            class="w-24 h-24 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mx-auto mb-5 shadow-inner">
-                            <i class="fas fa-inbox text-5xl text-gray-400"></i>
+                            class="w-16 h-16 sm:w-24 sm:h-24 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-5 shadow-inner">
+                            <i class="fas fa-inbox text-3xl sm:text-5xl text-gray-400"></i>
                         </div>
 
                         <!-- Text -->
-                        <h3 class="text-2xl font-bold text-gray-900 mb-2">Belum Ada Data Kelas</h3>
-                        <p class="text-gray-600 mb-6 max-w-md mx-auto">
+                        <h3 class="text-xl sm:text-2xl font-bold text-gray-900 mb-2">Belum Ada Data Kelas</h3>
+                        <p class="text-gray-600 mb-4 sm:mb-6 max-w-md mx-auto text-sm sm:text-base">
                             Mulai tambahkan kelas untuk mengelola data siswa dan wali kelas dengan lebih mudah
                         </p>
 
                         <!-- CTA Button -->
                         <a href="#addModal"
-                            class="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-3 rounded-xl font-semibold hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200">
+                            class="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white px-5 py-3 rounded-xl font-semibold hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 text-sm">
                             <i class="fas fa-plus"></i>
                             <span>Tambah Kelas Pertama</span>
                         </a>
                     </div>
                 </div>
-
             @endforelse
         </div>
 
+        <!-- Mobile Card View (Hidden on desktop) -->
+        <div class="md:hidden space-y-4">
+            @forelse ($kelas as $item)
+                <div class="bg-white rounded-xl border border-gray-200 p-4 shadow-sm hover:shadow-md transition-shadow duration-200">
+                    <div class="flex justify-between items-start mb-3">
+                        <div>
+                            <!-- Badge Jurusan -->
+                            <div class="inline-flex items-center gap-2 bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700 px-2.5 py-1 rounded-lg text-xs font-semibold mb-2">
+                                <i class="fas fa-bookmark text-xs"></i>
+                                <span>{{ $item->jurusan->nama_jurusan ?? 'Umum' }}</span>
+                            </div>
+
+                            <h3 class="font-bold text-gray-900 text-lg">{{ $item->nama_kelas }}</h3>
+                        </div>
+                        <div class="flex space-x-1">
+                            <a href="#editModal{{ $item->id }}"
+                               class="text-yellow-600 hover:text-yellow-800 p-2 rounded-full hover:bg-yellow-50 transition-colors">
+                                <i class="fas fa-edit text-sm"></i>
+                            </a>
+                            <a href="#deleteModal{{ $item->id }}"
+                               class="text-red-600 hover:text-red-800 p-2 rounded-full hover:bg-red-50 transition-colors">
+                                <i class="fas fa-trash text-sm"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Wali Kelas Info -->
+                    <div class="bg-gray-50 rounded-lg p-3 mb-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white flex-shrink-0">
+                                <i class="fas fa-user-tie text-xs"></i>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-xs text-gray-500 mb-1 font-medium">Wali Kelas</p>
+                                @if ($item->waliKelas)
+                                    <p class="font-semibold text-gray-900 text-sm truncate">{{ $item->waliKelas->name }}</p>
+                                @else
+                                    <p class="font-medium text-gray-400 text-sm italic">Belum Ditentukan</p>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-3 border-t border-gray-100">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-gradient-to-br from-green-50 to-green-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-users text-green-600"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500 font-medium">Total Siswa</p>
+                                <p class="font-bold text-gray-900">{{ $item->siswa->count() }}</p>
+                            </div>
+                        </div>
+
+                        <a href="#siswaModal{{ $item->id }}"
+                           class="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-sm hover:shadow-md transition-all duration-200">
+                            Lihat
+                        </a>
+                    </div>
+                </div>
+            @empty
+                <div class="bg-white rounded-lg border border-gray-200 p-6 text-center">
+                    <div class="w-16 h-16 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-inbox text-3xl text-gray-400"></i>
+                    </div>
+
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">Belum Ada Data Kelas</h3>
+                    <p class="text-gray-600 text-sm mb-4">
+                        Mulai tambahkan kelas untuk mengelola data siswa dan wali kelas dengan lebih mudah
+                    </p>
+
+                    <a href="#addModal"
+                        class="w-full py-3 rounded-lg bg-blue-600 text-white text-sm font-medium shadow-sm hover:bg-blue-700 block">
+                        + Tambah Kelas Pertama
+                    </a>
+                </div>
+            @endforelse
+        </div>
 
         <!-- PAGINATION -->
-        <div class="flex justify-between mt-8">
-            <div class="text-sm text-gray-700">
-                Menampilkan {{ $kelas->firstItem() }} - {{ $kelas->lastItem() }} dari {{ $kelas->total() }} kelas
+        <div class="flex flex-col sm:flex-row items-center justify-between mt-5 space-y-3 sm:space-y-0">
+            <div class="text-sm text-gray-700 text-center sm:text-left">
+                Menampilkan <span class="font-medium text-gray-900">{{ $kelas->firstItem() }}</span> hingga <span
+                    class="font-medium text-gray-900">{{ $kelas->lastItem() }}</span> dari <span
+                    class="font-medium text-gray-900">{{ $kelas->total() }}</span>
+                kelas
             </div>
-            <div>{{ $kelas->links() }}</div>
+            <div class="flex space-x-1">
+                {{-- Previous Page Link --}}
+                @if ($kelas->onFirstPage())
+                    <button disabled
+                        class="px-2.5 py-1.5 rounded-lg border border-gray-300 text-gray-400 cursor-not-allowed text-sm">
+                        <i class="fas fa-chevron-left text-xs"></i>
+                    </button>
+                @else
+                    <a href="{{ $kelas->previousPageUrl() }}"
+                        class="px-2.5 py-1.5 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100 transition-colors duration-200 text-sm">
+                        <i class="fas fa-chevron-left text-xs"></i>
+                    </a>
+                @endif
+
+                {{-- Pagination Numbers --}}
+                @foreach ($kelas->links()->elements[0] as $page => $url)
+                    @if ($page == $kelas->currentPage())
+                        <button
+                            class="px-3 py-1.5 rounded-lg bg-blue-600 text-white font-medium text-sm">{{ $page }}</button>
+                    @else
+                        <a href="{{ $url }}"
+                            class="px-3 py-1.5 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100 transition-colors duration-200 text-sm">{{ $page }}</a>
+                    @endif
+                @endforeach
+
+                {{-- Next Page Link --}}
+                @if ($kelas->hasMorePages())
+                    <a href="{{ $kelas->nextPageUrl() }}"
+                        class="px-2.5 py-1.5 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100 transition-colors duration-200 text-sm">
+                        <i class="fas fa-chevron-right text-xs"></i>
+                    </a>
+                @else
+                    <button disabled
+                        class="px-2.5 py-1.5 rounded-lg border border-gray-300 text-gray-400 cursor-not-allowed text-sm">
+                        <i class="fas fa-chevron-right text-xs"></i>
+                    </button>
+                @endif
+            </div>
         </div>
     </div>
 
@@ -292,4 +429,25 @@
         }
     </style>
 
+    @push('scripts')
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Auto submit form saat input search berubah (dengan debounce)
+                let searchTimeout;
+                const searchInput = document.getElementById('searchInput');
+                const filterForm = document.getElementById('filterForm');
+
+                // Fungsi untuk submit form
+                function submitForm() {
+                    filterForm.submit();
+                }
+
+                // Debounce untuk search input (500ms delay)
+                searchInput.addEventListener('input', function() {
+                    clearTimeout(searchTimeout);
+                    searchTimeout = setTimeout(submitForm, 500);
+                });
+            });
+        </script>
+    @endpush
 @endsection

@@ -170,14 +170,7 @@
             </div>
 
             <!-- Bottom CTA -->
-            <div class="mt-20 text-center">
-                <div class="inline-flex items-center gap-4 bg-white/80 backdrop-blur-md rounded-full px-8 py-4 shadow-lg border border-cyan-100">
-                    <span class="text-gray-700 font-medium">Siap transformasi sistem pendidikan Anda?</span>
-                    <button class="bg-gradient-to-r from-cyan-500 to-teal-600 text-white font-bold py-2 px-6 rounded-full hover:shadow-lg transform hover:scale-105 transition-all duration-300">
-                        Mulai Sekarang
-                    </button>
-                </div>
-            </div>
+           
         </div>
     </div>
 

@@ -19,7 +19,7 @@
                                 <h3 class="text-lg font-bold text-gray-900 mb-1">{{ $agenda->mata_pelajaran }}</h3>
                                 <p class="text-sm text-gray-600 mb-3">
                                     <i class="fas fa-clock mr-1 text-blue-600"></i>
-                                    {{ $agenda->jampel->nama_jam ?? '-' }} ({{ $agenda->jampel->rentang_waktu ?? '-' }})
+                                    {{ $agenda->startJampel?->nama_jam ?? 'Jam -' }} ({{ $agenda->startJampel?->rentang_waktu ?? '-' }}) s/d {{ $agenda->endJampel?->nama_jam ?? '-' }}
                                 </p>
                                 <div class="text-sm text-gray-700">
                                     <p class="font-semibold mb-1">Materi:</p>

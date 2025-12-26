@@ -3,15 +3,15 @@
 @section('title', 'Data Siswa')
 
 @section('content')
-    <div class="bg-white rounded-xl shadow-md p-5 mb-6">
+    <div class="bg-white rounded-xl shadow-md p-4 sm:p-5 mb-6">
         <div class="flex flex-col md:flex-row md:items-center justify-between mb-6">
             <div>
-                <h1 class="text-2xl font-bold text-gray-900 mb-1">Data Siswa</h1>
+                <h1 class="text-xl sm:text-2xl font-bold text-gray-900 mb-1">Data Siswa</h1>
                 <p class="text-gray-600 text-sm">Kelola informasi siswa sekolah dengan efisien</p>
             </div>
             <div class="mt-3 md:mt-0 flex flex-wrap gap-2">
                 <a href="#addModal"
-                    class="group bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-indigo-700 hover:to-blue-800 text-white px-5 py-2.5 rounded-lg flex items-center gap-2 shadow-md hover:shadow-lg transition-all duration-300 active:scale-95">
+                    class="group bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-indigo-700 hover:to-blue-800 text-white px-4 py-2 sm:px-5 sm:py-2.5 rounded-lg flex items-center gap-2 shadow-md hover:shadow-lg transition-all duration-300 active:scale-95">
                     <svg xmlns="http://www.w3.org/2000/svg"
                         class="w-4 h-4 stroke-[2.5] group-hover:rotate-90 transition duration-300" fill="none"
                         viewBox="0 0 24 24" stroke="currentColor">
@@ -20,7 +20,7 @@
                     <span class="font-medium text-sm">Tambah Siswa</span>
                 </a>
                 <a href="#importModal"
-                    class="group bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white px-5 py-2.5 rounded-lg flex items-center gap-2 shadow-md hover:shadow-lg transition-all duration-300 active:scale-95">
+                    class="group bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white px-4 py-2 sm:px-5 sm:py-2.5 rounded-lg flex items-center gap-2 shadow-md hover:shadow-lg transition-all duration-300 active:scale-95">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -74,33 +74,23 @@
             </div>
         </form>
 
-        <!-- Table -->
-        <div class="overflow-x-auto rounded-lg border border-gray-200">
+        <!-- Desktop Table (Hidden on mobile) -->
+        <div class="hidden md:block overflow-x-auto rounded-lg border border-gray-200">
             <table class="w-full">
                 <thead class="bg-gray-50 border-b border-gray-200">
                     <tr>
-                        <th
-                            class="py-3 px-5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider rounded-tl-lg">
-                            No</th>
-                        <th
-                            class="py-3 px-5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                            NIS</th>
-                        <th class="py-3 px-5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Nama
-                            Siswa</th>
-                        <th class="py-3 px-5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Kelas
-                        </th>
-                        <th class="py-3 px-5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Jenis
-                            Kelamin</th>
-                        <th
-                            class="py-3 px-5 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider rounded-tr-lg">
-                            Aksi</th>
+                        <th class="py-3 px-5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider rounded-tl-lg">No</th>
+                        <th class="py-3 px-5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">NIS</th>
+                        <th class="py-3 px-5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Nama Siswa</th>
+                        <th class="py-3 px-5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Kelas</th>
+                        <th class="py-3 px-5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Jenis Kelamin</th>
+                        <th class="py-3 px-5 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider rounded-tr-lg">Aksi</th>
                     </tr>
                 </thead>
                 @forelse ($siswa as $item)
                     <tbody class="divide-y divide-gray-200">
                         <tr class="hover:bg-gray-50 transition-colors duration-200">
-                            <td class="py-3 px-5 font-mono text-sm text-gray-900">{{ $siswa->firstItem() + $loop->index }}
-                            </td>
+                            <td class="py-3 px-5 font-mono text-sm text-gray-900">{{ $siswa->firstItem() + $loop->index }}</td>
                             <td class="py-3 px-5 font-mono text-sm text-gray-900">{{ $item->nis }}</td>
                             <td class="py-3 px-5">
                                 <div class="flex items-center">
@@ -127,7 +117,6 @@
                     <tr>
                         <td colspan="6" class="px-6 py-12">
                             <div class="text-center">
-                                {{-- Ilustrasi sederhana --}}
                                 <svg class="mx-auto mb-4 w-20 h-20 text-gray-300" fill="none" viewBox="0 0 64 64"
                                     stroke="currentColor" xmlns="http://www.w3.org/2000/svg">
                                     <rect x="8" y="14" width="48" height="36" rx="3" stroke-width="2"></rect>
@@ -152,13 +141,81 @@
                         </td>
                     </tr>
                 @endforelse
-
             </table>
         </div>
 
+        <!-- Mobile Card View (Hidden on desktop) -->
+        <div class="md:hidden space-y-4">
+            @forelse ($siswa as $item)
+                <div class="bg-white rounded-lg border border-gray-200 p-4 shadow-sm hover:shadow-md transition-shadow duration-200">
+                    <div class="flex justify-between items-start mb-3">
+                        <div>
+                            <h3 class="font-bold text-gray-900 text-lg">{{ $item->nama_siswa }}</h3>
+                            <div class="flex items-center mt-1">
+                                <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">{{ $item->kelas->nama_kelas }}</span>
+                                <span class="mx-2 text-gray-300">•</span>
+                                <span class="text-sm text-gray-600">{{ $item->jenkel }}</span>
+                            </div>
+                        </div>
+                        <div class="flex space-x-2">
+                            <a href="#editModal{{ $item->id }}"
+                               class="text-yellow-600 hover:text-yellow-800 p-2 rounded-full hover:bg-yellow-50 transition-colors">
+                                <i class="fas fa-edit text-sm"></i>
+                            </a>
+                            <a href="#deleteModal{{ $item->id }}"
+                               class="text-red-600 hover:text-red-800 p-2 rounded-full hover:bg-red-50 transition-colors">
+                                <i class="fas fa-trash text-sm"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 text-sm">
+                        <div>
+                            <div class="text-gray-500 font-medium mb-1">NIS</div>
+                            <div class="font-mono text-gray-900 bg-gray-50 p-2 rounded">{{ $item->nis }}</div>
+                        </div>
+                        <div>
+                            <div class="text-gray-500 font-medium mb-1">No. Urut</div>
+                            <div class="font-mono text-gray-900 bg-gray-50 p-2 rounded">{{ $siswa->firstItem() + $loop->index }}</div>
+                        </div>
+                    </div>
+
+                    <div class="mt-3 pt-3 border-t border-gray-100">
+                        <div class="text-gray-500 text-xs">
+                            <i class="fas fa-calendar-alt mr-1"></i>
+                            Terakhir diperbarui: {{ \Carbon\Carbon::parse($item->updated_at)->diffForHumans() }}
+                        </div>
+                    </div>
+                </div>
+            @empty
+                <div class="bg-white rounded-lg border border-gray-200 p-6 text-center">
+                    <svg class="mx-auto mb-4 w-16 h-16 text-gray-300" fill="none" viewBox="0 0 64 64"
+                        stroke="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="8" y="14" width="48" height="36" rx="3" stroke-width="2"></rect>
+                        <path d="M20 22h24M20 30h24M20 38h12" stroke-width="2"></path>
+                    </svg>
+
+                    <h3 class="mt-2 text-lg font-semibold text-gray-800">Belum ada data siswa</h3>
+                    <p class="mt-1 text-sm text-gray-500 mb-4">Belum ada siswa yang ditambahkan. Tambahkan data siswa
+                        agar dapat dikelola di sini.</p>
+
+                    <div class="flex flex-col space-y-2">
+                        <a href="#addModal"
+                            class="w-full py-3 rounded-md bg-blue-600 text-white text-sm font-medium shadow-sm hover:bg-blue-700">
+                            + Tambah Siswa
+                        </a>
+                        <a href="{{ url()->current() }}"
+                            class="w-full py-3 rounded-md border border-gray-200 text-sm text-gray-700 hover:bg-gray-50">
+                            Segarkan
+                        </a>
+                    </div>
+                </div>
+            @endforelse
+        </div>
+
         <!-- Pagination -->
-        <div class="flex items-center justify-between mt-5">
-            <div class="text-sm text-gray-700">
+        <div class="flex flex-col sm:flex-row items-center justify-between mt-5 space-y-3 sm:space-y-0">
+            <div class="text-sm text-gray-700 text-center sm:text-left">
                 Menampilkan <span class="font-medium text-gray-900">{{ $siswa->firstItem() }}</span> hingga <span
                     class="font-medium text-gray-900">{{ $siswa->lastItem() }}</span> dari <span
                     class="font-medium text-gray-900">{{ $siswa->total() }}</span>

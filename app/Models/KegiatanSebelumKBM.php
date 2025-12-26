@@ -14,6 +14,7 @@ class KegiatanSebelumKBM extends Model
     protected $fillable = [
         'hari',
         'kegiatan',
+        'jurusan_id',
     ];
 
     protected $casts = [
@@ -35,5 +36,13 @@ class KegiatanSebelumKBM extends Model
     public static function getAvailableDays()
     {
         return ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'];
+    }
+
+    /**
+     * Relasi ke jurusan (opsional)
+     */
+    public function jurusan()
+    {
+        return $this->belongsTo(Jurusan::class, 'jurusan_id');
     }
 }

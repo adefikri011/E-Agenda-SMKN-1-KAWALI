@@ -72,7 +72,7 @@
                 <tr>
                     <td>{{ $no++ }}</td>
                     <td>{{ $agenda->tanggal->format('d/m/Y') }}</td>
-                    <td>{{ $agenda->jampel->nama_jam }}</td>
+                    <td>{{ $agenda->startJampel?->nama_jam ?? 'Jam -' }} s/d {{ $agenda->endJampel?->nama_jam ?? '-' }}</td>
                     <td>{{ $agenda->kelas->nama_kelas }}</td>
                     <td>{{ $agenda->mata_pelajaran }}</td>
                     <td>{{ $agenda->user->name }}

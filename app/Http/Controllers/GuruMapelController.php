@@ -69,7 +69,7 @@ class GuruMapelController extends Controller
             GuruMapel::create($validated);
 
             return redirect()->route('guru-mapel.index')
-                ->with('success', '✅ Penugasan guru berhasil ditambahkan!');
+                ->with('success', 'Penugasan guru berhasil ditambahkan!');
         } catch (\Exception $e) {
             Log::error('GuruMapel Store Error', [
                 'message' => $e->getMessage(),
@@ -78,7 +78,7 @@ class GuruMapelController extends Controller
                 'kelas_id' => $validated['kelas_id']
             ]);
 
-            return back()->withInput()->with('error', '❌ Gagal menambahkan penugasan: ' . $e->getMessage());
+            return back()->withInput()->with('error', 'Gagal menambahkan penugasan: ' . $e->getMessage());
         }
     }
 
@@ -116,21 +116,21 @@ class GuruMapelController extends Controller
             ->exists();
 
         if ($exists) {
-            return back()->withInput()->with('error', '❌ Kombinasi guru, mata pelajaran, dan kelas ini sudah ada.');
+            return back()->withInput()->with('error', 'Kombinasi guru, mata pelajaran, dan kelas ini sudah ada.');
         }
 
         try {
             $guruMapel->update($validated);
 
             return redirect()->route('guru-mapel.index')
-                ->with('success', '✅ Penugasan guru berhasil diperbarui!');
+                ->with('success', 'Penugasan guru berhasil diperbarui!');
         } catch (\Exception $e) {
             Log::error('GuruMapel Update Error', [
                 'message' => $e->getMessage(),
                 'id' => $id
             ]);
 
-            return back()->withInput()->with('error', '❌ Gagal memperbarui penugasan: ' . $e->getMessage());
+            return back()->withInput()->with('error', 'Gagal memperbarui penugasan: ' . $e->getMessage());
         }
     }
 
@@ -148,14 +148,14 @@ class GuruMapelController extends Controller
 
             $guruMapel->delete();
 
-            return back()->with('success', "✅ Penugasan $guru mengajar $mapel di $kelas berhasil dihapus!");
+            return back()->with('success', "Penugasan $guru mengajar $mapel di $kelas berhasil dihapus!");
         } catch (\Exception $e) {
             Log::error('GuruMapel Delete Error', [
                 'message' => $e->getMessage(),
                 'id' => $id
             ]);
 
-            return back()->with('error', '❌ Gagal menghapus penugasan: ' . $e->getMessage());
+            return back()->with('error', 'Gagal menghapus penugasan: ' . $e->getMessage());
         }
     }
 
@@ -193,7 +193,7 @@ class GuruMapelController extends Controller
                 }
             }
 
-            $message = "✅ $created penugasan berhasil ditambahkan";
+            $message = "$created penugasan berhasil ditambahkan";
             if ($skipped > 0) {
                 $message .= " ($skipped sudah ada sebelumnya)";
             }
@@ -205,7 +205,7 @@ class GuruMapelController extends Controller
                 'validated' => $validated
             ]);
 
-            return back()->with('error', '❌ Gagal bulk assign: ' . $e->getMessage());
+            return back()->with('error', 'Gagal bulk assign: ' . $e->getMessage());
         }
     }
 

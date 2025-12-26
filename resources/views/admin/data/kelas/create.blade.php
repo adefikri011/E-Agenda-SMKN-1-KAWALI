@@ -24,6 +24,16 @@
                 </select>
             </div>
 
+            <div>
+                <label class="block text-sm font-medium">Jurusan (Opsional)</label>
+                <select name="jurusan_id" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
+                    <option value="">Pilih Jurusan</option>
+                    @foreach ($jurusans as $j)
+                        <option value="{{ $j->id }}">{{ $j->nama_jurusan }}</option>
+                    @endforeach
+                </select>
+            </div>
+
             <div class="flex justify-end space-x-2 pt-2">
                 <a href="#" class="px-4 py-2 border rounded-lg text-sm modal-close">Batal</a>
                 <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm">Simpan</button>

@@ -20,7 +20,7 @@
                 @if (auth()->user()->role == 'admin')
                     <div class="relative group">
                         <button
-                            class="flex items-center space-x-1 {{ request()->routeIs('siswa.*') || request()->routeIs('kelas.*') || request()->routeIs('guru.*') ? 'text-blue-600 border-b-2 border-blue-600 pb-1' : 'text-gray-700 hover:text-blue-600' }} font-medium transition-colors focus:outline-none">
+                            class="flex items-center space-x-1 {{ request()->routeIs('siswa.*') || request()->routeIs('kelas.*') || request()->routeIs('guru.*') || request()->routeIs('mapel.*') || request()->routeIs('wali_kelas.*') || request()->routeIs('sekretaris.*') || request()->routeIs('guru-mapel.*') ? 'text-blue-600 border-b-2 border-blue-600 pb-1' : 'text-gray-700 hover:text-blue-600' }} font-medium transition-colors focus:outline-none">
                             <span>Data Master</span>
                             <svg class="w-4 h-4 transform group-hover:rotate-180 transition-transform duration-200"
                                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -87,7 +87,7 @@
                                 <div class="flex items-center">
                                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm6 8v-1a4 4 0 00-4-4H10a4 4 0 00-4 4v1M4 4h16v6H4z"/>
+                                            d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm6 8v-1a4 4 0 00-4-4H10a4 4 0 00-4 4v1M11-9l1 2 2 .3-1.5 1.4.4 2-1.9-1-1.9 1 .4-2L14 13.3l2-.3z" />
                                     </svg>
                                     Wali Kelas
                                 </div>
@@ -109,14 +109,38 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                     </svg>
-                                    📚 Kelola Jadwal Guru
+                                    Kelola Jadwal Guru
                                 </div>
                             </a>
                         </div>
                     </div>
+
+                    <!-- Menu Lihat Absensi (dipisah dari dropdown) -->
+                    <a href="{{ route('admin.rekap-absensi.index') }}"
+                        class="{{ request()->routeIs('admin.rekap-absensi.*') ? 'text-blue-600 border-b-2 border-blue-600 pb-1' : 'text-gray-700 hover:text-blue-600' }} font-medium transition-colors">
+                        <div class="flex items-center">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                            </svg>
+                            Rekap Absensi
+                        </div>
+                    </a>
+
+                    <!-- Menu Lihat Agenda (dipisah dari dropdown) -->
+                    <a href="{{ route('admin.lihat-agenda.index') }}"
+                        class="{{ request()->routeIs('admin.lihat-agenda.*') ? 'text-blue-600 border-b-2 border-blue-600 pb-1' : 'text-gray-700 hover:text-blue-600' }} font-medium transition-colors">
+                        <div class="flex items-center">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                            </svg>
+                            Lihat Agenda
+                        </div>
+                    </a>
                 @endif
 
-                @if (in_array(auth()->user()->role, ['guru', 'sekretaris']))
+                @if (in_array(auth()->user()->role, ['guru', 'sekretaris', 'walikelas']))
                     <div class="relative group">
                         <a href="{{ route('agenda.index') }}"
                             class="{{ request()->routeIs('agenda.*') ? 'text-blue-600 border-b-2 border-blue-600 pb-1' : 'text-gray-700 hover:text-blue-600' }} font-medium transition-colors flex items-center gap-1">
@@ -136,7 +160,14 @@
                     </div>
                 @endif
 
-                @if (auth()->user()->role == 'guru')
+                @if (in_array(auth()->user()->role, ['sekretaris']))
+                    <a href="{{ route('kegiatan.index') }}"
+                        class="{{ request()->routeIs('kegiatan.index') ? 'text-blue-600 border-b-2 border-blue-600 pb-1' : 'text-gray-700 hover:text-blue-600' }} font-medium transition-colors flex items-center gap-1">
+                        Kegiatan KBM
+                    </a>
+                @endif
+
+                @if (in_array(auth()->user()->role, ['guru', 'walikelas']))
                     <a href="{{ route('guru.jadwal-saya') }}"
                         class="{{ request()->routeIs('guru.jadwal-saya') ? 'text-blue-600 border-b-2 border-blue-600 pb-1' : 'text-gray-700 hover:text-blue-600' }} font-medium transition-colors">
                         Jadwal Saya
@@ -377,12 +408,46 @@
                                 Guru Mapel
                             </div>
                         </a>
+                        <a href="{{ route('admin.guru-schedule') }}"
+                            class="{{ request()->routeIs('admin.guru-schedule') ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-50' }} block px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                            <div class="flex items-center">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                                Kelola Jadwal Guru
+                            </div>
+                        </a>
                     </div>
                 </div>
+
+                <!-- Menu Lihat Absensi untuk mobile (dipisah dari dropdown) -->
+                <a href="{{ route('admin.rekap-absensi.index') }}"
+                    class="{{ request()->routeIs('admin.rekap-absensi.*') ? 'bg-blue-50 text-blue-600 border-l-4 border-blue-600' : 'text-gray-700 hover:bg-gray-50 hover:text-blue-600' }} block px-4 py-3 rounded-lg font-medium transition-colors">
+                    <div class="flex items-center">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                        </svg>
+                        Rekap Absensi
+                    </div>
+                </a>
+
+                <!-- Menu Lihat Agenda untuk mobile (dipisah dari dropdown) -->
+                <a href="{{ route('admin.lihat-agenda.index') }}"
+                    class="{{ request()->routeIs('admin.lihat-agenda.*') ? 'bg-blue-50 text-blue-600 border-l-4 border-blue-600' : 'text-gray-700 hover:bg-gray-50 hover:text-blue-600' }} block px-4 py-3 rounded-lg font-medium transition-colors">
+                    <div class="flex items-center">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                        </svg>
+                        Lihat Agenda
+                    </div>
+                </a>
             @endif
 
-            <!-- Agenda Link (Guru & Sekretaris) -->
-            @if (in_array(auth()->user()->role, ['guru', 'sekretaris']))
+            <!-- Agenda Link (Guru, Sekretaris & Walikelas) -->
+            @if (in_array(auth()->user()->role, ['guru', 'sekretaris', 'walikelas']))
                 <div class="space-y-1">
                     <a href="{{ route('agenda.index') }}"
                         class="{{ request()->routeIs('agenda.index') ? 'bg-blue-50 text-blue-600 border-l-4 border-blue-600' : 'text-gray-700 hover:bg-gray-50 hover:text-blue-600' }} block px-4 py-3 rounded-lg font-medium transition-colors">
@@ -400,6 +465,19 @@
 
             <!-- Divider -->
             <div class="md:hidden border-t border-gray-200 my-4"></div>
+
+            @if (in_array(auth()->user()->role, ['sekretaris']))
+                <a href="{{ route('kegiatan.index') }}"
+                    class="{{ request()->routeIs('kegiatan.index') ? 'bg-blue-50 text-blue-600 border-l-4 border-blue-600' : 'text-gray-700 hover:bg-gray-50 hover:text-blue-600' }} block px-4 py-3 rounded-lg font-medium transition-colors">
+                    <div class="flex items-center">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 5h6M9 10h6M9 15h6M4 6h.01M4 12h.01M4 18h.01" />
+                        </svg>
+                        Kegiatan KBM
+                    </div>
+                </a>
+            @endif
 
             <!-- Profile Actions (Mobile Only) -->
             <div class="md:hidden space-y-1">

@@ -8,7 +8,7 @@ class Kelas extends Model
 {
     protected $table = 'kelas';
 
-    protected $fillable = ['nama_kelas', 'wali_kelas_id'];
+    protected $fillable = ['nama_kelas', 'wali_kelas_id', 'jurusan_id'];
 
     /**
      * Relasi ke wali kelas (users)
@@ -42,6 +42,13 @@ class Kelas extends Model
         return $this->hasMany(GuruMapel::class, 'kelas_id');
     }
 
+    /**
+     * Relasi ke jurusan
+     */
+    public function jurusan()
+    {
+        return $this->belongsTo(Jurusan::class, 'jurusan_id');
+    }
     /**
      * Relasi ke guru melalui GuruMapel
      */

@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ringkasan E-Agenda (Absensi & Agenda)</title>
+  <style>
+    body { font-family: Arial, Helvetica, sans-serif; margin: 28px; color: #111; }
+    h1 { font-size: 22px; margin-bottom: 8px }
+    h2 { font-size: 18px; margin-top: 18px }
+    p { margin: 6px 0 }
+    pre { white-space: pre-wrap; font-family: inherit; }
+    .box { border-left: 4px solid #0ea5a2; padding: 12px 16px; background: #f8fafc; }
+    ul { margin: 6px 0 12px 20px }
+    li { margin-bottom: 6px }
+    hr { border: none; border-top: 1px solid #e6e6e6; margin: 16px 0 }
+  </style>
+</head>
+<body>
+  <h1>Ringkasan E-Agenda (Absensi & Agenda)</h1>
+  <div class="box">
+    <pre>
+Dokumen ini merangkum keseluruhan sistem pada project Anda dengan fokus utama: alur Absensi dan Agenda kelas.
+
+Intinya: Guru / Walikelas buat Agenda untuk kelas+jam. Setelah itu isi Absensi untuk siswa di kelas tersebut pada tanggal/jam yang sama.
+    </pre>
+  </div>
+
+  <h2>Roles yang penting</h2>
+  <ul>
+    <li><strong>admin</strong>: kelola data master (siswa, guru, kelas).</li>
+    <li><strong>guru</strong>: buat agenda dan input absensi untuk kelas yang dia ajar.</li>
+    <li><strong>walikelas</strong>: juga bisa bertindak sebagai guru untuk kelas yang dia ampui.</li>
+    <li><strong>sekretaris</strong>: bisa bantu membuat agenda dan melihat rekap.</li>
+  </ul>
+
+  <h2>Alur singkat Absensi</h2>
+  <ol>
+    <li>Guru/Walikelas buka halaman <em>Absensi</em> → klik <em>Buat Absensi</em>.</li>
+    <li>Pilih kelas dan jam (jampel). Sistem cek di <code>guru_mapel</code> apakah guru mengampu kelas tersebut.</li>
+    <li>Jika valid, simpan <code>absensi</code> dan buat <code>detail_absensi</code> untuk tiap siswa (hadir/izin/sakit/alpha).</li>
+    <li>Hasil dapat dilihat di daftar dan diekspor (Excel/PDF).</li>
+  </ol>
+
+  <h2>Alur singkat Agenda</h2>
+  <ol>
+    <li>Buka <em>Agenda</em> → klik <em>Buat Agenda</em>.</li>
+    <li>Isi: tanggal, jampel, kelas, mata pelajaran, materi, kegiatan, catatan, tanda tangan.</li>
+    <li>Jika pembuat guru/walikelas, sistem cek <code>guru_mapel</code> untuk validasi kelas/mapel.</li>
+    <li>Agenda dapat ada tanda tangan digital dan direkap/ekspor.</li>
+  </ol>
+
+  <h2>Kaitan Agenda & Absensi</h2>
+  <p>Agenda adalah catatan pelajaran. Absensi adalah catatan kehadiran pada jam/kelas yang sama. Di detail agenda, sistem menunjukkan apakah absensi hari itu sudah dibuat.</p>
+
+  <h2>Tabel DB penting (singkat)</h2>
+  <ul>
+    <li><code>agenda</code>: tanggal, jampel_id, kelas_id, mata_pelajaran, materi, tanda_tangan, pembuat, dll.</li>
+    <li><code>absensi</code>: kelas_id, guru_id, mapel_id, tanggal, jampel_id, dll.</li>
+    <li><code>detail_absensi</code>: absensi_id, siswa_id, status.</li>
+    <li><code>guru_mapel</code>: relasi guru ↔ kelas ↔ mapel (penting untuk izin).</li>
+  </ul>
+
+  <h2>Lokasi kode penting</h2>
+  <ul>
+    <li><code>app/Traits/CanManageAbsensi.php</code></li>
+    <li><code>app/Http/Controllers/AbsensiController.php</code></li>
+    <li><code>app/Http/Controllers/AgendaController.php</code></li>
+    <li><code>app/Models/Agenda.php</code>, <code>app/Models/Absensi.php</code>, <code>app/Models/DetailAbsensi.php</code></li>
+    <li><code>routes/web.php</code> dan <code>resources/views/layout/navbar.blade.php</code></li>
+  </ul>
+
+  <h2>Masalah Umum & Solusi Cepat</h2>
+  <ul>
+    <li><strong>tanggal->format() error</strong>: pastikan di model ada <code>protected $casts = ['tanggal' => 'date']</code> atau gunakan <code>\Carbon\Carbon::parse(...)</code>.</li>
+    <li><strong>Walikelas tidak lihat menu</strong>: periksa middleware di <code>routes/web.php</code> dan <code>navbar.blade.php</code>.</li>
+    <li><strong>Guru tidak bisa masukkan absensi</strong>: cek data pada <code>guru_mapel</code>.</li>
+  </ul>
+
+  <hr>
+  <p style="font-size:13px;color:#555">File sumber: <code>E-Agenda_Summary_Absensi_Agenda.md</code> — buka di editor atau browser lalu pilih <strong>Print → Save as PDF</strong> untuk menghasilkan PDF siap dibagikan.</p>
+</body>
+</html>

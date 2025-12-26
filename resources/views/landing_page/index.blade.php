@@ -105,10 +105,30 @@
             height: 100%;
             border-radius: 3px;
         }
-    </style>
+        /* Enhanced form controls (tailwind-like, but plain CSS for CDN setup) */
+        input[type="text"], input[type="email"], input[type="search"], textarea, select {
+                padding: .75rem 1rem;
+                border-radius: .75rem;
+                border: 1px solid rgba(2,6,23,0.06);
+                background: #ffffff;
+                box-shadow: 0 8px 24px rgba(2,6,23,0.06);
+                transition: box-shadow .18s ease, transform .12s ease, border-color .12s ease;
+            }
+
+            input[type="text"]:focus, input[type="email"]:focus, input[type="search"]:focus, textarea:focus, select:focus {
+                outline: none;
+                border-color: rgba(14,165,233,0.75);
+                box-shadow: 0 12px 36px rgba(14,165,233,0.08);
+                transform: translateY(-2px);
+            }
+
+            /* Small helper to improve text rendering */
+            body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+
+        </style>
 </head>
 
-<body class="font-sans text-gray-900 overflow-x-hidden bg-white">
+<body class="font-sans text-gray-900 overflow-x-hidden bg-gradient-to-b from-sky-50 to-white antialiased">
 
     @include('landing_page.layout.navbar')
     <x-notification />
@@ -123,13 +143,15 @@
 
 
     <script>
-        //MENU MOBILE
+        // MENU MOBILE (guard checks to avoid errors if element not present)
         const mobileMenuButton = document.getElementById('mobile-menu-button');
         const mobileMenu = document.getElementById('mobile-menu');
 
-        mobileMenuButton.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden'); // Buka/tutup menu mobile
-        });
+        if (mobileMenuButton && mobileMenu) {
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden'); // Buka/tutup menu mobile
+            });
+        }
 
         //efek scoll di navbar
         window.addEventListener('scroll', () => {

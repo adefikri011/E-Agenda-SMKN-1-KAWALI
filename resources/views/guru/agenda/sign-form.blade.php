@@ -40,7 +40,7 @@
                 </div>
                 <div>
                     <p class="text-sm text-gray-500">Jam Pelajaran</p>
-                    <p class="font-medium">{{ $agenda->jampel->nama_jam }} ({{ $agenda->jampel->rentang_waktu }})</p>
+                    <p class="font-medium">{{ $agenda->startJampel?->nama_jam ?? 'Jam -' }} ({{ $agenda->startJampel?->rentang_waktu ?? '-' }}) s/d {{ $agenda->endJampel?->nama_jam ?? '-' }}</p>
                 </div>
                 <div>
                     <p class="text-sm text-gray-500">Kelas</p>

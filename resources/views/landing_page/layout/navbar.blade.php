@@ -5,7 +5,7 @@
             <!-- Logo Section -->
             <div class="flex items-center space-x-3 group cursor-pointer">
                 <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-sky-50/80 to-cyan-50/80 p-2 shadow-lg shadow-sky-200/50 border border-sky-100/50">
-                    <img src="{{ asset('image/logooooo.jpeg') }}" alt="Logo E-Agenda"
+                    <img src="{{ asset('image/logo10.png') }}" alt="Logo E-Agenda"
                         class="w-10 h-10 object-contain transform transition-all duration-500 group-hover:scale-110 group-hover:rotate-6">
                     <div class="absolute inset-0 bg-gradient-to-br from-sky-400/20 to-cyan-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl"></div>
                 </div>
@@ -137,13 +137,18 @@
 </style>
 
 <script>
-    // Mobile menu toggle
+    // Mobile menu toggle (guard checks)
     const mobileMenuButton = document.getElementById('mobile-menu-button');
     const mobileMenu = document.getElementById('mobile-menu');
 
-    mobileMenuButton.addEventListener('click', () => {
-        mobileMenu.classList.toggle('hidden');
-    });
+    if (mobileMenuButton && mobileMenu) {
+        mobileMenuButton.setAttribute('aria-expanded', 'false');
+        mobileMenuButton.setAttribute('aria-controls', 'mobile-menu');
+        mobileMenuButton.addEventListener('click', () => {
+            const isHidden = mobileMenu.classList.toggle('hidden');
+            mobileMenuButton.setAttribute('aria-expanded', String(!isHidden));
+        });
+    }
 
     // Enhanced scroll effect dengan transparansi
     window.addEventListener('scroll', () => {

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\data;
 use App\Http\Controllers\Controller;
 use App\Models\Kelas;
 use App\Models\User;
+use App\Models\Jurusan;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\KelasImport;
@@ -26,12 +27,13 @@ class KelasController extends Controller
             });
         }
 
-        $kelas = $query->paginate(10)->appends($request->except('page'));
+        $kelas = $query->paginate(9)->appends($request->except('page'));
 
-        // Untuk dropdown wali kelas
+        // Untuk dropdown wali kelas dan jurusan
         $users = User::whereIn('role', ['guru', 'wali_kelas'])->get();
+        $jurusans = Jurusan::all();
 
-        return view('admin.data.kelas.index', compact('kelas', 'users'));
+        return view('admin.data.kelas.index', compact('kelas', 'users', 'jurusans'));
     }
 
     public function store(Request $request)
@@ -40,12 +42,14 @@ class KelasController extends Controller
         $validated = $request->validate([
             'nama_kelas' => 'required|string|max:255|unique:kelas,nama_kelas',
             'wali_kelas_id' => 'nullable|exists:users,id',
+            'jurusan_id' => 'nullable|exists:jurusan,id',
         ]);
 
         // Create Kelas
         Kelas::create([
             'nama_kelas' => $validated['nama_kelas'],
             'wali_kelas_id' => $validated['wali_kelas_id'],
+            'jurusan_id' => $validated['jurusan_id'] ?? null,
         ]);
 
         return back()->with('success', 'Kelas berhasil ditambahkan!');
@@ -58,11 +62,13 @@ class KelasController extends Controller
         $validated = $request->validate([
             'nama_kelas' => 'required|string|max:255|unique:kelas,nama_kelas,' . $id,
             'wali_kelas_id' => 'nullable|exists:users,id',
+            'jurusan_id' => 'nullable|exists:jurusan,id',
         ]);
 
         $kelas->update([
             'nama_kelas' => $validated['nama_kelas'],
             'wali_kelas_id' => $validated['wali_kelas_id'] ?? null,
+            'jurusan_id' => $validated['jurusan_id'] ?? null,
         ]);
 
         return back()->with('success', 'Kelas berhasil diperbarui!');

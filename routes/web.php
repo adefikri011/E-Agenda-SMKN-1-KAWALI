@@ -7,9 +7,12 @@ use App\Http\Controllers\data\GuruController;
 use App\Http\Controllers\data\SiswaController;
 use App\Http\Controllers\GuruMapelController;
 use App\Http\Controllers\Admin\GuruScheduleController;
+use App\Http\Controllers\Admin\RekapAbsensiController;
+use App\Http\Controllers\Admin\LihatAgendaController;
 use App\Http\Controllers\HakAksesController;
 use App\Http\Controllers\data\KelasController;
 use App\Http\Controllers\KegiatanSebelumKBMController;
+use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\NilaiController;
 use App\Http\Controllers\PesanController;
 use App\Http\Controllers\RekapController;
@@ -17,9 +20,7 @@ use App\Http\Controllers\SekretarisController;
 use App\Http\Controllers\data\MapelController;
 use App\Http\Controllers\data\WaliKelasController;
 
-Route::get('/', function () {
-    return view('landing_page.index');
-});
+Route::get('/' , [LandingPageController::class , 'index']);
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/dashboard-admin', [HakAksesController::class, 'admin'])->name('dashboard.admin');
@@ -29,7 +30,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     //siswa
     Route::get('/siswa', [SiswaController::class, 'index'])->name('siswa.index');
     Route::post('/siswa-store', [SiswaController::class, 'store'])->name('siswa.store');
-    Route::post('/siswa-update/{id}', [SiswaController::class, 'update'])->name('siswa.update');
+    Route::put('/siswa-update/{id}', [SiswaController::class, 'update'])->name('siswa.update');
     Route::delete('/siswa-delete/{id}', [SiswaController::class, 'delete'])
         ->name('siswa.delete');
     Route::post('/siswa/import', [SiswaController::class, 'import'])->name('siswa.import');
@@ -95,6 +96,17 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/jampel-grouped', [GuruScheduleController::class, 'getGroupedByDay']);
     Route::get('/api/guru-schedule/{kelasId}/{mapelId}', [GuruScheduleController::class, 'getScheduleByKelasMapel']);
 
+    // ===== REKAP ABSENSI ADMIN =====
+    Route::get('/rekap-absensi', [RekapAbsensiController::class, 'index'])->name('admin.rekap-absensi.index');
+    Route::get('/rekap-absensi/detail', [RekapAbsensiController::class, 'detail'])->name('admin.rekap-absensi.detail');
+    Route::get('/rekap-absensi/export', [RekapAbsensiController::class, 'exportExcel'])->name('admin.rekap-absensi.export');
+
+    // ===== LIHAT AGENDA ADMIN =====
+    Route::get('/lihat-agenda', [LihatAgendaController::class, 'index'])->name('admin.lihat-agenda.index');
+    Route::get('/lihat-agenda/{id}', [LihatAgendaController::class, 'show'])->name('admin.lihat-agenda.show');
+    Route::get('/lihat-agenda/export', [LihatAgendaController::class, 'exportExcel'])->name('admin.lihat-agenda.export');
+    Route::get('/api/lihat-agenda/statistik', [LihatAgendaController::class, 'getStatistik'])->name('admin.lihat-agenda.statistik');
+
     Route::get('/wali-kelas', [WaliKelasController::class, 'index'])->name('wali_kelas.index');
     // Route::get('/wali-kelas/create', ...) -> RUTE INI SUDAH TIDAK DIPERLUKAN
     Route::post('/wali-kelas', [WaliKelasController::class, 'store'])->name('wali_kelas.store');
@@ -118,8 +130,10 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
 Route::middleware(['auth', 'role:guru'])->group(function () {
     Route::get('/dashboard-guru', [HakAksesController::class, 'guru'])->name('dashboard.guru');
+});
 
-    Route::get('/jadwal-saya', function() {
+Route::middleware(['auth', 'role:guru,walikelas'])->group(function () {
+    Route::get('/jadwal-saya', function () {
         return view('guru.jadwal-saya');
     })->name('guru.jadwal-saya');
 
@@ -150,7 +164,7 @@ Route::middleware(['auth', 'role:sekretaris'])->group(function () {
 Route::middleware(['auth', 'role:walikelas'])->group(function () {
     Route::get('/dashboard-walikelas', [HakAksesController::class, 'walikelas']);
 
-    Route::get('/rekap' , [RekapController::class , 'index'])->name('rekap.index');
+    Route::get('/rekap', [RekapController::class, 'index'])->name('rekap.index');
     Route::get('/api/rekap-data', [RekapController::class, 'getRekapData']);
     Route::get('/rekap/download/{format}', [RekapController::class, 'download'])->name('rekap.download');
 
@@ -180,6 +194,7 @@ Route::middleware(['auth', 'role:guru,sekretaris,walikelas'])->group(function ()
     Route::get('/agenda/get-mapel-by-kelas/{kelasId}', [AgendaController::class, 'getMapelByKelas'])->name('agenda.get-mapel-by-kelas');
 
     // Route Kegiatan Sebelum KBM
+    Route::get('/kegiatan-sebelum-kbm', [KegiatanSebelumKBMController::class, 'index'])->name('kegiatan.index');
     Route::post('/kegiatan-sebelum-kbm', [KegiatanSebelumKBMController::class, 'store'])->name('kegiatan-sebelum-kbm.store');
     Route::get('/kegiatan-sebelum-kbm/{id}/edit', [KegiatanSebelumKBMController::class, 'edit'])->name('kegiatan-sebelum-kbm.edit');
     Route::put('/kegiatan-sebelum-kbm/{id}', [KegiatanSebelumKBMController::class, 'update'])->name('kegiatan-sebelum-kbm.update');
@@ -196,6 +211,7 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/api/agendas/{id}', [AgendaController::class, 'destroyApi']);
 
     Route::get('/api/my-schedules', [AgendaController::class, 'getMySchedules']);
+    Route::get('/api/validate-schedule/{kelasId}/{mapelId}/{startJampelId}/{endJampelId}', [AgendaController::class, 'validateScheduleForAgenda']);
 });
 
 Route::get('/login', [AuthController::class, 'index'])->name('login');

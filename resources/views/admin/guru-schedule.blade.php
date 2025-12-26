@@ -3,74 +3,121 @@
 @section('title', 'Kelola Jadwal Guru')
 
 @section('content')
-    <div class="mb-6">
-        <h1 class="text-3xl font-bold text-gray-900">📚 Kelola Jadwal Mengajar Guru</h1>
-        <p class="text-gray-500 mt-2">Admin mengatur jadwal mengajar setiap guru per kelas dan mata pelajaran</p>
-    </div>
-
-    <!-- Add New Schedule Button -->
-    <div class="mb-6">
-        <button onclick="openAddModal()"
-            class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-all">
-            <i class="fas fa-plus mr-2"></i> Tambah Jadwal Baru
-        </button>
-    </div>
-
-    <!-- Filter Section -->
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div class="bg-white rounded-xl shadow-md p-4 sm:p-5 mb-6">
+        <!-- Header -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between mb-6">
             <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Cari Guru</label>
-                <input type="text" id="filterGuru" placeholder="Ketik nama guru..."
-                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none">
+                <h1 class="text-xl sm:text-2xl font-bold text-gray-900 mb-1">📚 Kelola Jadwal Mengajar Guru</h1>
+                <p class="text-gray-600 text-sm">Admin mengatur jadwal mengajar setiap guru per kelas dan mata pelajaran</p>
             </div>
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Filter Kelas</label>
-                <select id="filterKelas"
-                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white">
-                    <option value="">-- Semua Kelas --</option>
-                    @foreach ($kelas as $k)
-                        <option value="{{ $k->id }}">{{ $k->nama_kelas }}</option>
-                    @endforeach
-                </select>
-            </div>
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Filter Mapel</label>
-                <select id="filterMapel"
-                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white">
-                    <option value="">-- Semua Mapel --</option>
-                    @foreach ($mapel as $m)
-                        <option value="{{ $m->id }}">{{ $m->nama }}</option>
-                    @endforeach
-                </select>
+            <div class="mt-3 md:mt-0 flex flex-wrap gap-2">
+                <!-- Tombol Tambah Jadwal -->
+                <button onclick="openAddModal()"
+                    class="group bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-indigo-700 hover:to-blue-800 text-white px-4 py-2 sm:px-5 sm:py-2.5 rounded-lg flex items-center gap-2 shadow-md hover:shadow-lg transition-all duration-300 active:scale-95">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                        class="w-4 h-4 stroke-[2.5] group-hover:rotate-90 transition duration-300" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                    </svg>
+                    <span class="font-medium text-sm">Tambah Jadwal</span>
+                </button>
             </div>
         </div>
-    </div>
 
-    <!-- Jadwal Table -->
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-        <div class="overflow-x-auto">
+        <!-- Filter Section -->
+        <div class="bg-gray-50 rounded-lg p-4 mb-5">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Cari Guru</label>
+                    <div class="relative">
+                        <input type="text" id="filterGuru" placeholder="Ketik nama guru..."
+                            class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm">
+                        <i class="fas fa-search absolute left-3 top-3 text-gray-400 text-sm"></i>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Filter Kelas</label>
+                    <select id="filterKelas"
+                        class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm bg-white">
+                        <option value="">Semua Kelas</option>
+                        @foreach ($kelas as $k)
+                            <option value="{{ $k->id }}">{{ $k->nama_kelas }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Filter Mapel</label>
+                    <select id="filterMapel"
+                        class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm bg-white">
+                        <option value="">Semua Mapel</option>
+                        @foreach ($mapel as $m)
+                            <option value="{{ $m->id }}">{{ $m->nama }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Desktop Table (Hidden on mobile) -->
+        <div class="hidden md:block overflow-x-auto rounded-lg border border-gray-200">
             <table class="w-full">
                 <thead class="bg-gray-50 border-b border-gray-200">
                     <tr>
-                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Guru</th>
-                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Kelas</th>
-                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Mata Pelajaran</th>
-                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Jam Pelajaran</th>
-                        <th class="px-6 py-4 text-right text-sm font-semibold text-gray-700">Aksi</th>
+                        <th class="py-3 px-5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider rounded-tl-lg">No</th>
+                        <th class="py-3 px-5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Guru</th>
+                        <th class="py-3 px-5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Kelas</th>
+                        <th class="py-3 px-5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Mata Pelajaran</th>
+                        <th class="py-3 px-5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Jam Pelajaran</th>
+                        <th class="py-3 px-5 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider rounded-tr-lg">Aksi</th>
                     </tr>
                 </thead>
-                <tbody id="scheduleList" class="divide-y divide-gray-100">
+                <tbody id="scheduleList" class="divide-y divide-gray-200">
                     <!-- Loaded via JavaScript -->
                 </tbody>
             </table>
         </div>
+
+        <!-- Mobile Card View (Hidden on desktop) -->
+        <div class="md:hidden space-y-4" id="mobileScheduleList">
+            <!-- Loaded via JavaScript -->
+        </div>
+
+        <!-- Empty State Template (hidden by default) -->
+        <div id="emptyState" class="hidden">
+            <div class="text-center py-12">
+                <svg class="mx-auto mb-4 w-20 h-20 text-gray-300" fill="none" viewBox="0 0 64 64"
+                    stroke="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="12" y="10" width="40" height="44" rx="3" stroke-width="2" />
+                    <path d="M24 20h16M24 30h16M24 40h16M24 50h8" stroke-width="2" />
+                    <path d="M48 30l4-4M48 40l4-4" stroke-width="2" />
+                </svg>
+
+                <h3 class="mt-2 text-lg font-semibold text-gray-800">Belum ada jadwal mengajar</h3>
+                <p class="mt-1 text-sm text-gray-500">Belum ada jadwal yang ditambahkan. Tambahkan jadwal untuk mengatur pengajaran.</p>
+
+                <div class="mt-4 flex items-center justify-center space-x-3">
+                    <button onclick="openAddModal()"
+                        class="inline-flex items-center px-4 py-2 rounded-md bg-blue-600 text-white text-sm font-medium shadow-sm hover:bg-blue-700">
+                        + Tambah Jadwal
+                    </button>
+                    <button onclick="loadSchedules()"
+                        class="inline-flex items-center px-4 py-2 rounded-md border border-gray-200 text-sm text-gray-700 hover:bg-gray-50">
+                        Segarkan
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Modal Add/Edit Schedule -->
-    <div id="scheduleModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-8">
-            <h3 class="text-2xl font-bold text-gray-900 mb-6" id="modalTitle">Tambah Jadwal</h3>
+    <div id="scheduleModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full p-6" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-gray-900" id="modalTitle">Tambah Jadwal</h3>
+                <button onclick="closeScheduleModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
 
             <form id="scheduleForm" onsubmit="saveSchedule(event)">
                 @csrf
@@ -79,10 +126,9 @@
 
                 <!-- GURU -->
                 <div class="mb-4">
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">Guru <span
-                            class="text-red-600">*</span></label>
-                    <select id="guruId" name="guru_id" class="w-full px-4 py-2.5 border rounded-lg" required>
-                        <option value="">-- Pilih Guru --</option>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Guru <span class="text-red-500">*</span></label>
+                    <select id="guruId" name="guru_id" class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm" required>
+                        <option value="">Pilih Guru</option>
                         @foreach ($guru as $g)
                             <option value="{{ $g->id }}">{{ $g->user->name }} ({{ $g->nip ?? 'N/A' }})</option>
                         @endforeach
@@ -91,10 +137,9 @@
 
                 <!-- KELAS -->
                 <div class="mb-4">
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">Kelas <span
-                            class="text-red-600">*</span></label>
-                    <select id="kelasId" name="kelas_id" class="w-full px-4 py-2.5 border rounded-lg" required>
-                        <option value="">-- Pilih Kelas --</option>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Kelas <span class="text-red-500">*</span></label>
+                    <select id="kelasId" name="kelas_id" class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm" required>
+                        <option value="">Pilih Kelas</option>
                         @foreach ($kelas as $k)
                             <option value="{{ $k->id }}">{{ $k->nama_kelas }}</option>
                         @endforeach
@@ -103,10 +148,9 @@
 
                 <!-- MAPEL -->
                 <div class="mb-4">
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">Mata Pelajaran <span
-                            class="text-red-600">*</span></label>
-                    <select id="mapelId" name="mapel_id" class="w-full px-4 py-2.5 border rounded-lg" required>
-                        <option value="">-- Pilih Mapel --</option>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Mata Pelajaran <span class="text-red-500">*</span></label>
+                    <select id="mapelId" name="mapel_id" class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm" required>
+                        <option value="">Pilih Mapel</option>
                         @foreach ($mapel as $m)
                             <option value="{{ $m->id }}">{{ $m->nama }}</option>
                         @endforeach
@@ -115,10 +159,9 @@
 
                 <!-- HARI -->
                 <div class="mb-4">
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">Hari <span
-                            class="text-red-600">*</span></label>
-                    <select id="hariSelect" class="w-full px-4 py-2.5 border rounded-lg" required>
-                        <option value="">-- Pilih Hari --</option>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Hari <span class="text-red-500">*</span></label>
+                    <select id="hariSelect" class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm" required>
+                        <option value="">Pilih Hari</option>
                         <option value="senin">Senin</option>
                         <option value="selasa_rabu_kamis">Selasa - Rabu - Kamis</option>
                         <option value="jumat">Jumat</option>
@@ -127,14 +170,13 @@
 
                 <!-- JAM -->
                 <div class="mb-6">
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">Jam Pelajaran <span
-                            class="text-red-600">*</span></label>
-                    <div class="grid grid-cols-2 gap-3">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Jam Pelajaran <span class="text-red-500">*</span></label>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
                             <label class="block text-xs text-gray-600 mb-1">Mulai</label>
-                            <select id="startJampelId" name="start_jampel_id" class="w-full px-4 py-2.5 border rounded-lg"
+                            <select id="startJampelId" name="start_jampel_id" class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
                                 required>
-                                <option value="">-- Pilih Jam --</option>
+                                <option value="">Pilih Jam</option>
                                 @foreach ($jampel as $j)
                                     <option value="{{ $j->id }}" data-hari="{{ $j->hari_tipe }}"
                                         data-order="{{ $j->jam_ke }}">
@@ -146,8 +188,8 @@
 
                         <div>
                             <label class="block text-xs text-gray-600 mb-1">Selesai</label>
-                            <select id="endJampelId" name="end_jampel_id" class="w-full px-4 py-2.5 border rounded-lg">
-                                <option value="">-- Otomatis --</option>
+                            <select id="endJampelId" name="end_jampel_id" class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm">
+                                <option value="">Otomatis</option>
                                 @foreach ($jampel as $j)
                                     <option value="{{ $j->id }}" data-hari="{{ $j->hari_tipe }}"
                                         data-order="{{ $j->jam_ke }}">
@@ -160,22 +202,70 @@
                 </div>
 
                 <!-- BUTTON -->
-                <div class="flex gap-3 justify-end">
-                    <button type="button" onclick="closeScheduleModal()" class="px-6 py-2 border rounded-lg">
+                <div class="flex gap-3 justify-end pt-4 border-t border-gray-200">
+                    <button type="button" onclick="closeScheduleModal()"
+                            class="px-5 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium">
                         Batal
                     </button>
-                    <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg">
+                    <button type="submit"
+                            class="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-colors text-sm font-medium">
                         Simpan Jadwal
                     </button>
                 </div>
             </form>
-
         </div>
     </div>
 
     <script>
         // Load schedules on page load
-        loadSchedules();
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSchedules();
+
+            // Filter event listeners
+            document.getElementById('filterGuru').addEventListener('input', loadSchedules);
+            document.getElementById('filterKelas').addEventListener('change', loadSchedules);
+            document.getElementById('filterMapel').addEventListener('change', loadSchedules);
+
+            // Event listener untuk perubahan jam mulai
+            document.getElementById('startJampelId')?.addEventListener('change', function() {
+                const selectedOption = this.selectedOptions[0];
+                if (selectedOption) {
+                    const hariTipe = selectedOption.dataset.hari;
+                    document.getElementById('hariTipe').value = hariTipe;
+                    updateEndOptions();
+                }
+            });
+
+            // Close modal when clicking outside
+            document.getElementById('scheduleModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeScheduleModal();
+                }
+            });
+
+            // Close modal with ESC key
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape') {
+                    closeScheduleModal();
+                }
+            });
+
+            // Event listeners for jam filtering
+            const hariSelect = document.getElementById('hariSelect');
+            const startSelect = document.getElementById('startJampelId');
+            const endSelect = document.getElementById('endJampelId');
+            const hariInput = document.getElementById('hariTipe');
+
+            hariSelect.addEventListener('change', function() {
+                const hari = this.value;
+                hariInput.value = hari;
+                filterJamByHari(hari);
+            });
+
+            startSelect.addEventListener('change', function() {
+                updateEndOptions();
+            });
+        });
 
         function loadSchedules() {
             const filterGuru = document.getElementById('filterGuru').value.toLowerCase();
@@ -185,8 +275,12 @@
             fetch('/api/guru-schedules')
                 .then(r => r.json())
                 .then(schedules => {
-                    const list = document.getElementById('scheduleList');
-                    list.innerHTML = '';
+                    const desktopList = document.getElementById('scheduleList');
+                    const mobileList = document.getElementById('mobileScheduleList');
+                    const emptyState = document.getElementById('emptyState');
+
+                    desktopList.innerHTML = '';
+                    mobileList.innerHTML = '';
 
                     // Filter schedules
                     const filtered = schedules.filter(s => {
@@ -197,10 +291,12 @@
                     });
 
                     if (filtered.length === 0) {
-                        list.innerHTML =
-                            '<tr><td colspan="5" class="px-6 py-8 text-center text-gray-500">Tidak ada jadwal</td></tr>';
+                        emptyState.classList.remove('hidden');
+                        desktopList.innerHTML = '<tr><td colspan="6" class="px-6 py-12">' + emptyState.innerHTML + '</td></tr>';
                         return;
                     }
+
+                    emptyState.classList.add('hidden');
 
                     // Group schedules by guru to show duplicates
                     const groupedSchedules = {};
@@ -212,72 +308,156 @@
                         groupedSchedules[key].push(schedule);
                     });
 
-                    // Display schedules
+                    // Display desktop schedules
                     Object.values(groupedSchedules).forEach(group => {
                         group.forEach((schedule, index) => {
                             const row = document.createElement('tr');
-                            row.className = 'hover:bg-gray-50 transition-colors';
+                            row.className = 'hover:bg-gray-50 transition-colors duration-200';
 
                             // Only show guru name on first row of group
                             const guruCell = index === 0 ?
-                                `<td class="px-6 py-4 text-sm font-medium text-gray-900" rowspan="${group.length}">${schedule.guru_name}</td>` :
+                                `<td class="py-3 px-5 font-mono text-sm text-gray-900" rowspan="${group.length}">${group.length > 1 ? 'Multi' : schedule.id}</td>` :
+                                '';
+
+                            const guruNameCell = index === 0 ?
+                                `<td class="py-3 px-5 text-sm font-medium text-gray-900" rowspan="${group.length}">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white flex-shrink-0">
+                                            <i class="fas fa-chalkboard-teacher text-xs"></i>
+                                        </div>
+                                        <span>${schedule.guru_name}</span>
+                                    </div>
+                                </td>` :
                                 '';
 
                             // Only show kelas name on first row of group
                             const kelasCell = index === 0 ?
-                                `<td class="px-6 py-4 text-sm text-gray-700" rowspan="${group.length}">${schedule.kelas_name}</td>` :
+                                `<td class="py-3 px-5 text-sm text-gray-900 font-medium" rowspan="${group.length}">
+                                    <span class="inline-flex items-center gap-1 bg-gradient-to-r from-green-50 to-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold">
+                                        <i class="fas fa-chalkboard text-xs"></i>
+                                        ${schedule.kelas_name}
+                                    </span>
+                                </td>` :
                                 '';
 
                             // Only show mapel name on first row of group
                             const mapelCell = index === 0 ?
-                                `<td class="px-6 py-4 text-sm text-gray-700" rowspan="${group.length}">${schedule.mapel_name}</td>` :
+                                `<td class="py-3 px-5 text-sm" rowspan="${group.length}">
+                                    <span class="inline-flex items-center gap-1 bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-semibold">
+                                        <i class="fas fa-book text-xs"></i>
+                                        ${schedule.mapel_name}
+                                    </span>
+                                </td>` :
                                 '';
 
                             const jamDisplay = (() => {
                                 if (schedule.start_jampel_name && schedule.end_jampel_name) {
-                                    if (schedule.start_jampel_name === schedule
-                                        .end_jampel_name) {
-                                        return `${schedule.start_jampel_name} (${schedule.start_rentang || '-'})`;
+                                    if (schedule.start_jampel_name === schedule.end_jampel_name) {
+                                        return `${schedule.start_jampel_name}`;
                                     }
-                                    return `${schedule.start_jampel_name} - ${schedule.end_jampel_name} (${schedule.start_rentang || schedule.end_rentang || '-'})`;
+                                    return `${schedule.start_jampel_name} - ${schedule.end_jampel_name}`;
                                 }
                                 return '-';
                             })();
 
                             row.innerHTML = `
-                            ${guruCell}
-                            ${kelasCell}
-                            ${mapelCell}
-                            <td class="px-6 py-4 text-sm text-gray-600">${jamDisplay}</td>
-                            <td class="px-6 py-4 text-right space-x-2">
-                                <button onclick="editSchedule(${schedule.id})" class="px-4 py-2 bg-blue-100 text-blue-700 font-semibold rounded-lg hover:bg-blue-200 transition-colors">
-                                    ✏️ Edit
-                                </button>
-                                <button onclick="deleteSchedule(${schedule.id})" class="px-4 py-2 bg-red-100 text-red-700 font-semibold rounded-lg hover:bg-red-200 transition-colors">
-                                    🗑️ Hapus
-                                </button>
-                            </td>
-                        `;
-                            list.appendChild(row);
+                                ${guruCell}
+                                ${guruNameCell}
+                                ${kelasCell}
+                                ${mapelCell}
+                                <td class="py-3 px-5 text-sm text-gray-600">
+                                    <div class="font-medium">${jamDisplay}</div>
+                                    <div class="text-xs text-gray-500">${schedule.start_rentang || ''}</div>
+                                </td>
+                                <td class="py-3 px-5 text-center">
+                                    <div class="flex justify-center space-x-2">
+                                        <button onclick="editSchedule(${schedule.id})"
+                                                class="text-yellow-600 hover:text-yellow-800 transition-colors duration-200 p-1.5 rounded-full hover:bg-yellow-50">
+                                            <i class="fas fa-edit text-sm"></i>
+                                        </button>
+                                        <button onclick="deleteSchedule(${schedule.id})"
+                                                class="text-red-600 hover:text-red-800 transition-colors duration-200 p-1.5 rounded-full hover:bg-red-50">
+                                            <i class="fas fa-trash text-sm"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            `;
+                            desktopList.appendChild(row);
                         });
+                    });
+
+                    // Display mobile card view
+                    filtered.forEach((schedule, index) => {
+                        const card = document.createElement('div');
+                        card.className = 'bg-white rounded-lg border border-gray-200 p-4 shadow-sm hover:shadow-md transition-shadow duration-200';
+
+                        const jamDisplay = (() => {
+                            if (schedule.start_jampel_name && schedule.end_jampel_name) {
+                                if (schedule.start_jampel_name === schedule.end_jampel_name) {
+                                    return `${schedule.start_jampel_name}`;
+                                }
+                                return `${schedule.start_jampel_name} - ${schedule.end_jampel_name}`;
+                            }
+                            return '-';
+                        })();
+
+                        card.innerHTML = `
+                            <div class="flex justify-between items-start mb-3">
+                                <div>
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white flex-shrink-0">
+                                            <i class="fas fa-chalkboard-teacher text-xs"></i>
+                                        </div>
+                                        <h3 class="font-bold text-gray-900 text-sm">${schedule.guru_name}</h3>
+                                    </div>
+
+                                    <div class="space-y-2">
+                                        <div class="flex items-center gap-1">
+                                            <span class="bg-gradient-to-r from-green-50 to-green-100 text-green-700 text-xs font-medium px-2 py-0.5 rounded-full">
+                                                <i class="fas fa-chalkboard mr-1 text-xs"></i>${schedule.kelas_name}
+                                            </span>
+                                        </div>
+                                        <div class="flex items-center gap-1">
+                                            <span class="bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700 text-xs font-medium px-2 py-0.5 rounded-full">
+                                                <i class="fas fa-book mr-1 text-xs"></i>${schedule.mapel_name}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex space-x-1">
+                                    <button onclick="editSchedule(${schedule.id})"
+                                            class="text-yellow-600 hover:text-yellow-800 p-2 rounded-full hover:bg-yellow-50 transition-colors">
+                                        <i class="fas fa-edit text-sm"></i>
+                                    </button>
+                                    <button onclick="deleteSchedule(${schedule.id})"
+                                            class="text-red-600 hover:text-red-800 p-2 rounded-full hover:bg-red-50 transition-colors">
+                                        <i class="fas fa-trash text-sm"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-3 text-sm mt-3">
+                                <div>
+                                    <div class="text-gray-500 font-medium mb-1">Jam</div>
+                                    <div class="text-gray-900 bg-gray-50 p-2 rounded font-medium">${jamDisplay}</div>
+                                </div>
+                                <div>
+                                    <div class="text-gray-500 font-medium mb-1">Waktu</div>
+                                    <div class="text-gray-900 bg-gray-50 p-2 rounded">${schedule.start_rentang || '-'}</div>
+                                </div>
+                            </div>
+
+                            <div class="mt-3 pt-3 border-t border-gray-100">
+                                <div class="text-gray-500 text-xs flex justify-between items-center">
+                                    <span>ID: ${schedule.id}</span>
+                                    <span><i class="fas fa-calendar-alt mr-1"></i> ${new Date(schedule.created_at).toLocaleDateString('id-ID')}</span>
+                                </div>
+                            </div>
+                        `;
+                        mobileList.appendChild(card);
                     });
                 });
         }
-
-        // Filter event listeners
-        document.getElementById('filterGuru').addEventListener('input', loadSchedules);
-        document.getElementById('filterKelas').addEventListener('change', loadSchedules);
-        document.getElementById('filterMapel').addEventListener('change', loadSchedules);
-
-        // Event listener untuk perubahan jam mulai
-        document.getElementById('startJampelId')?.addEventListener('change', function() {
-            const selectedOption = this.selectedOptions[0];
-            if (selectedOption) {
-                const hariTipe = selectedOption.dataset.hari;
-                document.getElementById('hariTipe').value = hariTipe;
-                updateEndOptions();
-            }
-        });
 
         function openAddModal() {
             document.getElementById('scheduleForm').reset();
@@ -394,8 +574,21 @@
             }
         }
 
-        document.getElementById('startJampelId').addEventListener('change', updateEndOptions);
-        document.getElementById('endJampelId').addEventListener('change', updateEndOptions);
+        function filterJamByHari(hari) {
+            const startSelect = document.getElementById('startJampelId');
+            const endSelect = document.getElementById('endJampelId');
+
+            [startSelect, endSelect].forEach(select => {
+                Array.from(select.options).forEach(opt => {
+                    if (!opt.dataset.hari) return;
+
+                    const match = opt.dataset.hari === hari;
+                    opt.hidden = !match;
+                    opt.disabled = !match;
+                });
+                select.value = '';
+            });
+        }
 
         function deleteSchedule(id) {
             if (confirm('Apakah Anda yakin ingin menghapus jadwal ini?')) {
@@ -414,43 +607,5 @@
                     });
             }
         }
-
-        const hariSelect = document.getElementById('hariSelect');
-        const startSelect = document.getElementById('startJampelId');
-        const endSelect = document.getElementById('endJampelId');
-        const hariInput = document.getElementById('hariTipe');
-
-        hariSelect.addEventListener('change', function() {
-            const hari = this.value;
-            hariInput.value = hari;
-
-            filterJamByHari(hari);
-        });
-
-        function filterJamByHari(hari) {
-            [startSelect, endSelect].forEach(select => {
-                Array.from(select.options).forEach(opt => {
-                    if (!opt.dataset.hari) return;
-
-                    const match = opt.dataset.hari === hari;
-                    opt.hidden = !match;
-                    opt.disabled = !match;
-                });
-                select.value = '';
-            });
-        }
-
-        // pastikan jam selesai >= jam mulai
-        startSelect.addEventListener('change', function() {
-            const startOrder = this.selectedOptions[0]?.dataset.order;
-
-            Array.from(endSelect.options).forEach(opt => {
-                if (!opt.dataset.order) return;
-                opt.disabled = Number(opt.dataset.order) < Number(startOrder);
-            });
-
-            endSelect.value = this.value;
-        });
     </script>
-
 @endsection

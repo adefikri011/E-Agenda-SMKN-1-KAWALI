@@ -11,6 +11,8 @@ class Agenda extends Model
     protected $fillable = [
         'tanggal',
         'jampel_id',
+        'start_jampel_id',
+        'end_jampel_id',
         'kelas_id',
         'users_id',
         'mata_pelajaran',
@@ -40,6 +42,14 @@ class Agenda extends Model
     }
 
     /**
+     * Relasi ke guru yang membuat agenda
+     */
+    public function guru()
+    {
+        return $this->belongsTo(Guru::class, 'users_id', 'users_id');
+    }
+
+    /**
      * Relasi ke guru yang menandatangani agenda
      */
     public function guruTtd()
@@ -61,6 +71,22 @@ class Agenda extends Model
     public function jampel()
     {
         return $this->belongsTo(Jampel::class, 'jampel_id');
+    }
+
+    /**
+     * Relasi ke jam pelajaran mulai
+     */
+    public function startJampel()
+    {
+        return $this->belongsTo(Jampel::class, 'start_jampel_id');
+    }
+
+    /**
+     * Relasi ke jam pelajaran selesai
+     */
+    public function endJampel()
+    {
+        return $this->belongsTo(Jampel::class, 'end_jampel_id');
     }
 
     /**

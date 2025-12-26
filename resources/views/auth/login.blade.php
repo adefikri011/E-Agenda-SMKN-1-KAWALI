@@ -8,6 +8,28 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="icon" type="image/png" href="{{ asset('image/smk.png') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Konfigurasi Tailwind untuk menyamakan dengan landing page -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    // Warna custom sesuai landing page
+                    colors: {
+                        primary: '#3498db',
+                        secondary: '#2980b9',
+                        accent: '#e3f2fd',
+                        dark: '#2c3e50',
+                        light: '#ecf0f1',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
@@ -65,13 +87,13 @@
 
         .input-field:focus {
             background: white;
-            border-color: #3b82f6;
+            border-color: #3498db; /* Diubah ke primary color */
             outline: none;
-            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+            box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.1); /* Diubah ke primary color */
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            background: linear-gradient(135deg, #1e40af 0%, #7c3aed 100%); /* Disamakan dengan landing page */
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
@@ -79,7 +101,7 @@
 
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 12px 30px rgba(59, 130, 246, 0.4);
+            box-shadow: 0 12px 30px rgba(30, 64, 175, 0.4); /* Disamakan dengan landing page */
         }
 
         .btn-primary::before {
@@ -173,7 +195,7 @@
         }
 
         .gradient-text {
-            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%); /* Disamakan dengan landing page */
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -405,4 +427,5 @@
         });
     </script>
 </body>
+
 </html>
