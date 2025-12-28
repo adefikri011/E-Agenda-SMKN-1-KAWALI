@@ -105,27 +105,38 @@
             height: 100%;
             border-radius: 3px;
         }
+
         /* Enhanced form controls (tailwind-like, but plain CSS for CDN setup) */
-        input[type="text"], input[type="email"], input[type="search"], textarea, select {
-                padding: .75rem 1rem;
-                border-radius: .75rem;
-                border: 1px solid rgba(2,6,23,0.06);
-                background: #ffffff;
-                box-shadow: 0 8px 24px rgba(2,6,23,0.06);
-                transition: box-shadow .18s ease, transform .12s ease, border-color .12s ease;
-            }
+        input[type="text"],
+        input[type="email"],
+        input[type="search"],
+        textarea,
+        select {
+            padding: .75rem 1rem;
+            border-radius: .75rem;
+            border: 1px solid rgba(2, 6, 23, 0.06);
+            background: #ffffff;
+            box-shadow: 0 8px 24px rgba(2, 6, 23, 0.06);
+            transition: box-shadow .18s ease, transform .12s ease, border-color .12s ease;
+        }
 
-            input[type="text"]:focus, input[type="email"]:focus, input[type="search"]:focus, textarea:focus, select:focus {
-                outline: none;
-                border-color: rgba(14,165,233,0.75);
-                box-shadow: 0 12px 36px rgba(14,165,233,0.08);
-                transform: translateY(-2px);
-            }
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="search"]:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: rgba(14, 165, 233, 0.75);
+            box-shadow: 0 12px 36px rgba(14, 165, 233, 0.08);
+            transform: translateY(-2px);
+        }
 
-            /* Small helper to improve text rendering */
-            body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
-
-        </style>
+        /* Small helper to improve text rendering */
+        body {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+    </style>
 </head>
 
 <body class="font-sans text-gray-900 overflow-x-hidden bg-gradient-to-b from-sky-50 to-white antialiased">
@@ -203,6 +214,82 @@
             observer.observe(card);
         });
     </script>
+
+    <script>
+        const navbar = document.getElementById('navbar');
+        const navTexts = document.querySelectorAll('.nav-text');
+        const sections = document.querySelectorAll('section[data-theme]');
+
+        function updateNavbarColor() {
+            let currentTheme = 'light';
+
+            sections.forEach(section => {
+                const rect = section.getBoundingClientRect();
+                if (rect.top <= 120 && rect.bottom >= 120) {
+                    currentTheme = section.dataset.theme;
+                }
+            });
+
+            if (currentTheme === 'dark') {
+                navbar.classList.add('bg-transparent');
+                navTexts.forEach(el => {
+                    el.classList.remove('text-blue-600');
+                    el.classList.add('text-white');
+                });
+            } else {
+                navbar.classList.add('bg-white/80', 'backdrop-blur');
+                navTexts.forEach(el => {
+                    el.classList.remove('text-white');
+                    el.classList.add('text-blue-600');
+                });
+            }
+        }
+
+        window.addEventListener('scroll', updateNavbarColor);
+        window.addEventListener('load', updateNavbarColor);
+    </script>
+
+    <script>
+document.addEventListener('DOMContentLoaded', () => {
+    const brand = document.getElementById('brand-text');
+    const subtitle = document.getElementById('subtitle-text');
+    const sections = document.querySelectorAll('section[data-theme]');
+
+    if (!brand || !subtitle || sections.length === 0) return;
+
+    function updateBrandColor() {
+        let currentTheme = 'light';
+
+        sections.forEach(section => {
+            const rect = section.getBoundingClientRect();
+            if (rect.top <= 120 && rect.bottom >= 120) {
+                currentTheme = section.dataset.theme;
+            }
+        });
+
+        if (currentTheme === 'dark') {
+            // ➜ gelap = putih
+            brand.classList.remove('text-gradient');
+            brand.classList.add('text-white');
+
+            subtitle.classList.remove('text-sky-600/80');
+            subtitle.classList.add('text-white/80');
+        } else {
+            // ➜ terang = biru + gradient
+            brand.classList.remove('text-white');
+            brand.classList.add('text-gradient');
+
+            subtitle.classList.remove('text-white/80');
+            subtitle.classList.add('text-sky-600/80');
+        }
+    }
+
+    window.addEventListener('scroll', updateBrandColor);
+    window.addEventListener('load', updateBrandColor);
+});
+</script>
+
+
 </body>
 
 </html>

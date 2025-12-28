@@ -1,61 +1,90 @@
 <!-- Premium Navbar with Sky Blue Theme -->
-<nav class="fixed w-full bg-white/30 backdrop-blur-2xl shadow-sm z-50 transition-all duration-500 border-b border-sky-100/30" id="navbar">
+<nav id="navbar" class="fixed w-full z-50 transition-all duration-500"
+    style="background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02)); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); box-shadow: 0 8px 30px rgba(2,6,23,0.06); border-bottom: 1px solid rgba(255,255,255,0.06);">
     <div class="container mx-auto px-4 lg:px-6 py-3">
         <div class="flex justify-between items-center">
             <!-- Logo Section -->
-            <div class="flex items-center space-x-3 group cursor-pointer">
-                <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-sky-50/80 to-cyan-50/80 p-2 shadow-lg shadow-sky-200/50 border border-sky-100/50">
-                    <img src="{{ asset('image/logo10.png') }}" alt="Logo E-Agenda"
-                        class="w-10 h-10 object-contain transform transition-all duration-500 group-hover:scale-110 group-hover:rotate-6">
-                    <div class="absolute inset-0 bg-gradient-to-br from-sky-400/20 to-cyan-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl"></div>
-                </div>
+            <div class="flex items-center space-x-4 group cursor-pointer">
+                <!-- Clean rounded logo (larger, responsive) -->
+                <img src="{{ asset('image/logo10.png') }}" alt="Logo E-Agenda"
+                    class="w-14 h-14 md:w-16 md:h-16 lg:w-20 lg:h-20 rounded-full object-cover shadow-md transform transition-all duration-300 group-hover:scale-105"
+                    loading="eager" decoding="async">
+
                 <div class="flex flex-col">
-                    <span class="text-xl font-black bg-gradient-to-r from-sky-600 via-cyan-600 to-blue-600 bg-clip-text text-transparent leading-tight tracking-tight drop-shadow-sm">
+                    <span id="brand-text"
+                        class="text-2xl md:text-3xl font-black text-white leading-tight tracking-tight drop-shadow-sm">
                         E-Agenda
                     </span>
-                    <span class="text-[10px] font-semibold text-sky-600/80 tracking-wider drop-shadow-sm">SMKN 1 KAWALI</span>
+                    <span id="subtitle-text"
+                        class="text-[11px] md:text-[12px] font-semibold text-white/90 tracking-wider drop-shadow-sm">
+                        SMKN 1 KAWALI
+                    </span>
                 </div>
+
             </div>
 
             <!-- Desktop Navigation -->
             <div class="hidden lg:flex items-center space-x-2">
-                <a href="#beranda" class="nav-link group relative px-5 py-2.5 text-gray-800 hover:text-sky-700 font-semibold text-sm rounded-xl hover:bg-gradient-to-r hover:from-sky-50/70 hover:to-cyan-50/70 transition-all duration-300 drop-shadow-sm">
+                <a href="#beranda"
+                    class="nav-link group relative px-5 py-2.5 text-gray-800 hover:text-sky-700 font-semibold text-sm rounded-xl hover:bg-gradient-to-r hover:from-sky-50/70 hover:to-cyan-50/70 transition-all duration-300 drop-shadow-sm">
                     <span class="relative z-10">Beranda</span>
-                    <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-sky-500 to-cyan-500 group-hover:w-3/4 transition-all duration-300 rounded-full"></div>
+                    <div
+                        class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-sky-500 to-cyan-500 group-hover:w-3/4 transition-all duration-300 rounded-full">
+                    </div>
                 </a>
-                <a href="#fitur" class="nav-link group relative px-5 py-2.5 text-gray-800 hover:text-sky-700 font-semibold text-sm rounded-xl hover:bg-gradient-to-r hover:from-sky-50/70 hover:to-cyan-50/70 transition-all duration-300 drop-shadow-sm">
+                <a href="#fitur"
+                    class="nav-link group relative px-5 py-2.5 text-gray-800 hover:text-sky-700 font-semibold text-sm rounded-xl hover:bg-gradient-to-r hover:from-sky-50/70 hover:to-cyan-50/70 transition-all duration-300 drop-shadow-sm">
                     <span class="relative z-10">Fitur</span>
-                    <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-sky-500 to-cyan-500 group-hover:w-3/4 transition-all duration-300 rounded-full"></div>
+                    <div
+                        class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-sky-500 to-cyan-500 group-hover:w-3/4 transition-all duration-300 rounded-full">
+                    </div>
                 </a>
-                <a href="#manfaat" class="nav-link group relative px-5 py-2.5 text-gray-800 hover:text-sky-700 font-semibold text-sm rounded-xl hover:bg-gradient-to-r hover:from-sky-50/70 hover:to-cyan-50/70 transition-all duration-300 drop-shadow-sm">
+                <a href="#manfaat"
+                    class="nav-link group relative px-5 py-2.5 text-gray-800 hover:text-sky-700 font-semibold text-sm rounded-xl hover:bg-gradient-to-r hover:from-sky-50/70 hover:to-cyan-50/70 transition-all duration-300 drop-shadow-sm">
                     <span class="relative z-10">Manfaat</span>
-                    <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-sky-500 to-cyan-500 group-hover:w-3/4 transition-all duration-300 rounded-full"></div>
+                    <div
+                        class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-sky-500 to-cyan-500 group-hover:w-3/4 transition-all duration-300 rounded-full">
+                    </div>
                 </a>
-                <a href="#tim" class="nav-link group relative px-5 py-2.5 text-gray-800 hover:text-sky-700 font-semibold text-sm rounded-xl hover:bg-gradient-to-r hover:from-sky-50/70 hover:to-cyan-50/70 transition-all duration-300 drop-shadow-sm">
+                <a href="#tim"
+                    class="nav-link group relative px-5 py-2.5 text-gray-800 hover:text-sky-700 font-semibold text-sm rounded-xl hover:bg-gradient-to-r hover:from-sky-50/70 hover:to-cyan-50/70 transition-all duration-300 drop-shadow-sm">
                     <span class="relative z-10">Tim Kami</span>
-                    <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-sky-500 to-cyan-500 group-hover:w-3/4 transition-all duration-300 rounded-full"></div>
+                    <div
+                        class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-sky-500 to-cyan-500 group-hover:w-3/4 transition-all duration-300 rounded-full">
+                    </div>
                 </a>
-                <a href="#kontak" class="nav-link group relative px-5 py-2.5 text-gray-800 hover:text-sky-700 font-semibold text-sm rounded-xl hover:bg-gradient-to-r hover:from-sky-50/70 hover:to-cyan-50/70 transition-all duration-300 drop-shadow-sm">
+                <a href="#kontak"
+                    class="nav-link group relative px-5 py-2.5 text-gray-800 hover:text-sky-700 font-semibold text-sm rounded-xl hover:bg-gradient-to-r hover:from-sky-50/70 hover:to-cyan-50/70 transition-all duration-300 drop-shadow-sm">
                     <span class="relative z-10">Kontak</span>
-                    <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-sky-500 to-cyan-500 group-hover:w-3/4 transition-all duration-300 rounded-full"></div>
+                    <div
+                        class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-sky-500 to-cyan-500 group-hover:w-3/4 transition-all duration-300 rounded-full">
+                    </div>
                 </a>
             </div>
 
             <!-- Action Buttons -->
             <div class="flex items-center space-x-3">
-                <a href="{{ route('login') }}" class="hidden sm:flex items-center gap-2 px-6 py-2.5 text-sm font-bold text-white bg-gradient-to-r from-sky-500/90 via-cyan-500/90 to-blue-600/90 rounded-xl hover:shadow-lg hover:shadow-sky-300/50 hover:scale-105 transition-all duration-300 group backdrop-blur-sm">
+                <a href="{{ route('login') }}"
+                    class="hidden sm:flex items-center gap-2 px-6 py-2.5 text-sm font-bold text-white bg-gradient-to-r from-sky-500/90 via-cyan-500/90 to-blue-600/90 rounded-xl hover:shadow-lg hover:shadow-sky-300/50 hover:scale-105 transition-all duration-300 group backdrop-blur-sm">
                     <span>Masuk</span>
-                    <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                    <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-300"
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
                     </svg>
                 </a>
 
                 <!-- Mobile menu button -->
-                <button class="lg:hidden relative p-2.5 rounded-xl hover:bg-gradient-to-r hover:from-sky-50/70 hover:to-cyan-50/70 transition-all duration-300 group backdrop-blur-sm" id="mobile-menu-button">
+                <button
+                    class="lg:hidden relative p-2.5 rounded-xl hover:bg-gradient-to-r hover:from-sky-50/70 hover:to-cyan-50/70 transition-all duration-300 group backdrop-blur-sm"
+                    id="mobile-menu-button">
                     <div class="w-6 h-5 flex flex-col justify-between">
-                        <span class="w-full h-0.5 bg-sky-600 rounded-full transform transition-all duration-300 group-hover:bg-cyan-600"></span>
-                        <span class="w-full h-0.5 bg-sky-600 rounded-full transform transition-all duration-300 group-hover:bg-cyan-600"></span>
-                        <span class="w-full h-0.5 bg-sky-600 rounded-full transform transition-all duration-300 group-hover:bg-cyan-600"></span>
+                        <span
+                            class="w-full h-0.5 bg-sky-600 rounded-full transform transition-all duration-300 group-hover:bg-cyan-600"></span>
+                        <span
+                            class="w-full h-0.5 bg-sky-600 rounded-full transform transition-all duration-300 group-hover:bg-cyan-600"></span>
+                        <span
+                            class="w-full h-0.5 bg-sky-600 rounded-full transform transition-all duration-300 group-hover:bg-cyan-600"></span>
                     </div>
                 </button>
             </div>
@@ -65,42 +94,54 @@
     <!-- Premium Mobile Menu -->
     <div class="lg:hidden hidden bg-white/40 backdrop-blur-2xl border-t border-sky-100/30 shadow-2xl" id="mobile-menu">
         <div class="container mx-auto px-4 py-4 space-y-2">
-            <a href="#beranda" class="flex items-center justify-between px-5 py-3.5 text-gray-800 hover:text-sky-700 font-semibold rounded-xl hover:bg-gradient-to-r hover:from-sky-50/70 hover:to-cyan-50/70 transition-all duration-300 group drop-shadow-sm">
+            <a href="#beranda"
+                class="flex items-center justify-between px-5 py-3.5 text-gray-800 hover:text-sky-700 font-semibold rounded-xl hover:bg-gradient-to-r hover:from-sky-50/70 hover:to-cyan-50/70 transition-all duration-300 group drop-shadow-sm">
                 <span>Beranda</span>
-                <svg class="w-5 h-5 transform group-hover:translate-x-1 transition-transform text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-5 h-5 transform group-hover:translate-x-1 transition-transform text-sky-400"
+                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                 </svg>
             </a>
-            <a href="#fitur" class="flex items-center justify-between px-5 py-3.5 text-gray-800 hover:text-sky-700 font-semibold rounded-xl hover:bg-gradient-to-r hover:from-sky-50/70 hover:to-cyan-50/70 transition-all duration-300 group drop-shadow-sm">
+            <a href="#fitur"
+                class="flex items-center justify-between px-5 py-3.5 text-gray-800 hover:text-sky-700 font-semibold rounded-xl hover:bg-gradient-to-r hover:from-sky-50/70 hover:to-cyan-50/70 transition-all duration-300 group drop-shadow-sm">
                 <span>Fitur</span>
-                <svg class="w-5 h-5 transform group-hover:translate-x-1 transition-transform text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-5 h-5 transform group-hover:translate-x-1 transition-transform text-sky-400"
+                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                 </svg>
             </a>
-            <a href="#manfaat" class="flex items-center justify-between px-5 py-3.5 text-gray-800 hover:text-sky-700 font-semibold rounded-xl hover:bg-gradient-to-r hover:from-sky-50/70 hover:to-cyan-50/70 transition-all duration-300 group drop-shadow-sm">
+            <a href="#manfaat"
+                class="flex items-center justify-between px-5 py-3.5 text-gray-800 hover:text-sky-700 font-semibold rounded-xl hover:bg-gradient-to-r hover:from-sky-50/70 hover:to-cyan-50/70 transition-all duration-300 group drop-shadow-sm">
                 <span>Manfaat</span>
-                <svg class="w-5 h-5 transform group-hover:translate-x-1 transition-transform text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-5 h-5 transform group-hover:translate-x-1 transition-transform text-sky-400"
+                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                 </svg>
             </a>
-            <a href="#tim" class="flex items-center justify-between px-5 py-3.5 text-gray-800 hover:text-sky-700 font-semibold rounded-xl hover:bg-gradient-to-r hover:from-sky-50/70 hover:to-cyan-50/70 transition-all duration-300 group drop-shadow-sm">
+            <a href="#tim"
+                class="flex items-center justify-between px-5 py-3.5 text-gray-800 hover:text-sky-700 font-semibold rounded-xl hover:bg-gradient-to-r hover:from-sky-50/70 hover:to-cyan-50/70 transition-all duration-300 group drop-shadow-sm">
                 <span>Tim Kami</span>
-                <svg class="w-5 h-5 transform group-hover:translate-x-1 transition-transform text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-5 h-5 transform group-hover:translate-x-1 transition-transform text-sky-400"
+                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                 </svg>
             </a>
-            <a href="#kontak" class="flex items-center justify-between px-5 py-3.5 text-gray-800 hover:text-sky-700 font-semibold rounded-xl hover:bg-gradient-to-r hover:from-sky-50/70 hover:to-cyan-50/70 transition-all duration-300 group drop-shadow-sm">
+            <a href="#kontak"
+                class="flex items-center justify-between px-5 py-3.5 text-gray-800 hover:text-sky-700 font-semibold rounded-xl hover:bg-gradient-to-r hover:from-sky-50/70 hover:to-cyan-50/70 transition-all duration-300 group drop-shadow-sm">
                 <span>Kontak</span>
-                <svg class="w-5 h-5 transform group-hover:translate-x-1 transition-transform text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-5 h-5 transform group-hover:translate-x-1 transition-transform text-sky-400"
+                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                 </svg>
             </a>
 
             <div class="pt-4 border-t border-sky-100/30">
-                <a href="{{ route('login') }}" class="flex items-center justify-center gap-2 w-full px-5 py-3.5 text-center text-white font-bold bg-gradient-to-r from-sky-500/90 via-cyan-500/90 to-blue-600/90 rounded-xl hover:shadow-lg hover:shadow-sky-300/50 hover:scale-105 transition-all duration-300 backdrop-blur-sm">
+                <a href="{{ route('login') }}"
+                    class="flex items-center justify-center gap-2 w-full px-5 py-3.5 text-center text-white font-bold bg-gradient-to-r from-sky-500/90 via-cyan-500/90 to-blue-600/90 rounded-xl hover:shadow-lg hover:shadow-sky-300/50 hover:scale-105 transition-all duration-300 backdrop-blur-sm">
                     <span>Masuk Sekarang</span>
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
                     </svg>
                 </a>
             </div>
@@ -109,12 +150,13 @@
 </nav>
 
 <style>
-    /* Navbar scroll effect dengan transparansi */
+    /* Navbar scrolled: slightly stronger glass + shadow (still transparent) */
     #navbar.scrolled {
-        background: rgba(255, 255, 255, 0.4) !important;
-        backdrop-filter: blur(20px);
-        box-shadow: 0 4px 30px rgba(14, 165, 233, 0.1);
-        border-bottom: 1px solid rgba(14, 165, 233, 0.15);
+        background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04));
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+        box-shadow: 0 14px 40px rgba(2,6,23,0.09);
+        border-bottom: 1px solid rgba(255,255,255,0.08);
     }
 
     /* Smooth underline effect */
@@ -137,6 +179,64 @@
 </style>
 
 <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const brand = document.getElementById('brand-text');
+        const subtitle = document.getElementById('subtitle-text');
+        const sections = document.querySelectorAll('[data-bg]');
+
+        if (!brand || !subtitle || sections.length === 0) return;
+
+        // Require section to be at least 40% visible before toggling — avoids early flips
+        const REQUIRED_RATIO = 0.4;
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                // Only act when a decent portion of the section is visible
+                if (entry.intersectionRatio < REQUIRED_RATIO) return;
+
+                if (entry.target.dataset.bg === 'light') {
+                    brand.classList.remove('text-white');
+                    brand.classList.add('text-sky-600');
+
+                    subtitle.classList.remove('text-white/80');
+                    subtitle.classList.add('text-sky-600/80');
+                } else {
+                    brand.classList.remove('text-sky-600');
+                    brand.classList.add('text-white');
+
+                    subtitle.classList.remove('text-sky-600/80');
+                    subtitle.classList.add('text-white/80');
+                }
+            });
+        }, {
+            threshold: [REQUIRED_RATIO]
+        });
+
+        sections.forEach(section => observer.observe(section));
+
+        // Run an initial check to set correct brand color on page load
+        (function initialBrandCheck() {
+            let found = false;
+            sections.forEach(section => {
+                const rect = section.getBoundingClientRect();
+                if (!found && rect.top <= 120 && rect.bottom >= 120) {
+                    if (section.dataset.bg === 'light') {
+                        brand.classList.remove('text-white');
+                        brand.classList.add('text-sky-600');
+                        subtitle.classList.remove('text-white/80');
+                        subtitle.classList.add('text-sky-600/80');
+                    } else {
+                        brand.classList.remove('text-sky-600');
+                        brand.classList.add('text-white');
+                        subtitle.classList.remove('text-sky-600/80');
+                        subtitle.classList.add('text-white/80');
+                    }
+                    found = true;
+                }
+            });
+        })();
+    });
+
+
     // Mobile menu toggle (guard checks)
     const mobileMenuButton = document.getElementById('mobile-menu-button');
     const mobileMenu = document.getElementById('mobile-menu');

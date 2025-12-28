@@ -99,7 +99,7 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm6 8v-1a4 4 0 00-4-4H10a4 4 0 00-4 4v1m11-9l1 2 2 .3-1.5 1.4.4 2-1.9-1-1.9 1 .4-2L14 13.3l2-.3z" />
                                     </svg>
-                                    Guru Mapel (Legacy)
+                                    Guru Mapel
                                 </div>
                             </a>
                             <a href="{{ route('admin.guru-schedule') }}"
@@ -217,7 +217,7 @@
                                     <p class="text-xs text-gray-500 truncate">{{ auth()->user()->email }}</p>
                                 </div>
                                 <div class="py-1">
-                                    <a href="#"
+                                    <a href="{{ route('profile.show') }}"
                                         class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition-colors duration-200">
                                         <svg class="w-5 h-5 mr-3 text-gray-400" fill="none" stroke="currentColor"
                                             viewBox="0 0 24 24">
@@ -227,17 +227,15 @@
                                         </svg>
                                         Profile
                                     </a>
-                                    <a href="#"
+                                    <a href="{{ route('profile.change-password') }}"
                                         class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition-colors duration-200">
                                         <svg class="w-5 h-5 mr-3 text-gray-400" fill="none" stroke="currentColor"
                                             viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z">
+                                                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z">
                                             </path>
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                         </svg>
-                                        Settings
+                                        Ganti Password
                                     </a>
                                 </div>
                                 <div class="py-1 border-t border-gray-100">
@@ -481,7 +479,7 @@
 
             <!-- Profile Actions (Mobile Only) -->
             <div class="md:hidden space-y-1">
-                <a href="#"
+                <a href="{{ route('profile.show') }}"
                     class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-blue-600 rounded-lg transition-colors">
                     <svg class="w-5 h-5 mr-3 text-gray-400" fill="none" stroke="currentColor"
                         viewBox="0 0 24 24">
@@ -492,17 +490,15 @@
                     </svg>
                     <span class="font-medium">Profile</span>
                 </a>
-                <a href="#"
+                <a href="{{ route('profile.change-password') }}"
                     class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-blue-600 rounded-lg transition-colors">
                     <svg class="w-5 h-5 mr-3 text-gray-400" fill="none" stroke="currentColor"
                         viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z">
+                            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z">
                         </path>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                     </svg>
-                    <span class="font-medium">Settings</span>
+                    <span class="font-medium">Ganti Password</span>
                 </a>
                 <form action="{{ route('logout') }}" method="POST">
                     @csrf

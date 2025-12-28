@@ -75,11 +75,11 @@ class HakAksesController extends Controller
         ];
 
         // 13. Kelas dengan wali kelas (terbaru)
-        $kelasData = Kelas::with('walikelas:id,name')->orderBy('created_at', 'desc')->limit(5)->get();
+        $kelasData = Kelas::with('walikelas:id,name')->orderBy('created_at', 'desc')->limit(3)->get();
 
         // 14. Guru Mapel Terbaru
         $guruMapelTerbaru = GuruMapel::with(['guru:id,nama', 'kelas:id,nama_kelas', 'mapel:id,nama'])
-            ->orderBy('created_at', 'desc')->limit(5)->get();
+            ->orderBy('created_at', 'desc')->limit(3)->get();
 
         // Kirim semua data ke view admin.dashboard
         return view('admin.dashboard', compact(

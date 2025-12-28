@@ -20,7 +20,7 @@
 
                 <div>
                     <label class="block text-sm font-medium">Wali Kelas (Opsional)</label>
-                    <select name="wali_kelas_id" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
+                    <select id="walikelas--{{ $item->id }}" name="wali_kelas_id" class="select2 w-full text-sm">
                         <option value="">Pilih Wali Kelas</option>
                         @foreach ($users as $u)
                             <option value="{{ $u->id }}" {{ $item->wali_kelas_id == $u->id ? 'selected' : '' }}>

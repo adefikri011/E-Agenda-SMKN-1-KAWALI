@@ -126,33 +126,6 @@
 
         <!-- Right Side -->
         <div class="space-y-6">
-            <!-- Recent Teachers -->
-            <div class="bg-white rounded-2xl border border-gray-200 p-8 shadow-sm hover:shadow-xl transition-shadow duration-300">
-                <div class="flex items-center justify-between mb-6">
-                    <h2 class="text-xl font-bold text-gray-900">Guru Hari Ini</h2>
-                    <span class="w-2 h-2 bg-gray-700 rounded-full animate-pulse"></span>
-                </div>
-
-                <div class="space-y-3">
-                    @forelse($guruMapelToday as $gm)
-                        <div class="group flex items-center gap-4 p-4 rounded-xl border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all duration-200">
-                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center flex-shrink-0 shadow-md">
-                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                </svg>
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <p class="text-sm font-bold text-gray-900 truncate">{{ $gm->guru?->user?->name ?? 'N/A' }}</p>
-                                <p class="text-xs text-gray-500 mt-1 truncate font-medium">{{ $gm->mapel?->nama ?? 'N/A' }}</p>
-                            </div>
-                        </div>
-                    @empty
-                        <div class="text-center py-4">
-                            <p class="text-gray-500 text-sm">Tidak ada guru yang ditugaskan</p>
-                        </div>
-                    @endforelse
-                </div>
-            </div>
 
             <!-- Kegiatan Sebelum KBM - Single Schedule -->
             <div class="bg-white rounded-2xl border border-gray-200 p-8 shadow-sm hover:shadow-xl transition-shadow duration-300">

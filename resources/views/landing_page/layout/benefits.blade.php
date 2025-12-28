@@ -1,5 +1,5 @@
 <!-- Premium Benefits Section - Cyan/Teal Theme -->
-<section class="py-16 lg:py-24 bg-white relative overflow-hidden" id="manfaat">
+<section data-bg="light" class="py-16 lg:py-24 bg-white relative overflow-hidden" id="manfaat">
     <!-- Decorative Background -->
     <div class="absolute inset-0 overflow-hidden pointer-events-none">
         <div class="absolute top-40 -right-40 w-96 h-96 bg-cyan-100/40 rounded-full blur-3xl"></div>
@@ -507,7 +507,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                
+
                             </div>
 
                             <div class="space-y-3">

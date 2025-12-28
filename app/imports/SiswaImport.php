@@ -10,23 +10,44 @@ class SiswaImport implements ToModel, WithHeadingRow
 {
     public function model(array $row)
     {
-        // Validasi data sebelum disimpan
-        if (empty($row['nama_siswa']) || empty($row['nis']) || empty($row['kelas_id']) || empty($row['jenkel'])) {
-            return null; // Lewati baris jika data tidak lengkap
+        // Validasi wajib
+        if (
+            empty($row['nama_siswa']) ||
+            empty($row['nis']) ||
+            empty($row['kelas_id']) ||
+            empty($row['jenkel'])
+        ) {
+            return null;
         }
 
-        // Cek apakah NIS sudah ada
-        $existingSiswa = Siswa::where('nis', $row['nis'])->first();
-        if ($existingSiswa) {
-            return null; // Lewati baris jika NIS sudah ada
+        // Alias jenkel
+        $jenkel = strtolower(trim($row['jenkel']));
+
+        $jenkelMap = [
+            'laki-laki' => 'L',
+            'laki laki' => 'L',
+            'l'         => 'L',
+            'pria'      => 'L',
+
+            'perempuan' => 'P',
+            'wanita'    => 'P',
+            'p'         => 'P',
+        ];
+
+        if (!isset($jenkelMap[$jenkel])) {
+            return null; // Lewati jika format tidak dikenal
         }
 
-        // Buat siswa
+        // Cek NIS unik
+        if (Siswa::where('nis', $row['nis'])->exists()) {
+            return null;
+        }
+
         return new Siswa([
             'nama_siswa' => $row['nama_siswa'],
             'nis'        => $row['nis'],
             'kelas_id'   => $row['kelas_id'],
-            'jenkel'     => $row['jenkel'],
+            'jenkel'     => $jenkelMap[$jenkel],
         ]);
     }
 }

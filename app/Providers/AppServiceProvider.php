@@ -19,6 +19,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Pastikan helper file dimuat (memudahkan availability saat development)
+        $helper = app_path('Helpers/RoleHelper.php');
+        if (file_exists($helper)) {
+            require_once $helper;
+        }
     }
 }

@@ -27,7 +27,7 @@
 
                 <div>
                     <label class="block text-sm font-medium">Kelas <span class="text-red-500">*</span></label>
-                    <select name="kelas_id" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
+                    <select name="kelas_id" required class="select2 w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
                         <option value="">Pilih Kelas</option>
                         @foreach ($kelas as $k)
                             <option value="{{ $k->id }}" {{ $item->siswa && $item->siswa->kelas_id == $k->id ? 'selected' : '' }}>

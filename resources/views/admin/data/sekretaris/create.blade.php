@@ -14,7 +14,7 @@
             {{-- Kelas --}}
             <div>
                 <label class="block text-sm font-medium">Kelas <span class="text-red-500">*</span></label>
-                <select name="kelas_id" id="kelas_id" required class="w-full px-3 py-2 border rounded-lg text-sm">
+                <select name="kelas_id" id="kelas_id" required class="select2 select-kelas w-full text-sm">
                     <option value="">Pilih Kelas</option>
                     @foreach ($kelas as $k)
                         <option value="{{ $k->id }}">{{ $k->nama_kelas }}</option>
@@ -25,7 +25,7 @@
             {{-- Siswa (Baru) --}}
             <div>
                 <label class="block text-sm font-medium">Siswa <span class="text-red-500">*</span></label>
-                <select name="siswa_id" id="siswa_id" required class="w-full px-3 py-2 border rounded-lg text-sm" disabled>
+                <select name="siswa_id" id="siswa_id" required class="select2 select-siswa w-full text-sm" disabled>
                     <option value="">Pilih Siswa</option>
                 </select>
             </div>
@@ -64,76 +64,85 @@
 
 <!-- Tambahkan script di bagian bawah halaman -->
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const kelasSelect = document.getElementById('kelas_id');
-        const siswaSelect = document.getElementById('siswa_id');
-        const nisInput = document.getElementById('nis');
-        const jenkelSelect = document.getElementById('jenkel');
-        kelasSelect.addEventListener('change', function() {
-            const kelasId = this.value;
+    // Use jQuery-based flow for more reliable integration with Select2
+    $(function() {
+        const $kelas = $('#kelas_id');
+        const $siswa = $('#siswa_id');
+        const $nis = $('#nis');
+        const $jenkel = $('#jenkel');
 
-            // Reset dropdown siswa
-            siswaSelect.innerHTML = '<option value="">Pilih Siswa</option>';
-            siswaSelect.disabled = true;
-            nisInput.value = '';
-            jenkelSelect.value = '';
-            jenkelSelect.disabled = true;
+        function resetSiswa() {
+            $siswa.empty().append($('<option>').val('').text('Pilih Siswa'));
+            $siswa.prop('disabled', true);
+            $nis.value = '';
+            $nis.val('');
+            $jenkel.val('');
+            $jenkel.prop('disabled', true);
+            try { window.initSelect2('#siswa_id'); } catch (e) { /* ignore */ }
+        }
+
+        // Initial reset
+        resetSiswa();
+
+        $kelas.on('change', function() {
+            const kelasId = $(this).val();
+            resetSiswa();
 
             if (!kelasId) return;
 
             const url = '{{ url('/sekretaris/get-siswa-by-kelas') }}' + '/' + kelasId;
             console.log('Fetching siswa for kelas:', kelasId, url);
 
-            fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
-                .then(response => {
-                    if (!response.ok) throw new Error('HTTP ' + response.status);
-                    return response.json();
-                })
-                .then(data => {
+            $.ajax({
+                url: url,
+                method: 'GET',
+                dataType: 'json',
+                headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                success: function(data) {
                     console.log('Siswa response:', data);
-                    siswaSelect.innerHTML = '<option value="">Pilih Siswa</option>';
+                    $siswa.empty().append($('<option>').val('').text('Pilih Siswa'));
+
                     if (Array.isArray(data) && data.length > 0) {
-                        siswaSelect.disabled = false;
-                        data.forEach(siswa => {
-                            const option = document.createElement('option');
-                            option.value = siswa.id;
-                            option.textContent = siswa.nama_siswa;
-                            option.setAttribute('data-nis', siswa.nis);
-                            option.setAttribute('data-jenkel', siswa.jenkel);
-                            siswaSelect.appendChild(option);
+                        data.forEach(function(siswa) {
+                            const $opt = $('<option>')
+                                .val(siswa.id)
+                                .text(siswa.nama_siswa)
+                                .attr('data-nis', siswa.nis)
+                                .attr('data-jenkel', siswa.jenkel);
+                            $siswa.append($opt);
                         });
+                        $siswa.prop('disabled', false);
                     } else {
-                        // No students available; enable select and show message
-                        siswaSelect.disabled = false;
-                        const opt = document.createElement('option');
-                        opt.value = '';
-                        opt.textContent = 'Tidak ada siswa yang tersedia';
-                        siswaSelect.appendChild(opt);
+                        $siswa.append($('<option>').val('').text('Tidak ada siswa yang tersedia'));
+                        $siswa.prop('disabled', true);
                     }
-                })
-                .catch(error => {
-                    console.error('Gagal ambil siswa:', error);
-                    siswaSelect.innerHTML = '<option value="">Pilih Siswa</option>';
-                    const opt = document.createElement('option');
-                    opt.value = '';
-                    opt.textContent = 'Gagal mengambil data siswa';
-                    siswaSelect.appendChild(opt);
-                    siswaSelect.disabled = false;
-                });
+
+                    try {
+                        window.initSelect2('#siswa_id');
+                    } catch (e) {
+                        console.error('initSelect2 error:', e);
+                    }
+                },
+                error: function(xhr, status, err) {
+                    console.error('Gagal ambil siswa:', status, err, xhr.responseText);
+                    $siswa.empty().append($('<option>').val('').text('Gagal mengambil data siswa'));
+                    $siswa.prop('disabled', true);
+                    try { window.initSelect2('#siswa_id'); } catch (e) {}
+                }
+            });
         });
 
-        siswaSelect.addEventListener('change', function() {
-            const selectedOption = this.options[this.selectedIndex];
-
-            if (selectedOption && selectedOption.value) {
-                // Isi NIS dan Jenis Kelamin otomatis
-                nisInput.value = selectedOption.getAttribute('data-nis') || '';
-                jenkelSelect.value = selectedOption.getAttribute('data-jenkel') || '';
-                jenkelSelect.disabled = false;
+        // When siswa changes, fill NIS and Jenis Kelamin
+        $siswa.on('change', function() {
+            const $opt = $(this).find('option:selected');
+            if ($opt.val()) {
+                $nis.val($opt.data('nis') || '');
+                $jenkel.val($opt.data('jenkel') || '');
+                $jenkel.prop('disabled', false);
             } else {
-                nisInput.value = '';
-                jenkelSelect.value = '';
-                jenkelSelect.disabled = true;
+                $nis.val('');
+                $jenkel.val('');
+                $jenkel.prop('disabled', true);
             }
         });
     });

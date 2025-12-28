@@ -29,7 +29,7 @@
                     <label class="block text-sm font-semibold text-gray-900 mb-2">
                         <i class="fas fa-chalkboard-teacher text-blue-600 mr-2"></i>Guru <span class="text-red-500">*</span>
                     </label>
-                    <select name="guru_id" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" required>
+                    <select name="guru_id" class="select2 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" required>
                         <option value="">Pilih Guru</option>
                         @foreach ($gurus as $guru)
                             <option value="{{ $guru->id }}" {{ old('guru_id') == $guru->id ? 'selected' : '' }}>
@@ -44,7 +44,7 @@
                     <label class="block text-sm font-semibold text-gray-900 mb-2">
                         <i class="fas fa-book text-blue-600 mr-2"></i>Mata Pelajaran <span class="text-red-500">*</span>
                     </label>
-                    <select name="mapel_id" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" required>
+                    <select name="mapel_id" class="select2 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" required>
                         <option value="">Pilih Mata Pelajaran</option>
                         @foreach ($mapels as $mapel)
                             <option value="{{ $mapel->id }}" {{ old('mapel_id') == $mapel->id ? 'selected' : '' }}>
@@ -59,7 +59,7 @@
                     <label class="block text-sm font-semibold text-gray-900 mb-2">
                         <i class="fas fa-users text-blue-600 mr-2"></i>Kelas <span class="text-red-500">*</span>
                     </label>
-                    <select name="kelas_id" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" required>
+                    <select name="kelas_id" class="select2 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" required>
                         <option value="">Pilih Kelas</option>
                         @foreach ($kelas as $k)
                             <option value="{{ $k->id }}" {{ old('kelas_id') == $k->id ? 'selected' : '' }}>

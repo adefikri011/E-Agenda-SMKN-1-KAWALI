@@ -9,6 +9,7 @@ use App\Models\Jurusan;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\KelasImport;
+use App\Exports\KelasTemplateExport;
 
 class KelasController extends Controller
 {
@@ -88,8 +89,37 @@ class KelasController extends Controller
             'file' => 'required|mimes:xlsx,xls|max:10240'
         ]);
 
-        Excel::import(new KelasImport, $request->file('file'));
+        try {
+            $import = new KelasImport();
+            Excel::import($import, $request->file('file'));
 
-        return back()->with('success', 'Data kelas berhasil diimport!');
+            // Cek ada berapa yang sukses/gagal
+            $successCount = $import->successCount ?? 0;
+            $failureCount = $import->failureCount ?? count($import->failures());
+
+            if ($successCount > 0) {
+                $message = "Import berhasil! {$successCount} kelas ditambahkan.";
+                if ($failureCount > 0) {
+                    $message .= " ({$failureCount} baris gagal - cek logs)";
+                }
+                return back()->with('success', $message);
+            } else {
+                $message = "Tidak ada data yang berhasil diimport.";
+                if ($failureCount > 0) {
+                    $message .= " {$failureCount} baris gagal validasi - cek format Excel (nama_kelas wajib, jurusan_id opsional dengan ID valid)";
+                }
+                return back()->with('error', $message);
+            }
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error import: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Download Excel template for importing kelas
+     */
+    public function downloadTemplate()
+    {
+        return Excel::download(new KelasTemplateExport, 'template_kelas.xlsx');
     }
 }

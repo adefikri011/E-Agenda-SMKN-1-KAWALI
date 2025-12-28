@@ -19,6 +19,7 @@ use App\Http\Controllers\RekapController;
 use App\Http\Controllers\SekretarisController;
 use App\Http\Controllers\data\MapelController;
 use App\Http\Controllers\data\WaliKelasController;
+use App\Http\Controllers\ProfileController;
 
 Route::get('/' , [LandingPageController::class , 'index']);
 
@@ -43,6 +44,8 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         ->name('kelas.delete');
     Route::post('/kelas/import', [KelasController::class, 'import'])
         ->name('kelas.import');
+    // Rute untuk mengunduh template impor Excel untuk Kelas
+    Route::get('/kelas/template', [KelasController::class, 'downloadTemplate'])->name('kelas.template');
 
     //guru
     Route::get('/guru', [GuruController::class, 'index'])->name('guru.index');
@@ -238,3 +241,10 @@ Route::get('/tes-email', function () {
 if (app()->environment('local')) {
     Route::get('/agenda/rekap-debug', [AgendaController::class, 'rekap'])->name('agenda.rekap.debug');
 }
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::get('/change-password', [ProfileController::class, 'changePasswordForm'])->name('profile.change-password');
+    Route::put('/change-password', [ProfileController::class, 'changePassword'])->name('profile.update-password');
+});

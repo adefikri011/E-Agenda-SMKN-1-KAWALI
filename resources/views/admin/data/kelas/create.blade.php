@@ -16,13 +16,16 @@
 
             <div>
                 <label class="block text-sm font-medium">Wali Kelas (Opsional)</label>
-                <select name="wali_kelas_id" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
-                    <option value="">Pilih Wali Kelas</option>
+                <select id="walikelas" name="wali_kelas_id" class="select2 w-full text-sm">
+                    <option value=""></option>
                     @foreach ($users as $u)
-                        <option value="{{ $u->id }}">{{ $u->name }} ({{ $u->role }})</option>
+                        <option value="{{ $u->id }}">
+                            {{ $u->name }} ({{ $u->role }})
+                        </option>
                     @endforeach
                 </select>
             </div>
+
 
             <div>
                 <label class="block text-sm font-medium">Jurusan (Opsional)</label>
@@ -41,3 +44,5 @@
         </form>
     </div>
 </div>
+
+

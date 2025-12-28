@@ -1,5 +1,5 @@
 <!-- Sky Blue Professional Contact Section with Map -->
-<section class="py-20 lg:py-32 bg-gradient-to-br from-sky-50 via-cyan-50 to-blue-50 relative overflow-hidden" id="kontak">
+<section data-bg="light" class="py-20 lg:py-32 bg-gradient-to-br from-sky-50 via-cyan-50 to-blue-50 relative overflow-hidden" id="kontak">
     <!-- Animated Wave Background -->
     <div class="absolute inset-0 overflow-hidden pointer-events-none">
         <svg class="absolute top-0 left-0 w-full h-64 opacity-30" viewBox="0 0 1440 320" preserveAspectRatio="none">
@@ -65,7 +65,7 @@
                         <!-- Subject Input -->
                         <div class="group">
                             <div class="relative">
-                                <div class="absolute left-4 top-1/2 -translate-y-1/2 text-sky-500">
+                                <div class="absolute left-4 top-5 text-sky-500">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path>
                                     </svg>

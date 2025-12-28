@@ -1,4 +1,4 @@
-{{-- 
+{{--
     File ini dimaksudkan untuk di-include di dalam loop @foreach di index.blade.php
     Contoh: @include('admin.data.wali_kelas.edit', ['item' => $item])
 --}}
@@ -21,12 +21,12 @@
                 <label class="block text-gray-700 text-sm font-medium mb-1">Pilih Guru <span class="text-red-500">*</span></label>
                 <select name="guru_id" class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm" required>
                     <option value="">-- Pilih Guru --</option>
-                    
+
                     {{-- Tampilkan guru yang saat ini dipilih sebagai pilihan pertama --}}
                     <option value="{{ $item->guru->id }}" selected>
                         {{ $item->guru->nama }} ({{ $item->guru->nip }})
                     </option>
-                    
+
                     {{-- Tampilkan guru lain yang BELUM ditugaskan sebagai wali kelas --}}
                     @foreach ($guruAvailable as $guru)
                         <option value="{{ $guru->id }}">{{ $guru->nama }} ({{ $guru->nip }})</option>
@@ -37,14 +37,14 @@
             {{-- Input Kelas --}}
             <div>
                 <label class="block text-gray-700 text-sm font-medium mb-1">Pilih Kelas <span class="text-red-500">*</span></label>
-                <select name="kelas_id" class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm" required>
+                <select name="kelas_id" class="selct2 w-full px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm" required>
                     <option value="">-- Pilih Kelas --</option>
-                    
+
                     {{-- Tampilkan kelas yang saat ini dipilih sebagai pilihan pertama --}}
                     <option value="{{ $item->kelasAsWali->id }}" selected>
                         {{ $item->kelasAsWali->nama_kelas }}
                     </option>
-                    
+
                     {{-- Tampilkan kelas lain yang BELUM memiliki wali kelas --}}
                     @foreach ($kelasAvailable as $kelas)
                         <option value="{{ $kelas->id }}">{{ $kelas->nama_kelas }}</option>

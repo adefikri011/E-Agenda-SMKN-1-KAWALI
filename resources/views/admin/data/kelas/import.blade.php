@@ -10,6 +10,11 @@
             </div>
 
             <div class="mb-4">
+                <div class="flex justify-between items-center mb-2">
+                    <a href="{{ route('kelas.template') }}" class="text-sm text-green-600 hover:underline">Download Template Excel</a>
+                    <span class="text-xs text-gray-500">Header: nama_kelas, jurusan_id</span>
+                </div>
+
                 <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
                     <div class="mt-2 text-sm text-gray-600">
                         <label for="file-upload" class="relative cursor-pointer bg-white rounded-md font-medium text-green-600 hover:text-green-500">

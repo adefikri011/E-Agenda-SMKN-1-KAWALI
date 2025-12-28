@@ -127,7 +127,7 @@
                 <!-- GURU -->
                 <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-700 mb-2">Guru <span class="text-red-500">*</span></label>
-                    <select id="guruId" name="guru_id" class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm" required>
+                    <select id="guruId" name="guru_id" class="select2 w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm" required>
                         <option value="">Pilih Guru</option>
                         @foreach ($guru as $g)
                             <option value="{{ $g->id }}">{{ $g->user->name }} ({{ $g->nip ?? 'N/A' }})</option>
@@ -138,7 +138,7 @@
                 <!-- KELAS -->
                 <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-700 mb-2">Kelas <span class="text-red-500">*</span></label>
-                    <select id="kelasId" name="kelas_id" class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm" required>
+                    <select id="kelasId" name="kelas_id" class="select2 w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm" required>
                         <option value="">Pilih Kelas</option>
                         @foreach ($kelas as $k)
                             <option value="{{ $k->id }}">{{ $k->nama_kelas }}</option>
@@ -149,7 +149,7 @@
                 <!-- MAPEL -->
                 <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-700 mb-2">Mata Pelajaran <span class="text-red-500">*</span></label>
-                    <select id="mapelId" name="mapel_id" class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm" required>
+                    <select id="mapelId" name="mapel_id" class="select2 w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm" required>
                         <option value="">Pilih Mapel</option>
                         @foreach ($mapel as $m)
                             <option value="{{ $m->id }}">{{ $m->nama }}</option>

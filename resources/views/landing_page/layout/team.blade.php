@@ -1,5 +1,5 @@
 <!-- Premium Team Section - Sky Blue Theme -->
-<section id="tim" class="py-16 lg:py-24 bg-gradient-to-b from-white via-sky-50/30 to-gray-50 relative overflow-hidden">
+<section id="tim" data-bg="light" class="py-16 lg:py-24 bg-gradient-to-b from-white via-sky-50/30 to-gray-50 relative overflow-hidden">
     <!-- Decorative Background -->
     <div class="absolute inset-0 overflow-hidden pointer-events-none">
         <div class="absolute top-20 left-10 w-80 h-80 bg-sky-200/20 rounded-full blur-3xl"></div>

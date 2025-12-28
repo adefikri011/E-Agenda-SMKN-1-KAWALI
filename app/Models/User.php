@@ -16,6 +16,9 @@ class User extends Authenticatable
         'role',
     ];
 
+    // Ensure timestamps are enabled
+    public $timestamps = true;
+
     /**
      * Relasi ke guru
      */

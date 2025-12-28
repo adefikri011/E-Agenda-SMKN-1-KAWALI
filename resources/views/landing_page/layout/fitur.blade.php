@@ -1,5 +1,5 @@
 <!-- Premium Features Section - Ultra Modern Design -->
-<section class="py-20 lg:py-32 bg-gradient-to-br from-cyan-50 via-white to-teal-50 relative overflow-hidden" id="fitur">
+<section data-bg="light" class="py-20 lg:py-32 bg-gradient-to-br from-cyan-50 via-white to-teal-50 relative overflow-hidden" id="fitur">
     <!-- Animated Background -->
     <div class="absolute inset-0 overflow-hidden">
         <div class="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-transparent via-cyan-50/20 to-transparent"></div>
@@ -85,7 +85,7 @@
                                 </p>
                                 <div class="grid grid-cols-2 gap-4 text-center">
                                     <div class="bg-cyan-50 rounded-xl p-3">
-                                        <div class="text-2xl font-bold text-cyan-600">6+</div>
+                                        <div class="text-2xl font-bold text-cyan-600">5+</div>
                                         <div class="text-xs text-gray-600">Fitur Utama</div>
                                     </div>
                                     <div class="bg-teal-50 rounded-xl p-3">
@@ -170,7 +170,7 @@
             </div>
 
             <!-- Bottom CTA -->
-           
+
         </div>
     </div>
 
