@@ -36,28 +36,10 @@ class AbsensiController extends Controller
 
         $kelas = Kelas::whereIn('id', $kelas_ids)->get();
         $mapel = MataPelajaran::whereIn('id', $mapel_ids)->get();
-        $jampel = Jampel::all();
-
-        // Ambil parameter dari URL jika ada, dengan nilai default
-        $selectedKelas = request()->input('kelas_id');
-        $selectedTanggal = request()->input('tanggal', now()->format('Y-m-d'));
-        $selectedMapel = request()->input('mapel_id');
-        $autoLoad = request()->input('auto_load'); // Flag untuk auto-load dari jadwal-saya
-
-        // Jika ada parameter start_jampel_id dan end_jampel_id, ambil range jam
-        $startJampelId = request()->input('start_jampel_id');
-        $endJampelId = request()->input('end_jampel_id');
 
         return view('absensi.index', compact(
             'kelas',
-            'mapel',
-            'jampel',
-            'selectedKelas',
-            'selectedTanggal',
-            'selectedMapel',
-            'autoLoad',
-            'startJampelId',
-            'endJampelId'
+            'mapel'
         ));
     }
 
@@ -109,7 +91,22 @@ class AbsensiController extends Controller
         $mapel = MataPelajaran::findOrFail($request->mapel_id);
         $jampel = Jampel::findOrFail($request->jampel_id);
         $tanggal = Carbon::parse($request->tanggal)->format('Y-m-d');
+        $pertemuan = $request->pertemuan;
         $siswa = Siswa::where('kelas_id', $request->kelas_id)->get();
+
+        // Tentukan jam berdasarkan jampel
+        $jam = '00:00';
+        if (!empty($jampel->rentang_waktu)) {
+            $jam = $jampel->rentang_waktu;
+        } else {
+            $startTime = $jampel->jam_mulai ? (is_string($jampel->jam_mulai) ? $jampel->jam_mulai : $jampel->jam_mulai->format('H:i')) : null;
+            $endTime = $jampel->jam_selesai ? (is_string($jampel->jam_selesai) ? $jampel->jam_selesai : $jampel->jam_selesai->format('H:i')) : null;
+            if ($startTime && $endTime) {
+                $jam = $startTime . ' - ' . $endTime;
+            } elseif ($startTime) {
+                $jam = $startTime;
+            }
+        }
 
         // Cek apakah absensi sudah ada
         $existingAbsensi = Absensi::where([
@@ -125,7 +122,7 @@ class AbsensiController extends Controller
                 ->with('info', 'Absensi untuk kelas, mapel, dan tanggal tersebut sudah ada. Menampilkan data yang sudah ada.');
         }
 
-        return view('absensi.create', compact('kelas', 'mapel', 'jampel', 'tanggal', 'siswa', 'pertemuan'));
+        return view('absensi.create', compact('kelas', 'mapel', 'jampel', 'tanggal', 'siswa', 'pertemuan', 'jam'));
     }
 
 
@@ -146,11 +143,11 @@ class AbsensiController extends Controller
             ]);
 
             // Prioritize start/end jampel, fallback to jampel_id
-            $startJampelId = $validated['start_jampel_id'];
-            $endJampelId = $validated['end_jampel_id'];
+            $startJampelId = $validated['start_jampel_id'] ?? null;
+            $endJampelId = $validated['end_jampel_id'] ?? null;
 
             // Jika hanya jampel_id yang ada
-            if (!$startJampelId && !$endJampelId && $validated['jampel_id']) {
+            if (!$startJampelId && !$endJampelId && !empty($validated['jampel_id'])) {
                 $startJampelId = $validated['jampel_id'];
                 $endJampelId = $validated['jampel_id'];
             }
@@ -168,6 +165,13 @@ class AbsensiController extends Controller
             $validated['end_jampel_id'] = $endJampelId;
 
             $tanggal = Carbon::parse($validated['tanggal'])->format('Y-m-d');
+
+            // Ensure pertemuan is at least 1 (avoid saving 0)
+            $pertemuan = isset($validated['pertemuan']) ? intval($validated['pertemuan']) : 1;
+            if ($pertemuan <= 0) {
+                $pertemuan = 1;
+            }
+            $validated['pertemuan'] = $pertemuan;
 
             // Get the current user's associated guru
             $user_id = Auth::id();
@@ -273,14 +277,21 @@ class AbsensiController extends Controller
 
                 \DB::commit();
 
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Data absensi berhasil disimpan!',
-                    'data' => [
-                        'id' => $absensi->id,
-                        'tanggal' => $absensi->tanggal,
-                    ]
-                ], 201);
+                // If request expects JSON (API), return JSON response
+                if ($request->wantsJson()) {
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'Data absensi berhasil disimpan!',
+                        'data' => [
+                            'id' => $absensi->id,
+                            'tanggal' => $absensi->tanggal,
+                        ]
+                    ], 201);
+                }
+
+                // For web requests, redirect to absensi index
+                return redirect()->route('absensi.index')
+                    ->with('success', 'Data absensi berhasil disimpan!');
 
             } catch (\Exception $e) {
                 \DB::rollBack();
@@ -288,23 +299,58 @@ class AbsensiController extends Controller
             }
 
         } catch (\Illuminate\Validation\ValidationException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Validasi gagal',
-                'errors' => $e->errors()
-            ], 422);
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Validasi gagal',
+                    'errors' => $e->errors()
+                ], 422);
+            }
+
+            return redirect()->back()->withErrors($e->errors())->withInput();
         } catch (\Exception $e) {
             \Log::error('Absensi store error: ' . $e->getMessage());
-            return response()->json([
-                'success' => false,
-                'message' => 'Terjadi kesalahan server: ' . $e->getMessage()
-            ], 500);
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Terjadi kesalahan server: ' . $e->getMessage()
+                ], 500);
+            }
+
+            return redirect()->back()->with('error', 'Terjadi kesalahan server: ' . $e->getMessage())->withInput();
         }
     }
     public function show($id)
     {
         $absensi = Absensi::with(['kelas', 'mapel', 'jampel', 'guru', 'detailAbsensi.siswa'])->findOrFail($id);
         return view('absensi.show', compact('absensi'));
+    }
+
+    public function edit($id)
+    {
+        $absensi = Absensi::with(['kelas', 'mapel', 'jampel', 'guru', 'detailAbsensi.siswa'])->findOrFail($id);
+
+        // Prepare siswa list from detailAbsensi for editing
+        $siswa = $absensi->detailAbsensi->map(function ($d) {
+            return (object) [
+                'id' => $d->siswa->id,
+                'nis' => $d->siswa->nis,
+                'nama_siswa' => $d->siswa->nama_siswa,
+                'detail_id' => $d->id,
+                'status' => $d->status,
+            ];
+        });
+
+        $kelas = $absensi->kelas;
+        $mapel = $absensi->mapel;
+        $jampel = $absensi->jampel;
+        $tanggal = $absensi->tanggal;
+        $pertemuan = $absensi->pertemuan ?? 1;
+
+        // Determine jam display
+        $jam = $absensi->jam ?? ($jampel?->rentang_waktu ?? ($jampel?->jam_mulai ? ($jampel->jam_mulai instanceof \Carbon\Carbon ? $jampel->jam_mulai->format('H:i') : $jampel->jam_mulai) : '00:00'));
+
+        return view('absensi.edit', compact('absensi', 'kelas', 'mapel', 'jampel', 'tanggal', 'siswa', 'pertemuan', 'jam'));
     }
 
     public function update(Request $request, $id)
@@ -324,5 +370,97 @@ class AbsensiController extends Controller
             ->with('success', 'Data absensi berhasil diperbarui!');
     }
 
+    /**
+     * Get history absensi untuk API
+     */
+    public function getHistory(Request $request)
+    {
+        try {
+            $user_id = Auth::id();
+
+            // Cari guru berdasarkan users_id yang login
+            $guru = Guru::where('users_id', $user_id)->first();
+
+            if (!$guru) {
+                return response()->json([], 200);
+            }
+
+            // Get filter parameters
+            $startDate = $request->input('start_date');
+            $endDate = $request->input('end_date');
+            $kelasId = $request->input('kelas_id');
+            $mapelId = $request->input('mapel_id');
+
+            // Validasi tanggal
+            if (!$startDate || !$endDate) {
+                return response()->json([], 200);
+            }
+
+            // Ambil guru_mapel yang diajar oleh guru ini
+            $guruMapelQuery = GuruMapel::where('guru_id', $guru->id);
+
+            if ($kelasId) {
+                $guruMapelQuery->where('kelas_id', $kelasId);
+            }
+
+            if ($mapelId) {
+                $guruMapelQuery->where('mapel_id', $mapelId);
+            }
+
+            $guruMapel = $guruMapelQuery->get();
+
+            if ($guruMapel->isEmpty()) {
+                return response()->json([], 200);
+            }
+
+            $kelas_ids = $guruMapel->pluck('kelas_id')->unique();
+            $mapel_ids = $guruMapel->pluck('mapel_id')->unique();
+
+            // Query detail absensi dengan relasi
+            $query = DetailAbsensi::with([
+                'absensi' => function ($q) {
+                    $q->with(['kelas', 'mapel']);
+                },
+                'siswa'
+            ])
+            ->whereHas('absensi', function ($q) use ($kelas_ids, $mapel_ids, $startDate, $endDate) {
+                $q->whereIn('kelas_id', $kelas_ids)
+                  ->whereIn('mapel_id', $mapel_ids)
+                  ->whereDate('tanggal', '>=', $startDate)
+                  ->whereDate('tanggal', '<=', $endDate);
+            })
+            ->orderBy('created_at', 'desc');
+
+            $detailAbsensi = $query->get();
+
+            // Format response
+            $result = $detailAbsensi->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'siswa_id' => $item->siswa_id,
+                    'tanggal' => $item->absensi->tanggal,
+                    'kelas' => [
+                        'id' => $item->absensi->kelas->id,
+                        'nama_kelas' => $item->absensi->kelas->nama_kelas
+                    ],
+                    'mapel' => [
+                        'id' => $item->absensi->mapel->id,
+                        'nama' => $item->absensi->mapel->nama
+                    ],
+                    'siswa' => [
+                        'id' => $item->siswa->id,
+                        'nama_siswa' => $item->siswa->nama_siswa,
+                        'nis' => $item->siswa->nis
+                    ],
+                    'status' => $item->status
+                ];
+            });
+
+            return response()->json($result);
+        } catch (\Exception $e) {
+            \Log::error('Error getting history: ' . $e->getMessage());
+            return response()->json([], 200);
+        }
+    }
 
 }

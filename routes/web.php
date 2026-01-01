@@ -142,10 +142,12 @@ Route::middleware(['auth', 'role:guru,walikelas'])->group(function () {
 
     Route::get('/absensi', [AbsensiController::class, 'index'])->name('absensi.index');
     Route::get('/absensi/create', [AbsensiController::class, 'create'])->name('absensi.create');
+    Route::get('/absensi/{id}/edit', [AbsensiController::class, 'edit'])->name('absensi.edit');
     Route::post('/absensi', [AbsensiController::class, 'store'])->name('absensi.store');
     Route::get('/absensi/{id}', [AbsensiController::class, 'show'])->name('absensi.show');
     Route::put('/absensi/{id}', [AbsensiController::class, 'update'])->name('absensi.update');
     Route::get('/absensi/siswa/{kelas_id}', [AbsensiController::class, 'getSiswaByKelas'])->name('absensi.siswa');
+    Route::get('/api/absensi/history', [AbsensiController::class, 'getHistory'])->name('api.absensi.history');
     Route::get('/agenda/siswa-tidak-hadir', [AgendaController::class, 'getSiswaTidakHadirJson'])->name('agenda.siswa-tidak-hadir');
     Route::get('/agenda/{id}/detail', [AgendaController::class, 'getDetail'])->name('agenda.detail');
 
@@ -229,6 +231,7 @@ Route::get('/tes-email', function () {
     Mail::raw('selamat anda telah berhasil menarik tunai sebesar 100.000.000.', function ($message) {
         $message->to('abuubelang@gmail.com')
             ->subject('Rafly Bau Tai');
+        Route::get('/api/absensi/history', [AbsensiController::class, 'getHistory']);
     });
 
     return "Email terkirim!";
