@@ -67,7 +67,19 @@ class AgendaController extends Controller
         $kelas = $this->getGuruKelas();
         $kelasIds = $kelas->pluck('id');
 
-        $kegiatanSebelumKBM = KegiatanSebelumKBM::orderBy('hari')->get();
+        // Tampilkan kegiatan sebelum KBM hanya untuk hari ini
+        $englishDay = now()->format('l');
+        $dayMapForKegiatan = [
+            'Monday' => 'Senin',
+            'Tuesday' => 'Selasa',
+            'Wednesday' => 'Rabu',
+            'Thursday' => 'Kamis',
+            'Friday' => 'Jumat',
+            'Saturday' => 'Senin',
+            'Sunday' => 'Senin',
+        ];
+        $todayHariForKegiatan = $dayMapForKegiatan[$englishDay] ?? 'Senin';
+        $kegiatanSebelumKBM = KegiatanSebelumKBM::where('hari', $todayHariForKegiatan)->orderBy('created_at', 'desc')->get();
 
         // Query berdasarkan role user
         if (auth()->user()->hasRole('guru') || auth()->user()->hasRole('walikelas')) {
@@ -130,7 +142,19 @@ class AgendaController extends Controller
         $kelas = $this->getGuruKelas();
         $kelasIds = $kelas->pluck('id');
 
-        $kegiatanSebelumKBM = KegiatanSebelumKBM::orderBy('hari')->get();
+        // Tampilkan kegiatan sebelum KBM hanya untuk hari ini
+        $englishDayForKegiatan = now()->format('l');
+        $dayMapForKegiatan = [
+            'Monday' => 'Senin',
+            'Tuesday' => 'Selasa',
+            'Wednesday' => 'Rabu',
+            'Thursday' => 'Kamis',
+            'Friday' => 'Jumat',
+            'Saturday' => 'Senin',
+            'Sunday' => 'Senin',
+        ];
+        $todayHariForKegiatan = $dayMapForKegiatan[$englishDayForKegiatan] ?? 'Senin';
+        $kegiatanSebelumKBM = KegiatanSebelumKBM::where('hari', $todayHariForKegiatan)->orderBy('created_at', 'desc')->get();
 
         // Ambil 5 agenda terbaru untuk sidebar
         $recentAgendas = Agenda::with(['kelas', 'jampel'])
@@ -181,7 +205,7 @@ class AgendaController extends Controller
             ]);
 
             if (!$allowed) {
-                return back()->withInput()->with('error', '❌ Anda tidak memiliki akses ke kelas ini.');
+                return back()->withInput()->with('error', 'Anda tidak memiliki akses ke kelas ini.');
             }
         }
 
@@ -199,13 +223,13 @@ class AgendaController extends Controller
         ]);
 
         if (!$guruMapel) {
-            return back()->withInput()->with('error', '❌ Kombinasi kelas, mata pelajaran, dan guru tidak valid. Pastikan guru mengajar mata pelajaran ini di kelas ini.');
+            return back()->withInput()->with('error', 'Kombinasi kelas, mata pelajaran, dan guru tidak valid. Pastikan guru mengajar mata pelajaran ini di kelas ini.');
         }
 
         // Ambil data mata pelajaran
         $mapel = MataPelajaran::find($validated['mata_pelajaran_id']);
         if (!$mapel) {
-            return back()->withInput()->with('error', '❌ Mata pelajaran tidak ditemukan.');
+            return back()->withInput()->with('error', 'Mata pelajaran tidak ditemukan.');
         }
 
         // Siapkan data untuk disimpan
@@ -259,7 +283,7 @@ class AgendaController extends Controller
 
             \Log::info('Agenda created successfully');
             return redirect()->route('agenda.index')
-                ->with('success', '✅ Agenda berhasil disimpan!');
+                ->with('success', 'Agenda berhasil disimpan!');
         } catch (\Exception $e) {
             \Log::error('Agenda Store Error', [
                 'message' => $e->getMessage(),
@@ -270,7 +294,7 @@ class AgendaController extends Controller
 
             return redirect()->back()
                 ->withInput()
-                ->with('error', '❌ Gagal menyimpan agenda: ' . $e->getMessage());
+                ->with('error', 'Gagal menyimpan agenda: ' . $e->getMessage());
         }
     }
 
@@ -345,14 +369,14 @@ class AgendaController extends Controller
             if (!$guruKelas) {
                 return redirect()->back()
                     ->withInput()
-                    ->with('error', '❌ Anda tidak memiliki akses untuk mengupdate agenda ini.');
+                    ->with('error', 'Anda tidak memiliki akses untuk mengupdate agenda ini.');
             }
         } else {
             // Siswa hanya bisa mengupdate agenda miliknya sendiri di kelasnya
             if ($agenda->users_id != auth()->id() || $agenda->kelas_id != auth()->user()->siswa->kelas_id) {
                 return redirect()->back()
                     ->withInput()
-                    ->with('error', '❌ Anda tidak memiliki akses untuk mengupdate agenda ini.');
+                    ->with('error', 'Anda tidak memiliki akses untuk mengupdate agenda ini.');
             }
         }
 
@@ -382,7 +406,7 @@ class AgendaController extends Controller
         try {
             $agenda->update($validated);
 
-            return redirect()->route('agenda.index')->with('success', '✅ Agenda berhasil diperbarui!');
+            return redirect()->route('agenda.index')->with('success', ' Agenda berhasil diperbarui!');
         } catch (\Exception $e) {
             Log::error('Agenda Update Error', [
                 'message' => $e->getMessage(),
@@ -393,7 +417,7 @@ class AgendaController extends Controller
 
             return redirect()->back()
                 ->withInput()
-                ->with('error', '❌ Gagal memperbarui agenda: ' . $e->getMessage());
+                ->with('error', 'Gagal memperbarui agenda: ' . $e->getMessage());
         }
     }
 
@@ -411,20 +435,20 @@ class AgendaController extends Controller
 
             if (!$guruKelas) {
                 return redirect()->back()
-                    ->with('error', '❌ Anda tidak memiliki akses untuk menghapus agenda ini.');
+                    ->with('error', 'Anda tidak memiliki akses untuk menghapus agenda ini.');
             }
         } else {
             // Siswa hanya bisa menghapus agenda miliknya sendiri di kelasnya
             if ($agenda->users_id != auth()->id() || $agenda->kelas_id != auth()->user()->siswa->kelas_id) {
                 return redirect()->back()
-                    ->with('error', '❌ Anda tidak memiliki akses untuk menghapus agenda ini.');
+                    ->with('error', 'Anda tidak memiliki akses untuk menghapus agenda ini.');
             }
         }
 
         try {
             $agenda->delete();
 
-            return redirect()->route('agenda.index')->with('success', '✅ Agenda berhasil dihapus!');
+            return redirect()->route('agenda.index')->with('success', ' Agenda berhasil dihapus!');
         } catch (\Exception $e) {
             Log::error('Agenda Delete Error', [
                 'message' => $e->getMessage(),
@@ -433,7 +457,7 @@ class AgendaController extends Controller
                 'agenda_id' => $id
             ]);
 
-            return redirect()->route('agenda.index')->with('error', '❌ Gagal menghapus agenda: ' . $e->getMessage());
+            return redirect()->route('agenda.index')->with('error', 'Gagal menghapus agenda: ' . $e->getMessage());
         }
     }
 
@@ -657,7 +681,7 @@ class AgendaController extends Controller
 
                 if (!in_array($request->kelas_id, $kelasIds->toArray())) {
                     return redirect()->back()
-                        ->with('error', '❌ Anda tidak memiliki akses ke kelas tersebut.');
+                        ->with('error', 'Anda tidak memiliki akses ke kelas tersebut.');
                 }
             }
 
@@ -728,7 +752,7 @@ class AgendaController extends Controller
 
                 if (!in_array($request->kelas_id, $kelasIds->toArray())) {
                     return redirect()->back()
-                        ->with('error', '❌ Anda tidak memiliki akses ke kelas tersebut.');
+                        ->with('error', 'Anda tidak memiliki akses ke kelas tersebut.');
                 }
             }
             $query->where('kelas_id', $request->kelas_id);
@@ -874,7 +898,7 @@ class AgendaController extends Controller
 
                 if (!in_array($request->kelas_id, $kelasIds->toArray())) {
                     return redirect()->back()
-                        ->with('error', '❌ Anda tidak memiliki akses ke kelas tersebut.');
+                        ->with('error', 'Anda tidak memiliki akses ke kelas tersebut.');
                 }
             }
             $query->where('kelas_id', $request->kelas_id);
@@ -1103,6 +1127,35 @@ class AgendaController extends Controller
                     'mapel_count' => count($mapels),
                     'mapels' => $mapels->toArray()
                 ]);
+            } elseif (auth()->user()->hasRole('sekretaris')) {
+                // Sekretaris dapat melihat semua mata pelajaran untuk kelas ini beserta guru pengampu
+                $guruMapels = GuruMapel::where('kelas_id', $kelasId)
+                    ->with(['mapel', 'guru'])
+                    ->get();
+
+                \Log::info('GuruMapel results for sekretaris', [
+                    'count' => $guruMapels->count(),
+                    'kelas_id' => $kelasId
+                ]);
+
+                $mapels = $guruMapels->groupBy('mapel_id')->map(function ($group) {
+                    $mapel = $group->first()->mapel;
+                    $gurus = $group->map(function ($item) {
+                        return [
+                            'guru_id' => (int) $item->guru->id,
+                            'guru_nama' => $item->guru->nama
+                        ];
+                    })->values();
+
+                    return [
+                        'id' => $mapel->id,
+                        'nama' => $mapel->nama,
+                        'kode' => $mapel->kode,
+                        'kelompok' => $mapel->kelompok,
+                        'gurus' => $gurus,
+                        'guru_count' => count($gurus)
+                    ];
+                })->values();
             } elseif (auth()->user()->hasRole('siswa')) {
                 // Siswa bisa melihat semua mata pelajaran di kelasnya
                 if ($kelasId != auth()->user()->siswa->kelas_id) {

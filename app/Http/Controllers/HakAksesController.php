@@ -12,6 +12,7 @@ use App\Models\MataPelajaran;
 use App\Models\Agenda;
 use App\Models\Absensi;
 use App\Models\GuruMapel;
+use Illuminate\Support\Facades\DB;
 
 
 class HakAksesController extends Controller
@@ -101,110 +102,82 @@ class HakAksesController extends Controller
         ));
     }
 
-
     function guru()
-    {
-        $user = Auth::user();
+{
+    $user = Auth::user();
+    $guru = Guru::where('users_id', $user->id)->first();
 
-        $guru = Guru::where('users_id', $user->id)->first();
-
-        if (!$guru) {
-            return redirect()->back()->with('error', 'Profil guru tidak ditemukan.');
-        }
-
-        $kelasCount = GuruMapel::where('guru_id', $guru->id)->distinct('kelas_id')->count();
-        $mapelCount = GuruMapel::where('guru_id', $guru->id)->distinct('mapel_id')->count();
-
-        $today = now()->format('Y-m-d');
-
-        // Agenda table stores the creator in `users_id`, not `guru_id`
-        $agendaHariIni = Agenda::where('users_id', $guru->users_id)
-            ->whereDate('tanggal', $today)
-            ->orderBy('jampel_id')
-            ->get();
-
-        $recentAgendas = Agenda::where('users_id', $guru->users_id)
-            ->orderBy('tanggal', 'desc')
-            ->limit(5)
-            ->get();
-
-        $kelasIds = GuruMapel::where('guru_id', $guru->id)->pluck('kelas_id')->unique()->toArray();
-
-        $presensiHadir = DetailAbsensi::whereHas('absensi', function ($q) use ($today, $kelasIds) {
-            $q->whereDate('tanggal', $today)->whereIn('kelas_id', $kelasIds);
-        })->where('status', 'hadir')->count();
-
-        $presensiIzin = DetailAbsensi::whereHas('absensi', function ($q) use ($today, $kelasIds) {
-            $q->whereDate('tanggal', $today)->whereIn('kelas_id', $kelasIds);
-        })->where('status', 'izin')->count();
-
-        $presensiSakit = DetailAbsensi::whereHas('absensi', function ($q) use ($today, $kelasIds) {
-            $q->whereDate('tanggal', $today)->whereIn('kelas_id', $kelasIds);
-        })->where('status', 'sakit')->count();
-
-        $presensiAlpha = DetailAbsensi::whereHas('absensi', function ($q) use ($today, $kelasIds) {
-            $q->whereDate('tanggal', $today)->whereIn('kelas_id', $kelasIds);
-        })->where('status', 'alpha')->count();
-
-        $presensiData = [
-            'hadir' => $presensiHadir,
-            'izin' => $presensiIzin,
-            'sakit' => $presensiSakit,
-            'alpha' => $presensiAlpha,
-        ];
-
-        $totalSiswa = 0;
-        if (!empty($kelasIds)) {
-            $totalSiswa = Siswa::whereIn('kelas_id', $kelasIds)->count();
-        }
-
-        // Fetch activity history: recent agendas created by this guru + recent absences recorded
-        // Ensures data isolation per guru (only show their own activities)
-        $activities = [];
-
-        // Recent agendas created by this guru (last 10)
-        $recentAgendaActivities = Agenda::where('users_id', $guru->users_id)
-            ->with('kelas')
-            ->orderBy('created_at', 'desc')
-            ->limit(10)
-            ->get()
-            ->map(function ($agenda) {
-                return [
-                    'type' => 'agenda',
-                    'title' => 'Agenda: ' . $agenda->mata_pelajaran,
-                    'description' => 'Kelas ' . ($agenda->kelas->nama ?? 'N/A'),
-                    'timestamp' => $agenda->created_at,
-                ];
-            });
-
-        // Recent absences recorded for this guru's classes (last 10)
-        $recentAbsensiActivities = Absensi::whereIn('kelas_id', $kelasIds)
-            ->with('kelas')
-            ->orderBy('created_at', 'desc')
-            ->limit(10)
-            ->get()
-            ->map(function ($absensi) {
-                $tanggalFormatted = is_string($absensi->tanggal)
-                    ? \Carbon\Carbon::parse($absensi->tanggal)->format('d M Y')
-                    : $absensi->tanggal->format('d M Y');
-                return [
-                    'type' => 'absensi',
-                    'title' => 'Absensi Kelas ' . ($absensi->kelas->nama ?? 'N/A'),
-                    'description' => 'Tanggal: ' . $tanggalFormatted,
-                    'timestamp' => $absensi->created_at,
-                ];
-            });
-
-        // Merge and sort by timestamp (newest first)
-        $activities = collect($recentAgendaActivities)
-            ->merge($recentAbsensiActivities)
-            ->sortByDesc('timestamp')
-            ->take(10);
-
-        return view('guru.dashboard', compact(
-            'user', 'guru', 'kelasCount', 'mapelCount', 'agendaHariIni', 'recentAgendas', 'presensiData', 'totalSiswa', 'activities'
-        ));
+    if (!$guru) {
+        return redirect()->back()->with('error', 'Profil guru tidak ditemukan.');
     }
+
+    $kelasCount = GuruMapel::where('guru_id', $guru->id)->select('kelas_id')->distinct()->count();
+    $mapelCount = GuruMapel::where('guru_id', $guru->id)->select('mapel_id')->distinct()->count();
+
+    $today = now()->format('Y-m-d');
+    $kelasIds = GuruMapel::where('guru_id', $guru->id)->pluck('kelas_id')->unique()->toArray();
+
+    // DAFTAR KEHADIRAN HARI INI - DIUBAH
+    $daftarKehadiranHariIni = collect();
+
+    if (!empty($kelasIds)) {
+        $daftarKehadiranHariIni = DetailAbsensi::with(['siswa', 'absensi.kelas'])
+            ->whereHas('absensi', function ($query) use ($today, $kelasIds) {
+                $query->whereDate('tanggal', $today)
+                      ->whereIn('kelas_id', $kelasIds);
+            })
+            ->whereIn('status', ['izin', 'sakit', 'alpha'])
+            ->get()
+            ->groupBy('status');
+    }
+
+    // Pastikan semua kunci ada walaupun kosong
+    $daftarKehadiranHariIni = collect([
+        'izin' => $daftarKehadiranHariIni->get('izin', collect()),
+        'sakit' => $daftarKehadiranHariIni->get('sakit', collect()),
+        'alpha' => $daftarKehadiranHariIni->get('alpha', collect()),
+    ]);
+
+    // AGENDA HARI INI
+    $agendaHariIni = Agenda::where(function($query) use ($user, $kelasIds) {
+            $query->where('users_id', $user->id)
+                  ->orWhere('ditandatangani_oleh', $user->id)
+                  ->orWhereIn('kelas_id', $kelasIds);
+        })
+        ->with(['jampel', 'kelas'])
+        ->orderBy('tanggal', 'desc')
+        ->orderBy('jampel_id', 'desc')
+        ->limit(3)
+        ->get();
+
+    // PRESENSI DATA
+    $presensiCounts = DetailAbsensi::whereHas('absensi', function ($q) use ($today, $kelasIds) {
+            $q->whereDate('tanggal', $today)->whereIn('kelas_id', $kelasIds);
+        })
+        ->whereIn('status', ['hadir', 'izin', 'sakit', 'alpha'])
+        ->select('status', DB::raw('count(*) as total'))
+        ->groupBy('status')
+        ->get()
+        ->pluck('total', 'status');
+
+    $presensiData = [
+        'hadir' => $presensiCounts->get('hadir', 0),
+        'izin' => $presensiCounts->get('izin', 0),
+        'sakit' => $presensiCounts->get('sakit', 0),
+        'alpha' => $presensiCounts->get('alpha', 0),
+    ];
+
+    $totalSiswa = 0;
+    if (!empty($kelasIds)) {
+        $totalSiswa = Siswa::whereIn('kelas_id', $kelasIds)->count();
+    }
+
+    return view('guru.dashboard', compact(
+        'user', 'guru', 'kelasCount', 'mapelCount',
+        'agendaHariIni', 'presensiData', 'totalSiswa',
+        'daftarKehadiranHariIni'
+    ));
+}
 
     function walikelas()
     {

@@ -93,7 +93,17 @@
 
                             <!-- Submit Button -->
                             <div class="flex justify-end items-center space-x-4 pt-6 border-t border-gray-100">
-                                <a href="{{ route('dashboard.' . auth()->user()->role) }}"
+                                @php
+                                    $dashboardRoute = 'dashboard.' . auth()->user()->role;
+                                @endphp
+                                <a
+                                    @if(Route::has($dashboardRoute))
+                                        href="{{ route($dashboardRoute) }}"
+                                    @elseif(Route::has('dashboard'))
+                                        href="{{ route('dashboard') }}"
+                                    @else
+                                        href="{{ url('/') }}"
+                                    @endif
                                     class="px-6 py-2.5 text-gray-700 font-medium border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors duration-200">
                                     Batal
                                 </a>

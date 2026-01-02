@@ -109,10 +109,6 @@
                             </td>
 
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                <a href="javascript:void(0)" onclick="showAgendaDetail({{ $agenda->id }})"
-                                    class="text-blue-600 hover:text-blue-900 mr-3" title="Detail">
-                                    <i class="fas fa-eye"></i>
-                                </a>
                                 <a href="{{ route('agenda.show', $agenda->id) }}"
                                     class="text-indigo-600 hover:text-indigo-900 mr-3" title="Lihat Lengkap">
                                     <i class="fas fa-file-alt"></i>
@@ -121,7 +117,7 @@
                                     class="text-indigo-600 hover:text-indigo-900 mr-3" title="Edit">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                @if (!$agenda->status_ttd && auth()->user()->hasRole('guru'))
+                                @if (!$agenda->status_ttd && in_array(auth()->user()->role , ['guru' , 'walikelas']))
                                     <a href="{{ route('agenda.sign-form', $agenda->id) }}"
                                         class="text-green-600 hover:text-green-900 mr-3" title="Tanda Tangan">
                                         <i class="fas fa-signature"></i>

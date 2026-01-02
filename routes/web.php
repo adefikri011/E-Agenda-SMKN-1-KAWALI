@@ -163,11 +163,12 @@ Route::middleware(['auth', 'role:guru,walikelas'])->group(function () {
 
 
 Route::middleware(['auth', 'role:sekretaris'])->group(function () {
-    Route::get('/dashboard-sekretaris', [HakAksesController::class, 'sekretaris']);
+    Route::get('/dashboard-sekretaris', [HakAksesController::class, 'sekretaris'])->name('dashboard.sekretaris');
 });
 
+
 Route::middleware(['auth', 'role:walikelas'])->group(function () {
-    Route::get('/dashboard-walikelas', [HakAksesController::class, 'walikelas']);
+    Route::get('/dashboard-walikelas', [HakAksesController::class, 'walikelas'])->name('dashboard.walikelas');
 
     Route::get('/rekap', [RekapController::class, 'index'])->name('rekap.index');
     Route::get('/api/rekap-data', [RekapController::class, 'getRekapData']);
