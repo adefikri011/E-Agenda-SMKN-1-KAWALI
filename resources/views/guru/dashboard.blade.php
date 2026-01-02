@@ -146,7 +146,7 @@
                     @else
                         <div class="space-y-3">
                             @foreach ($agendaHariIni as $agenda)
-                                <a href="{{ url('/agenda/' . $agenda->id) }}" target="_blank"
+                                <a href="{{ url('/agenda/' . $agenda->id) }}"
                                     class="block card-hover border-l-4 border-blue-300 bg-gray-50 rounded-lg p-4 hover:bg-blue-50 transition-colors">
                                     <div class="flex justify-between items-start">
                                         <div class="flex-1">
@@ -168,7 +168,7 @@
                                         <div class="flex-shrink-0 ml-4">
                                             <span
                                                 class="inline-block bg-blue-100 text-blue-800 text-xs font-medium px-3 py-1 rounded-full">
-                                                📌 Sudah TTD
+                                                📌 Sudah Ditanda Tangani
                                             </span>
                                         </div>
                                     </div>

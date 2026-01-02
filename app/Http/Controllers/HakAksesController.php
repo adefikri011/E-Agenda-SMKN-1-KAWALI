@@ -103,81 +103,86 @@ class HakAksesController extends Controller
     }
 
     function guru()
-{
-    $user = Auth::user();
-    $guru = Guru::where('users_id', $user->id)->first();
+    {
+        $user = Auth::user();
+        $guru = Guru::where('users_id', $user->id)->first();
 
-    if (!$guru) {
-        return redirect()->back()->with('error', 'Profil guru tidak ditemukan.');
-    }
+        if (!$guru) {
+            return redirect()->back()->with('error', 'Profil guru tidak ditemukan.');
+        }
 
-    $kelasCount = GuruMapel::where('guru_id', $guru->id)->select('kelas_id')->distinct()->count();
-    $mapelCount = GuruMapel::where('guru_id', $guru->id)->select('mapel_id')->distinct()->count();
+        $kelasCount = GuruMapel::where('guru_id', $guru->id)->select('kelas_id')->distinct()->count();
+        $mapelCount = GuruMapel::where('guru_id', $guru->id)->select('mapel_id')->distinct()->count();
 
-    $today = now()->format('Y-m-d');
-    $kelasIds = GuruMapel::where('guru_id', $guru->id)->pluck('kelas_id')->unique()->toArray();
+        $today = now()->format('Y-m-d');
+        $kelasIds = GuruMapel::where('guru_id', $guru->id)->pluck('kelas_id')->unique()->toArray();
 
-    // DAFTAR KEHADIRAN HARI INI - DIUBAH
-    $daftarKehadiranHariIni = collect();
+        // DAFTAR KEHADIRAN HARI INI - DIUBAH
+        $daftarKehadiranHariIni = collect();
 
-    if (!empty($kelasIds)) {
-        $daftarKehadiranHariIni = DetailAbsensi::with(['siswa', 'absensi.kelas'])
-            ->whereHas('absensi', function ($query) use ($today, $kelasIds) {
-                $query->whereDate('tanggal', $today)
-                      ->whereIn('kelas_id', $kelasIds);
-            })
-            ->whereIn('status', ['izin', 'sakit', 'alpha'])
-            ->get()
-            ->groupBy('status');
-    }
+        if (!empty($kelasIds)) {
+            $daftarKehadiranHariIni = DetailAbsensi::with(['siswa', 'absensi.kelas'])
+                ->whereHas('absensi', function ($query) use ($today, $kelasIds) {
+                    $query->whereDate('tanggal', $today)
+                        ->whereIn('kelas_id', $kelasIds);
+                })
+                ->whereIn('status', ['izin', 'sakit', 'alpha'])
+                ->get()
+                ->groupBy('status');
+        }
 
-    // Pastikan semua kunci ada walaupun kosong
-    $daftarKehadiranHariIni = collect([
-        'izin' => $daftarKehadiranHariIni->get('izin', collect()),
-        'sakit' => $daftarKehadiranHariIni->get('sakit', collect()),
-        'alpha' => $daftarKehadiranHariIni->get('alpha', collect()),
-    ]);
+        // Pastikan semua kunci ada walaupun kosong
+        $daftarKehadiranHariIni = collect([
+            'izin' => $daftarKehadiranHariIni->get('izin', collect()),
+            'sakit' => $daftarKehadiranHariIni->get('sakit', collect()),
+            'alpha' => $daftarKehadiranHariIni->get('alpha', collect()),
+        ]);
 
-    // AGENDA HARI INI
-    $agendaHariIni = Agenda::where(function($query) use ($user, $kelasIds) {
+        // AGENDA HARI INI
+        $agendaHariIni = Agenda::where(function ($query) use ($user) {
             $query->where('users_id', $user->id)
-                  ->orWhere('ditandatangani_oleh', $user->id)
-                  ->orWhereIn('kelas_id', $kelasIds);
+                ->orWhere('ditandatangani_oleh', $user->id);
         })
-        ->with(['jampel', 'kelas'])
-        ->orderBy('tanggal', 'desc')
-        ->orderBy('jampel_id', 'desc')
-        ->limit(3)
-        ->get();
+            ->with(['jampel', 'kelas'])
+            ->orderBy('tanggal', 'desc')
+            ->orderBy('jampel_id', 'desc')
+            ->limit(3)
+            ->get();
 
-    // PRESENSI DATA
-    $presensiCounts = DetailAbsensi::whereHas('absensi', function ($q) use ($today, $kelasIds) {
+
+        // PRESENSI DATA
+        $presensiCounts = DetailAbsensi::whereHas('absensi', function ($q) use ($today, $kelasIds) {
             $q->whereDate('tanggal', $today)->whereIn('kelas_id', $kelasIds);
         })
-        ->whereIn('status', ['hadir', 'izin', 'sakit', 'alpha'])
-        ->select('status', DB::raw('count(*) as total'))
-        ->groupBy('status')
-        ->get()
-        ->pluck('total', 'status');
+            ->whereIn('status', ['hadir', 'izin', 'sakit', 'alpha'])
+            ->select('status', DB::raw('count(*) as total'))
+            ->groupBy('status')
+            ->get()
+            ->pluck('total', 'status');
 
-    $presensiData = [
-        'hadir' => $presensiCounts->get('hadir', 0),
-        'izin' => $presensiCounts->get('izin', 0),
-        'sakit' => $presensiCounts->get('sakit', 0),
-        'alpha' => $presensiCounts->get('alpha', 0),
-    ];
+        $presensiData = [
+            'hadir' => $presensiCounts->get('hadir', 0),
+            'izin' => $presensiCounts->get('izin', 0),
+            'sakit' => $presensiCounts->get('sakit', 0),
+            'alpha' => $presensiCounts->get('alpha', 0),
+        ];
 
-    $totalSiswa = 0;
-    if (!empty($kelasIds)) {
-        $totalSiswa = Siswa::whereIn('kelas_id', $kelasIds)->count();
+        $totalSiswa = 0;
+        if (!empty($kelasIds)) {
+            $totalSiswa = Siswa::whereIn('kelas_id', $kelasIds)->count();
+        }
+
+        return view('guru.dashboard', compact(
+            'user',
+            'guru',
+            'kelasCount',
+            'mapelCount',
+            'agendaHariIni',
+            'presensiData',
+            'totalSiswa',
+            'daftarKehadiranHariIni'
+        ));
     }
-
-    return view('guru.dashboard', compact(
-        'user', 'guru', 'kelasCount', 'mapelCount',
-        'agendaHariIni', 'presensiData', 'totalSiswa',
-        'daftarKehadiranHariIni'
-    ));
-}
 
     function walikelas()
     {
