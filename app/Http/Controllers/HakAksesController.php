@@ -281,6 +281,7 @@ class HakAksesController extends Controller
             return view('sekretaris.dashboard', [
                 'user' => $user,
                 'kelas' => null,
+                'jurusan' => null,
                 'jumlahSiswa' => 0,
                 'agendaHariIni' => [],
                 'guruMapelToday' => [],
@@ -307,7 +308,18 @@ class HakAksesController extends Controller
         $jumlahMapel = $guruMapelToday->count();
 
         // Get kegiatan sebelum KBM based on kelas's jurusan
-        $hari = now()->translatedFormat('l');
+        $englishDay = now()->format('l');
+        $dayMap = [
+            'Monday' => 'Senin',
+            'Tuesday' => 'Selasa',
+            'Wednesday' => 'Rabu',
+            'Thursday' => 'Kamis',
+            'Friday' => 'Jumat',
+            'Saturday' => 'Senin',
+            'Sunday' => 'Senin',
+        ];
+        $hari = $dayMap[$englishDay] ?? 'Senin';
+
         $kegiatanPreKBM = \App\Models\KegiatanSebelumKBM::where('hari', $hari)
             ->where(function ($query) use ($kelas) {
                 $query->whereNull('jurusan_id')
@@ -315,9 +327,13 @@ class HakAksesController extends Controller
             })
             ->first();
 
+        // Get jurusan data
+        $jurusan = $kelas->jurusan ?? null;
+
         return view('sekretaris.dashboard', compact(
             'user',
             'kelas',
+            'jurusan',
             'jumlahSiswa',
             'jumlahMapel',
             'agendaHariIni',

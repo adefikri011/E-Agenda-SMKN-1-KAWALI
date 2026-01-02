@@ -249,8 +249,15 @@
                             <div>
                                 <div class="text-sm font-semibold text-gray-900">{{ $agenda->mata_pelajaran }} -
                                     {{ $agenda->kelas->nama_kelas }}</div>
-                                <div class="text-xs text-gray-600 mt-1">{{ $agenda->jampel->rentang_waktu }} -
-                                    {{ $agenda->materi }}</div>
+                                @if($agenda->jampel)
+                                    <div class="text-xs text-gray-600 mt-1">{{ $agenda->jampel->rentang_waktu }} -
+                                        {{ $agenda->materi }}</div>
+                                @elseif($agenda->startJampel && $agenda->endJampel)
+                                    <div class="text-xs text-gray-600 mt-1">{{ $agenda->startJampel->jam_mulai }} - {{ $agenda->endJampel->jam_selesai }} -
+                                        {{ $agenda->materi }}</div>
+                                @else
+                                    <div class="text-xs text-gray-600 mt-1">Waktu Fleksibel - {{ $agenda->materi }}</div>
+                                @endif
                             </div>
                             <button onclick="showAgendaDetail({{ $agenda->id }})"
                                 class="text-blue-600 hover:text-blue-800">
@@ -421,89 +428,7 @@
 
                 console.log('Signature pad initialized successfully');
 
-                // When kelas changes, fetch mapel for that kelas
-                kelasSelect.addEventListener('change', function() {
-                    const kelasId = this.value;
-
-                    // Reset mapel selection
-                    mapelSelect.innerHTML = '<option value="">Pilih Mata Pelajaran</option>';
-                    mapelSelect.disabled = !kelasId;
-
-                    // Hide guru info
-                    guruInfo.classList.add('hidden');
-                    guruIdInput.value = '';
-                    mapelNamaInput.value = '';
-
-                    if (!kelasId) return;
-
-                    // Show loading
-                    mapelSelect.innerHTML = '<option value="">Memuat data...</option>';
-
-                    fetch("{{ url('/agenda/get-mapel-by-kelas') }}/" + kelasId, {
-                            headers: {
-                                'X-Requested-With': 'XMLHttpRequest'
-                            }
-                        })
-                        .then(res => {
-                            if (!res.ok) {
-                                throw new Error('Network response was not ok');
-                            }
-                            return res.json();
-                        })
-                        .then(data => {
-                            // Clear loading
-                            mapelSelect.innerHTML = '<option value="">Pilih Mata Pelajaran</option>';
-
-                            if (!Array.isArray(data) || data.length === 0) {
-                                mapelSelect.innerHTML =
-                                    '<option value="">Tidak ada mata pelajaran untuk kelas ini</option>';
-                                return;
-                            }
-
-                            data.forEach(item => {
-                                const opt = document.createElement('option');
-                                opt.value = item.id;
-                                opt.textContent = item.nama;
-                                opt.setAttribute('data-guru-id', item.guru_id);
-                                opt.setAttribute('data-guru-nama', item.guru_nama);
-                                mapelSelect.appendChild(opt);
-                            });
-                        })
-                        .catch(err => {
-                            console.error('Gagal ambil mapel:', err);
-                            mapelSelect.innerHTML = '<option value="">Gagal memuat data</option>';
-                        });
-                });
-
-                // When mapel changes, show guru info
-                mapelSelect.addEventListener('change', function() {
-                    const selectedOption = this.options[this.selectedIndex];
-
-                    if (selectedOption.value) {
-                        const guruId = selectedOption.getAttribute('data-guru-id');
-                        const guruNama = selectedOption.getAttribute('data-guru-nama');
-
-                        if (guruId && guruNama) {
-                            // Show guru info
-                            document.getElementById('guruNama').textContent = guruNama;
-                            guruInfo.classList.remove('hidden');
-
-                            // Set hidden inputs
-                            guruIdInput.value = guruId;
-                            mapelNamaInput.value = selectedOption.textContent;
-                        } else {
-                            // Hide guru info
-                            guruInfo.classList.add('hidden');
-                            guruIdInput.value = '';
-                            mapelNamaInput.value = '';
-                        }
-                    } else {
-                        // Hide guru info
-                        guruInfo.classList.add('hidden');
-                        guruIdInput.value = '';
-                        mapelNamaInput.value = '';
-                    }
-                });
+                // Mapel/guru handling consolidated in the global script below
 
                 // Tab switching functionality
                 const agendaTab = document.getElementById('agendaTab');

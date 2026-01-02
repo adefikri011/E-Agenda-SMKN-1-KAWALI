@@ -192,12 +192,16 @@ Route::middleware(['auth', 'role:guru,sekretaris,walikelas'])->group(function ()
 
     // Route untuk rekap agenda
     Route::get('/agenda/rekap', [AgendaController::class, 'rekap'])->name('agenda.rekap');
+    // Consolidated agendas (merge signed agendas per class/date)
+    Route::get('/agenda/consolidated', [AgendaController::class, 'consolidated'])->name('agenda.consolidated');
+    Route::post('/agenda/consolidate-save', [AgendaController::class, 'consolidateSave'])->name('agenda.consolidate.save');
     Route::get('/agenda/export-pdf', [AgendaController::class, 'exportPdf'])->name('agenda.export-pdf');
     Route::get('/agenda/export-excel', [AgendaController::class, 'exportExcel'])->name('agenda.export-excel');
 
     // API endpoint untuk mendapatkan mata pelajaran berdasarkan kelas
     Route::get('/agenda/get-mapel-by-kelas/{kelasId}', [AgendaController::class, 'getMapelByKelas'])->name('agenda.get-mapel-by-kelas');
 
+    // NOTE: manual consolidated UI removed; consolidation saved to history (rekap)
     // Route Kegiatan Sebelum KBM
     Route::get('/kegiatan-sebelum-kbm', [KegiatanSebelumKBMController::class, 'index'])->name('kegiatan.index');
     Route::post('/kegiatan-sebelum-kbm', [KegiatanSebelumKBMController::class, 'store'])->name('kegiatan-sebelum-kbm.store');

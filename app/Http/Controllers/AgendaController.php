@@ -145,17 +145,27 @@ class AgendaController extends Controller
 
     public function store(Request $request)
     {
+        // Debug log input
+        \Log::info('Agenda Store Request', [
+            'user_id' => auth()->id(),
+            'role' => auth()->user()->role,
+            'input' => $request->all()
+        ]);
+
         $validated = $request->validate([
             'tanggal' => 'required|date',
-            'start_jampel_id' => 'required|exists:jam_pelajaran,id',
-            'end_jampel_id' => 'required|exists:jam_pelajaran,id',
-            'kelas_id' => 'required|exists:kelas,id',
-            'mata_pelajaran_id' => 'required|exists:mata_pelajaran,id',
-            'guru_id' => 'required|exists:guru,id',
+            'start_jampel_id' => 'required|integer|exists:jam_pelajaran,id',
+            'end_jampel_id' => 'required|integer|exists:jam_pelajaran,id',
+            'kelas_id' => 'required|integer|exists:kelas,id',
+            'mata_pelajaran_id' => 'required|integer|exists:mata_pelajaran,id',
+            'guru_id' => 'required|integer|exists:guru,id',
             'materi' => 'required|string|max:500',
             'kegiatan' => 'required|string',
             'catatan' => 'nullable|string',
         ]);
+
+        // Debug validated data
+        \Log::info('Agenda Validated Data', ['validated' => $validated]);
 
         // Cek hak akses kelas untuk guru/walikelas
         if (auth()->user()->hasRole('guru') || auth()->user()->hasRole('walikelas')) {
@@ -163,6 +173,12 @@ class AgendaController extends Controller
             $allowed = $guru ? GuruMapel::where('guru_id', $guru->id)
                 ->where('kelas_id', $validated['kelas_id'])
                 ->exists() : false;
+
+            \Log::info('Guru Access Check', [
+                'guru' => $guru?->id,
+                'kelas_id' => $validated['kelas_id'],
+                'allowed' => $allowed
+            ]);
 
             if (!$allowed) {
                 return back()->withInput()->with('error', '❌ Anda tidak memiliki akses ke kelas ini.');
@@ -175,8 +191,15 @@ class AgendaController extends Controller
             ->where('guru_id', $validated['guru_id'])
             ->first();
 
+        \Log::info('GuruMapel Check', [
+            'kelas_id' => $validated['kelas_id'],
+            'mapel_id' => $validated['mata_pelajaran_id'],
+            'guru_id' => $validated['guru_id'],
+            'found' => $guruMapel ? true : false
+        ]);
+
         if (!$guruMapel) {
-            return back()->withInput()->with('error', '❌ Kombinasi kelas, mata pelajaran, dan guru tidak valid.');
+            return back()->withInput()->with('error', '❌ Kombinasi kelas, mata pelajaran, dan guru tidak valid. Pastikan guru mengajar mata pelajaran ini di kelas ini.');
         }
 
         // Ambil data mata pelajaran
@@ -199,8 +222,9 @@ class AgendaController extends Controller
             'pembuat' => (auth()->user()->hasRole('guru') || auth()->user()->hasRole('walikelas')) ? 'guru' : 'siswa',
         ];
 
-        // Status tanda tangan
-        if ($data['pembuat'] === 'guru') {
+        // Status tanda tangan - hanya untuk guru biasa (bukan walikelas)
+        if (auth()->user()->hasRole('guru') && !auth()->user()->hasRole('walikelas')) {
+            // Guru biasa harus memberikan tanda tangan
             $request->validate([
                 'tanda_tangan' => 'required|string|min:50',
             ]);
@@ -211,6 +235,7 @@ class AgendaController extends Controller
             $data['waktu_ttd'] = now();
             $data['tanda_tangan'] = $request->tanda_tangan;
         } else {
+            // Walikelas atau siswa tidak perlu tanda tangan saat membuat agenda
             $data['status_ttd'] = 'belum';
             $data['sudah_ttd'] = false;
             $data['guru_ttd_id'] = null;
@@ -219,14 +244,28 @@ class AgendaController extends Controller
         }
 
         try {
+            \Log::info('Creating Agenda with data', ['data_keys' => array_keys($data)]);
+
             Agenda::create($data);
+
+            // Jika agenda yang dibuat sudah bertanda_tangan (guru langsung ttd), lakukan auto-consolidate
+            try {
+                if (($data['status_ttd'] ?? 'belum') === 'sudah') {
+                    $this->consolidateForClassDate($data['kelas_id'], $data['tanggal']);
+                }
+            } catch (\Exception $e) {
+                \Log::error('Auto Consolidate after store failed', ['message' => $e->getMessage()]);
+            }
+
+            \Log::info('Agenda created successfully');
             return redirect()->route('agenda.index')
                 ->with('success', '✅ Agenda berhasil disimpan!');
         } catch (\Exception $e) {
-            Log::error('Agenda Store Error', [
+            \Log::error('Agenda Store Error', [
                 'message' => $e->getMessage(),
                 'file' => $e->getFile(),
-                'line' => $e->getLine()
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
             ]);
 
             return redirect()->back()
@@ -547,6 +586,13 @@ class AgendaController extends Controller
             $agenda->waktu_ttd = now();
             $agenda->save();
 
+            // Setelah ditandatangani, coba gabungkan agenda otomatis untuk kelas/tanggal ini
+            try {
+                $this->consolidateForClassDate($agenda->kelas_id, $agenda->tanggal);
+            } catch (\Exception $e) {
+                Log::error('Auto Consolidate after sign failed', ['message' => $e->getMessage()]);
+            }
+
             // Debug log
             Log::info('After signing agenda', [
                 'agenda_id' => $agenda->id,
@@ -852,22 +898,233 @@ class AgendaController extends Controller
 
 
 
+    // Consolidated view: group signed agendas by kelas for a given date
+    public function consolidated(Request $request)
+    {
+        $tanggal = $request->input('tanggal', now()->format('Y-m-d'));
+
+        $query = Agenda::with(['kelas','jampel','user','guruTtd'])
+            ->where('tanggal', $tanggal)
+            ->where('status_ttd', 'sudah');
+
+        if (auth()->user()->hasRole('guru') || auth()->user()->hasRole('walikelas')) {
+            $guru = $this->getGuruFromUser();
+            if ($guru) {
+                $kelasIds = GuruMapel::where('guru_id', $guru->id)->pluck('kelas_id');
+                $query->whereIn('kelas_id', $kelasIds);
+            }
+        } elseif (auth()->user()->hasRole('siswa')) {
+            $query->where('users_id', auth()->id())
+                ->where('kelas_id', auth()->user()->siswa->kelas_id);
+        }
+
+        $groups = $query->get()->groupBy('kelas_id')->map(function ($items) {
+            $kelas = $items->first()->kelas;
+            $entries = $items->map(function ($a) {
+                return [
+                    'id' => $a->id,
+                    'mapel' => $a->mata_pelajaran,
+                    'materi' => $a->materi,
+                    'kegiatan' => $a->kegiatan,
+                    'guru' => $a->guruTtd?->nama ?? $a->user?->name ?? '',
+                    'waktu_ttd' => $a->waktu_ttd,
+                    'tanda_tangan' => $a->tanda_tangan
+                ];
+            })->values();
+
+            return [
+                'kelas' => $kelas,
+                'entries' => $entries
+            ];
+        })->values();
+
+        return view('guru.agenda.consolidated', compact('groups', 'tanggal'));
+    }
+
+    public function consolidateSave(Request $request)
+    {
+        $validated = $request->validate([
+            'kelas_id' => 'required|integer|exists:kelas,id',
+            'tanggal' => 'required|date'
+        ]);
+
+        $kelasId = $validated['kelas_id'];
+        $tanggal = $validated['tanggal'];
+
+        $agendas = Agenda::where('kelas_id', $kelasId)
+            ->where('tanggal', $tanggal)
+            ->where('status_ttd', 'sudah')
+            ->get();
+
+        if ($agendas->isEmpty()) {
+            return redirect()->back()->with('error', 'Tidak ada agenda bertanda tangan untuk digabung pada tanggal ini.');
+        }
+
+        $mapels = $agendas->pluck('mata_pelajaran')->unique()->implode('; ');
+        $materi = $agendas->pluck('materi')->filter()->implode("\n\n---\n\n");
+        $kegiatan = $agendas->pluck('kegiatan')->filter()->implode("\n\n---\n\n");
+        $firstSignature = $agendas->pluck('tanda_tangan')->filter()->first();
+        $firstGuruTtd = $agendas->pluck('guru_ttd_id')->filter()->first();
+
+        $data = [
+            'tanggal' => $tanggal,
+            'start_jampel_id' => $agendas->first()->start_jampel_id ?? null,
+            'end_jampel_id' => $agendas->first()->end_jampel_id ?? null,
+            'kelas_id' => $kelasId,
+            'mata_pelajaran' => 'Gabungan: ' . $mapels,
+            'materi' => $materi,
+            'kegiatan' => $kegiatan,
+            'catatan' => 'Gabungan agenda terverifikasi',
+            'users_id' => auth()->id(),
+            'pembuat' => 'gabungan',
+            'status_ttd' => $firstSignature ? 'sudah' : 'belum',
+            'sudah_ttd' => $firstSignature ? true : false,
+            'guru_ttd_id' => $firstGuruTtd ?? null,
+            'waktu_ttd' => $firstSignature ? now() : null,
+            'tanda_tangan' => $firstSignature ?? null,
+        ];
+
+        try {
+            Agenda::create($data);
+            return redirect()->route('agenda.consolidated', ['tanggal' => $tanggal])->with('success', 'Gabungan agenda berhasil disimpan.');
+        } catch (\Exception $e) {
+            \Log::error('Consolidate Save Error', ['message' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+            return redirect()->back()->with('error', 'Gagal menyimpan gabungan agenda: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Private helper: consolidate agendas automatically for a class and date.
+     * It will create or update a single "gabungan" agenda record that
+     * summarizes all signed agendas for that class on that date.
+     */
+    private function consolidateForClassDate($kelasId, $tanggal)
+    {
+        // Ambil semua agenda yang sudah ditandatangani untuk kelas dan tanggal ini
+        $agendas = Agenda::where('kelas_id', $kelasId)
+            ->where('tanggal', $tanggal)
+            ->where('status_ttd', 'sudah')
+            ->get();
+
+        if ($agendas->isEmpty()) {
+            return null; // nothing to consolidate
+        }
+
+        $mapels = $agendas->pluck('mata_pelajaran')->unique()->implode('; ');
+        $materi = $agendas->pluck('materi')->filter()->implode("\n\n---\n\n");
+        $kegiatan = $agendas->pluck('kegiatan')->filter()->implode("\n\n---\n\n");
+        $firstSignature = $agendas->pluck('tanda_tangan')->filter()->first();
+        $firstGuruTtd = $agendas->pluck('guru_ttd_id')->filter()->first();
+
+        $data = [
+            'tanggal' => $tanggal,
+            'start_jampel_id' => $agendas->first()->start_jampel_id ?? null,
+            'end_jampel_id' => $agendas->first()->end_jampel_id ?? null,
+            'kelas_id' => $kelasId,
+            'mata_pelajaran' => 'Gabungan: ' . $mapels,
+            'materi' => $materi,
+            'kegiatan' => $kegiatan,
+            'catatan' => 'Gabungan otomatis dari agenda bertanda-tangan',
+            'users_id' => auth()->id(),
+            'pembuat' => 'gabungan',
+            'status_ttd' => $firstSignature ? 'sudah' : 'belum',
+            'sudah_ttd' => $firstSignature ? true : false,
+            'guru_ttd_id' => $firstGuruTtd ?? null,
+            'waktu_ttd' => $firstSignature ? now() : null,
+            'tanda_tangan' => $firstSignature ?? null,
+        ];
+
+        // Cek apakah sudah ada record gabungan untuk kelas+tanggal
+        $existing = Agenda::where('kelas_id', $kelasId)
+            ->where('tanggal', $tanggal)
+            ->where('pembuat', 'gabungan')
+            ->first();
+
+        if ($existing) {
+            // Update existing
+            $existing->update($data);
+            return $existing;
+        }
+
+        return Agenda::create($data);
+    }
+
     public function getMapelByKelas($kelasId)
     {
         try {
-            if (auth()->user()->hasRole('guru')) {
-                // Guru hanya bisa melihat mata pelajaran yang diampu di kelas tertentu
+            \Log::info('getMapelByKelas called', [
+                'user_id' => auth()->id(),
+                'role' => auth()->user()->role,
+                'kelas_id' => $kelasId,
+                'guru_id' => auth()->user()->guru->id ?? 'NULL'
+            ]);
+
+            if (auth()->user()->hasRole('guru') || auth()->user()->hasRole('walikelas')) {
+                // Cek apakah guru record ada
+                if (!auth()->user()->guru) {
+                    \Log::warning('Guru user tanpa guru record', ['user_id' => auth()->id()]);
+                    return response()->json([], 200);
+                }
+
+                // Guru/Walikelas hanya bisa melihat mata pelajaran yang diampu di kelas tertentu
                 $guruMapels = GuruMapel::where('guru_id', auth()->user()->guru->id)
                     ->where('kelas_id', $kelasId)
                     ->with(['mapel', 'guru'])
                     ->get();
+
+                \Log::info('GuruMapel results for guru', [
+                    'count' => $guruMapels->count(),
+                    'guru_id' => auth()->user()->guru->id,
+                    'kelas_id' => $kelasId,
+                    'raw_data' => $guruMapels->toArray()
+                ]);
 
                 // Group by mapel dan return semua guru per mapel
                 $mapels = $guruMapels->groupBy('mapel_id')->map(function ($group) {
                     $mapel = $group->first()->mapel;
                     $gurus = $group->map(function ($item) {
                         return [
-                            'guru_id' => $item->guru->id,
+                            'guru_id' => (int) $item->guru->id,
+                            'guru_nama' => $item->guru->nama
+                        ];
+                    })->values();
+
+                    return [
+                        'id' => $mapel->id,
+                        'nama' => $mapel->nama,
+                        'kode' => $mapel->kode,
+                        'kelompok' => $mapel->kelompok,
+                        'gurus' => $gurus,
+                        'guru_count' => count($gurus)
+                    ];
+                })->values();
+
+                \Log::info('Final mapels response for guru', [
+                    'mapel_count' => count($mapels),
+                    'mapels' => $mapels->toArray()
+                ]);
+            } elseif (auth()->user()->hasRole('siswa')) {
+                // Siswa bisa melihat semua mata pelajaran di kelasnya
+                if ($kelasId != auth()->user()->siswa->kelas_id) {
+                    return response()->json(['error' => 'Unauthorized'], 403);
+                }
+
+                // Untuk siswa, ambil semua mata pelajaran dengan guru yang mengajar
+                $guruMapels = GuruMapel::where('kelas_id', $kelasId)
+                    ->with(['mapel', 'guru'])
+                    ->get();
+
+                \Log::info('GuruMapel results for siswa', [
+                    'count' => $guruMapels->count(),
+                    'kelas_id' => $kelasId
+                ]);
+
+                // Group by mapel dan return semua guru per mapel
+                $mapels = $guruMapels->groupBy('mapel_id')->map(function ($group) {
+                    $mapel = $group->first()->mapel;
+                    $gurus = $group->map(function ($item) {
+                        return [
+                            'guru_id' => (int) $item->guru->id,
                             'guru_nama' => $item->guru->nama
                         ];
                     })->values();
@@ -882,35 +1139,8 @@ class AgendaController extends Controller
                     ];
                 })->values();
             } else {
-                // Siswa bisa melihat semua mata pelajaran di kelasnya
-                if ($kelasId != auth()->user()->siswa->kelas_id) {
-                    return response()->json(['error' => 'Unauthorized'], 403);
-                }
-
-                // Untuk siswa, ambil semua mata pelajaran dengan guru yang mengajar
-                $guruMapels = GuruMapel::where('kelas_id', $kelasId)
-                    ->with(['mapel', 'guru'])
-                    ->get();
-
-                // Group by mapel dan return semua guru per mapel
-                $mapels = $guruMapels->groupBy('mapel_id')->map(function ($group) {
-                    $mapel = $group->first()->mapel;
-                    $gurus = $group->map(function ($item) {
-                        return [
-                            'guru_id' => $item->guru->id,
-                            'guru_nama' => $item->guru->nama
-                        ];
-                    })->values();
-
-                    return [
-                        'id' => $mapel->id,
-                        'nama' => $mapel->nama,
-                        'kode' => $mapel->kode,
-                        'kelompok' => $mapel->kelompok,
-                        'gurus' => $gurus,
-                        'guru_count' => count($gurus)
-                    ];
-                })->values();
+                // Role tidak dikenali
+                $mapels = [];
             }
 
             return response()->json($mapels);
