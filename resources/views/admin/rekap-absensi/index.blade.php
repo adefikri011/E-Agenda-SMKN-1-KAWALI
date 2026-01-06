@@ -7,8 +7,8 @@
     <!-- Header -->
     <div class="flex flex-col md:flex-row md:items-center justify-between mb-6">
         <div>
-            <h1 class="text-xl sm:text-2xl font-bold text-gray-900 mb-1">📊 Rekap Absensi</h1>
-            <p class="text-gray-600 text-sm">Lihat ringkasan absensi semua kelas</p>
+            <h1 class="text-xl sm:text-2xl font-bold text-gray-900 mb-1">📊 Rekap Presensi</h1>
+            <p class="text-gray-600 text-sm">Lihat ringkasan presensi semua kelas</p>
         </div>
         <button id="filterBtn" class="group bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-indigo-700 hover:to-blue-800 text-white px-4 py-2 sm:px-5 sm:py-2.5 rounded-lg flex items-center gap-2 shadow-md hover:shadow-lg transition-all duration-300 active:scale-95 mt-3 md:mt-0">
             <i class="fas fa-filter text-sm"></i>
@@ -21,7 +21,7 @@
         <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-4 sm:p-5 hover:shadow-md transition-shadow duration-200">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-gray-500 text-xs font-medium mb-1">Total Record Absensi</p>
+                    <p class="text-gray-500 text-xs font-medium mb-1">Total Record Presensi</p>
                     <p class="text-xl sm:text-2xl font-bold text-gray-900">{{ $absensiData->count() }}</p>
                 </div>
                 <div class="w-10 h-10 bg-gradient-to-br from-blue-50 to-blue-100 rounded-full flex items-center justify-center">
@@ -338,7 +338,7 @@
                     <i class="fas fa-inbox text-2xl text-gray-400"></i>
                 </div>
                 <h3 class="text-lg font-semibold text-gray-800 mb-2">Tidak Ada Data</h3>
-                <p class="text-gray-600 text-sm mb-4">Tidak ada data absensi untuk periode yang dipilih</p>
+                <p class="text-gray-600 text-sm mb-4">Tidak ada data presensi untuk periode yang dipilih</p>
 
                 <button id="filterBtnMobile" class="w-full py-3 rounded-lg bg-blue-600 text-white text-sm font-medium shadow-sm hover:bg-blue-700">
                     <i class="fas fa-filter mr-2"></i> Coba Filter Lain

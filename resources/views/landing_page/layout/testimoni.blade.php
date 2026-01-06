@@ -36,58 +36,30 @@
 
                         <!-- Name Input -->
                         <div class="group">
-                            <div class="relative">
-                                <div class="absolute left-4 top-1/2 -translate-y-1/2 text-sky-500">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                                    </svg>
-                                </div>
-                                <input type="text" id="name" name="name" required
-                                    class="w-full pl-12 pr-5 py-4 bg-sky-50/50 border-2 border-sky-200 text-gray-900 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 focus:bg-white transition-all duration-300 outline-none placeholder:text-gray-400"
-                                    placeholder="Masukkan nama lengkap">
-                            </div>
+                            <input type="text" id="name" name="name" required
+                                class="w-full px-5 py-4 bg-sky-50/50 border-2 border-sky-200 text-gray-900 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 focus:bg-white transition-all duration-300 outline-none placeholder:text-gray-400"
+                                placeholder="Masukkan nama lengkap">
                         </div>
 
                         <!-- Email Input -->
                         <div class="group">
-                            <div class="relative">
-                                <div class="absolute left-4 top-1/2 -translate-y-1/2 text-sky-500">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                                    </svg>
-                                </div>
-                                <input type="email" id="email" name="email" required
-                                    class="w-full pl-12 pr-5 py-4 bg-sky-50/50 border-2 border-sky-200 text-gray-900 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 focus:bg-white transition-all duration-300 outline-none placeholder:text-gray-400"
-                                    placeholder="nama@email.com">
-                            </div>
+                            <input type="email" id="email" name="email" required
+                                class="w-full px-5 py-4 bg-sky-50/50 border-2 border-sky-200 text-gray-900 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 focus:bg-white transition-all duration-300 outline-none placeholder:text-gray-400"
+                                placeholder="nama@email.com">
                         </div>
 
                         <!-- Subject Input -->
                         <div class="group">
-                            <div class="relative">
-                                <div class="absolute left-4 top-5 text-sky-500">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path>
-                                    </svg>
-                                </div>
-                                <input type="text" id="subject" name="subject" required
-                                    class="w-full pl-12 pr-5 py-4 bg-sky-50/50 border-2 border-sky-200 text-gray-900 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 focus:bg-white transition-all duration-300 outline-none placeholder:text-gray-400"
-                                    placeholder="Subjek pesan">
-                            </div>
+                            <input type="text" id="subject" name="subject" required
+                                class="w-full px-5 py-4 bg-sky-50/50 border-2 border-sky-200 text-gray-900 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 focus:bg-white transition-all duration-300 outline-none placeholder:text-gray-400"
+                                placeholder="Subjek pesan">
                         </div>
 
                         <!-- Message Textarea -->
                         <div class="group">
-                            <div class="relative">
-                                <div class="absolute left-4 top-5 text-sky-500">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                                    </svg>
-                                </div>
-                                <textarea id="message" name="message" rows="5" required
-                                    class="w-full pl-12 pr-5 py-4 bg-sky-50/50 border-2 border-sky-200 text-gray-900 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 focus:bg-white transition-all duration-300 outline-none resize-none placeholder:text-gray-400"
-                                    placeholder="Tulis pesan Anda..."></textarea>
-                            </div>
+                            <textarea id="message" name="message" rows="5" required
+                                class="w-full px-5 py-4 bg-sky-50/50 border-2 border-sky-200 text-gray-900 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 focus:bg-white transition-all duration-300 outline-none resize-none placeholder:text-gray-400"
+                                placeholder="Tulis pesan Anda..."></textarea>
                         </div>
 
                         <!-- Submit Button -->
@@ -174,13 +146,16 @@
                         </div>
 
                         <!-- Social Links -->
-                        <div class="flex items-center gap-4 p-4 bg-gradient-to-r from-sky-50 to-cyan-50 rounded-xl border border-sky-100">
-                            <div class="w-12 h-12 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl flex items-center justify-center shrink-0 shadow-md">
-                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
-                                </svg>
+                        <div class="p-4 bg-gradient-to-r from-sky-50 to-cyan-50 rounded-xl border border-sky-100">
+                            <div class="flex items-center gap-4 mb-4">
+                                <div class="w-12 h-12 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl flex items-center justify-center shrink-0 shadow-md">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
+                                    </svg>
+                                </div>
+                                <h4 class="font-bold text-gray-900">Sosial Media</h4>
                             </div>
-                            <div class="flex gap-3">
+                            <div class="flex gap-3 pl-16">
                                 <a href="https://www.instagram.com/agenda.k_one?igsh=MTAyeTM2NWoyb3luNg==" target="_blank" class="w-11 h-11 bg-white hover:bg-gradient-to-br hover:from-pink-500 hover:to-purple-600 rounded-xl flex items-center justify-center transition-all duration-300 border-2 border-sky-200 hover:border-pink-500 shadow-sm hover:shadow-lg group">
                                     <i class="fab fa-instagram text-sky-600 group-hover:text-white text-xl transition-colors"></i>
                                 </a>
@@ -200,19 +175,19 @@
                         <!-- Email & Phone -->
                         <div class="pt-4 border-t border-sky-200">
                             <div class="flex items-center gap-3 mb-3">
-                                <svg class="w-5 h-5 text-sky-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-5 h-5 text-sky-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
                                 </svg>
                                 <a href="mailto:smkn1kawali@gmail.com" class="text-gray-700 hover:text-sky-600 transition-colors font-medium">smkn1kawali@gmail.com</a>
                             </div>
-                            <div class="flex items-center gap-3">
-                                <svg class="w-5 h-5 text-sky-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div class="flex items-center gap-3 mb-3">
+                                <svg class="w-5 h-5 text-sky-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
                                 </svg>
                                 <a href="tel:+62265791727" class="text-gray-700 hover:text-sky-600 transition-colors font-medium">+62-265-791727</a>
                             </div>
-                            <div class="flex items-center gap-3 mt-3">
-                                <svg class="w-5 h-5 text-sky-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div class="flex items-center gap-3">
+                                <svg class="w-5 h-5 text-sky-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                 </svg>
                                 <span class="text-gray-700 font-medium">Senin - Jumat: 06.30 - 15.05 WIB</span>

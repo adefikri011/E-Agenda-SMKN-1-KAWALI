@@ -5,6 +5,7 @@ use App\Http\Controllers\AgendaController;
 use App\Http\Controllers\auth\AuthController;
 use App\Http\Controllers\data\GuruController;
 use App\Http\Controllers\data\SiswaController;
+// Tugas controller removed; routes redirected to Nilai
 use App\Http\Controllers\GuruMapelController;
 use App\Http\Controllers\Admin\GuruScheduleController;
 use App\Http\Controllers\Admin\RekapAbsensiController;
@@ -159,6 +160,11 @@ Route::middleware(['auth', 'role:guru,walikelas'])->group(function () {
     Route::get('/nilai/{id}/edit', [NilaiController::class, 'edit'])->name('nilai.edit');
     Route::put('/nilai/{id}', [NilaiController::class, 'update'])->name('nilai.update');
     Route::delete('/nilai/{id}', [NilaiController::class, 'destroy'])->name('nilai.destroy');
+
+    // Legacy tugas route now redirected to Nilai create (teachers give grades here)
+    Route::get('/guru/tugas', function () {
+        return redirect()->route('nilai.create');
+    })->name('guru.tugas.index');
 });
 
 

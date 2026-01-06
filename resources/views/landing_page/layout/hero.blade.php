@@ -45,7 +45,7 @@
                         <h1 class="text-6xl sm:text-7xl lg:text-8xl font-black text-white leading-[0.9] tracking-tighter drop-shadow-2xl">
                             Kelola<br>
                             Agenda &<br>
-                            Absensi<br>
+                            Presensi<br>
                             <span class="relative inline-block">
                                 <span class="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-amber-300 to-yellow-400">
                                     Lebih Efisien

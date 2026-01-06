@@ -61,10 +61,10 @@
                                 <div class="w-12 h-12 bg-gradient-to-br from-emerald-100 to-green-100 rounded-xl flex items-center justify-center shadow-md">
                                     <i class="fas fa-user-check text-emerald-600 text-xl"></i>
                                 </div>
-                                <h3 class="text-xl font-bold text-gray-900">Absensi Digital</h3>
+                                <h3 class="text-xl font-bold text-gray-900">Presensi Digital</h3>
                             </div>
                             <p class="text-gray-600 text-sm leading-relaxed">
-                                Input absensi siswa dengan tracking real-time dan rekap otomatis untuk wali kelas
+                                Input presensi siswa dengan tracking real-time dan rekap otomatis untuk wali kelas
                             </p>
                         </div>
                     </div>
@@ -147,7 +147,7 @@
                             <h3 class="text-xl font-bold text-gray-900">Laporan & Monitoring</h3>
                         </div>
                         <p class="text-gray-600 text-sm leading-relaxed">
-                            Dashboard monitoring lengkap untuk admin dengan akses laporan absensi dan kegiatan semua kelas
+                            Dashboard monitoring lengkap untuk admin dengan akses laporan presensi dan kegiatan semua kelas
                         </p>
                     </div>
                 </div>

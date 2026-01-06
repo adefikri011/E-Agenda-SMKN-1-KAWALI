@@ -42,7 +42,7 @@
 
                 <p class="text-lg text-gray-600 mb-8 leading-relaxed">
                     Kurangi beban administrasi dan fokus pada proses pembelajaran. Membantu penyusunan agenda,
-                    pencatatan absensi, serta penyampaian informasi dengan lebih cepat dan akurat.
+                    pencatatan presensi, serta penyampaian informasi dengan lebih cepat dan akurat.
                 </p>
 
                 <ul class="space-y-4">
@@ -65,7 +65,7 @@
                                     d="M5 13l4 4L19 7"></path>
                             </svg>
                         </div>
-                        <span class="text-gray-700 leading-relaxed pt-1.5 font-medium">Input absensi siswa dengan
+                        <span class="text-gray-700 leading-relaxed pt-1.5 font-medium">Input presensi siswa dengan
                             tracking real-time</span>
                     </li>
                     <li class="flex items-start group">
@@ -199,7 +199,7 @@
                                         <i class="fas fa-chart-line text-white"></i>
                                     </div>
                                     <div>
-                                        <span class="text-sm font-bold text-gray-900">Rekap Absensi</span>
+                                        <span class="text-sm font-bold text-gray-900">Rekap Presensi</span>
                                         <p class="text-xs text-gray-500">Periode: Desember 2025</p>
                                     </div>
                                 </div>
@@ -270,7 +270,7 @@
 
                 <p class="text-lg text-gray-600 mb-8 leading-relaxed">
                     Akses mudah untuk melihat laporan nilai dan kehadiran siswa, mengawasi aktivitas kelas secara
-                    real-time, serta mengunduh laporan absensi bulanan sebagai bahan evaluasi.
+                    real-time, serta mengunduh laporan presensi bulanan sebagai bahan evaluasi.
                 </p>
 
                 <ul class="space-y-4">
@@ -295,7 +295,7 @@
                                     d="M5 13l4 4L19 7"></path>
                             </svg>
                         </div>
-                        <span class="text-gray-700 leading-relaxed pt-1.5 font-medium">Mengakses rekap absensi tiap
+                        <span class="text-gray-700 leading-relaxed pt-1.5 font-medium">Mengakses rekap presensi tiap
                             siswa di kelas binaan</span>
                     </li>
                     <li class="flex items-start group">
@@ -307,7 +307,7 @@
                                     d="M5 13l4 4L19 7"></path>
                             </svg>
                         </div>
-                        <span class="text-gray-700 leading-relaxed pt-1.5 font-medium">Mengunduh laporan absensi
+                        <span class="text-gray-700 leading-relaxed pt-1.5 font-medium">Mengunduh laporan presensi
                             bulanan untuk evaluasi</span>
                     </li>
                     <li class="flex items-start group">
@@ -347,7 +347,7 @@
 
                 <p class="text-lg text-gray-600 mb-8 leading-relaxed">
                     Kontrol penuh terhadap sistem melalui dashboard admin. Kelola data pengguna, struktur kelas, jadwal
-                    pelajaran, dan monitoring seluruh agenda serta laporan absensi dari semua kelas.
+                    pelajaran, dan monitoring seluruh agenda serta laporan presensi dari semua kelas.
                 </p>
 
                 <ul class="space-y-4">
@@ -396,7 +396,7 @@
                                     d="M5 13l4 4L19 7"></path>
                             </svg>
                         </div>
-                        <span class="text-gray-700 leading-relaxed pt-1.5 font-medium">Pengelolaan laporan absensi dari
+                        <span class="text-gray-700 leading-relaxed pt-1.5 font-medium">Pengelolaan laporan presensi dari
                             semua kelas</span>
                     </li>
                 </ul>

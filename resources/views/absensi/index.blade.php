@@ -16,7 +16,7 @@
         <div class="mb-8">
             <div class="flex items-center justify-between">
                 <div>
-                    <h1 class="text-3xl font-bold text-gray-900">Manajemen Absensi</h1>
+                    <h1 class="text-3xl font-bold text-gray-900">Manajemen Presensi</h1>
                     <p class="mt-2 text-sm text-gray-600">Kelola data kehadiran siswa dengan mudah</p>
                 </div>
             </div>
@@ -31,7 +31,7 @@
                 </button>
                 <button onclick="switchTab('history')"
                     class="tab-btn history-tab py-3 px-1 border-b-2 font-medium text-sm transition-colors {{ $activeTab === 'history' ? 'border-gray-900 text-gray-900' : 'border-transparent text-gray-600 hover:text-gray-900' }}">
-                    Riwayat Absensi
+                    Riwayat Presensi
                 </button>
                 <button onclick="switchTab('petunjuk')"
                     class="tab-btn petunjuk-tab py-3 px-1 border-b-2 font-medium text-sm transition-colors {{ $activeTab === 'petunjuk' ? 'border-gray-900 text-gray-900' : 'border-transparent text-gray-600 hover:text-gray-900' }}">
@@ -65,7 +65,7 @@
                             </svg>
                         </div>
                         <h3 class="font-semibold text-gray-900 mb-1">Jadwal Saya</h3>
-                        <p class="text-sm text-gray-600">Input absensi dari jadwal mengajar</p>
+                        <p class="text-sm text-gray-600">Input presensi dari jadwal mengajar</p>
                     </div>
                 </a>
 
@@ -88,7 +88,7 @@
                                 </path>
                             </svg>
                         </div>
-                        <h3 class="font-semibold text-gray-900 mb-1">Riwayat Absensi</h3>
+                        <h3 class="font-semibold text-gray-900 mb-1">Riwayat Presensi</h3>
                         <p class="text-sm text-gray-600">Analisis data kehadiran siswa</p>
                     </div>
                 </button>
@@ -165,7 +165,7 @@
         <!-- ============ RIWAYAT TAB ============ -->
         <div id="history-tab-content" class="{{ $activeTab !== 'history' ? 'hidden' : '' }}">
             <div class="mb-8">
-                <h2 class="text-2xl font-bold text-gray-900">Riwayat Absensi</h2>
+                <h2 class="text-2xl font-bold text-gray-900">Riwayat Presensi</h2>
                 <p class="mt-2 text-sm text-gray-600">Lihat dan analisis data kehadiran siswa dalam periode waktu tertentu
                 </p>
             </div>
@@ -302,7 +302,7 @@
             <!-- Data Table Section -->
             <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
                 <div class="px-6 py-4 border-b border-gray-200">
-                    <h2 class="font-semibold text-gray-900">Detail Absensi</h2>
+                    <h2 class="font-semibold text-gray-900">Detail Presensi</h2>
                 </div>
 
                 <div class="overflow-x-auto">
@@ -357,7 +357,7 @@
         <div id="petunjuk-tab-content" class="{{ $activeTab !== 'petunjuk' ? 'hidden' : '' }}">
             <div class="mb-8">
                 <h2 class="text-2xl font-bold text-gray-900">Petunjuk Penggunaan</h2>
-                <p class="mt-2 text-sm text-gray-600">Panduan lengkap untuk menggunakan sistem manajemen absensi</p>
+                <p class="mt-2 text-sm text-gray-600">Panduan lengkap untuk menggunakan sistem manajemen presensi</p>
             </div>
 
             <div class="space-y-6">
@@ -374,20 +374,20 @@
                             </div>
                         </div>
                         <div class="flex-1">
-                            <h3 class="font-semibold text-gray-900 mb-2">Cara Input Absensi</h3>
-                            <p class="text-sm text-gray-600 mb-3">Ada dua cara untuk input absensi siswa:</p>
+                            <h3 class="font-semibold text-gray-900 mb-2">Cara Input Presensi</h3>
+                            <p class="text-sm text-gray-600 mb-3">Ada dua cara untuk input presensi siswa:</p>
                             <ul class="space-y-2 text-sm text-gray-600">
                                 <li class="flex items-start gap-2">
                                     <span
                                         class="inline-block w-1.5 h-1.5 bg-gray-400 rounded-full mt-1.5 flex-shrink-0"></span>
-                                    <span><strong>Dari Dashboard:</strong> Klik tombol "Input Absensi" untuk langsung
+                                    <span><strong>Dari Dashboard:</strong> Klik tombol "Input Presensi" untuk langsung
                                         membuka form input</span>
                                 </li>
                                 <li class="flex items-start gap-2">
                                     <span
                                         class="inline-block w-1.5 h-1.5 bg-gray-400 rounded-full mt-1.5 flex-shrink-0"></span>
                                     <span><strong>Dari Jadwal Saya:</strong> Klik menu "Jadwal Saya", pilih kelas dan mata
-                                        pelajaran, kemudian klik tombol "Input Absensi"</span>
+                                        pelajaran, kemudian klik tombol "Input Presensi"</span>
                                 </li>
                             </ul>
                         </div>
@@ -407,7 +407,7 @@
                             </div>
                         </div>
                         <div class="flex-1">
-                            <h3 class="font-semibold text-gray-900 mb-2">Mengisi Form Input Absensi</h3>
+                            <h3 class="font-semibold text-gray-900 mb-2">Mengisi Form Input Presensi</h3>
                             <p class="text-sm text-gray-600 mb-3">Langkah-langkah mengisi form:</p>
                             <ul class="space-y-2 text-sm text-gray-600">
                                 <li class="flex items-start gap-2">
@@ -424,7 +424,7 @@
                                 <li class="flex items-start gap-2">
                                     <span
                                         class="inline-block w-1.5 h-1.5 bg-gray-400 rounded-full mt-1.5 flex-shrink-0"></span>
-                                    <span>Klik tombol "Simpan Absensi" untuk menyimpan data</span>
+                                    <span>Klik tombol "Simpan Presensi" untuk menyimpan data</span>
                                 </li>
                             </ul>
                         </div>
@@ -444,13 +444,13 @@
                             </div>
                         </div>
                         <div class="flex-1">
-                            <h3 class="font-semibold text-gray-900 mb-2">Melihat Riwayat Absensi</h3>
+                            <h3 class="font-semibold text-gray-900 mb-2">Melihat Riwayat Presensi</h3>
                             <p class="text-sm text-gray-600 mb-3">Untuk melihat data kehadiran yang telah disimpan:</p>
                             <ul class="space-y-2 text-sm text-gray-600">
                                 <li class="flex items-start gap-2">
                                     <span
                                         class="inline-block w-1.5 h-1.5 bg-gray-400 rounded-full mt-1.5 flex-shrink-0"></span>
-                                    <span>Klik tab "Riwayat Absensi" di bagian atas halaman</span>
+                                    <span>Klik tab "Riwayat Presensi" di bagian atas halaman</span>
                                 </li>
                                 <li class="flex items-start gap-2">
                                     <span
@@ -648,7 +648,7 @@
                     <tr>
                         <td colspan="6" class="px-6 py-8 text-center text-gray-500">
                             <i class="fas fa-inbox text-3xl mb-2 block opacity-50"></i>
-                            <p>Tidak ada data absensi untuk periode ini</p>
+                            <p>Tidak ada data presensi untuk periode ini</p>
                         </td>
                     </tr>
                 `;

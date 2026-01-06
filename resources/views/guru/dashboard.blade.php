@@ -131,7 +131,7 @@
                         <div class="text-center py-10">
                             <div class="text-4xl mb-3">🤷</div>
                             <p class="text-gray-500 font-medium">Data Kehadiran Kosong</p>
-                            <p class="text-gray-400 text-sm mt-1">Belum ada rekap absensi untuk hari ini.</p>
+                            <p class="text-gray-400 text-sm mt-1">Belum ada rekap presensi untuk hari ini.</p>
                         </div>
                     @endif
                 </div>

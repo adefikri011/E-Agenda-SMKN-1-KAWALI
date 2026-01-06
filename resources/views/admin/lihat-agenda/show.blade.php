@@ -118,7 +118,7 @@
             <!-- Absensi Detail -->
             @if($agenda->detailAbsensi && $agenda->detailAbsensi->count() > 0)
                 <div class="bg-white rounded-lg shadow p-6">
-                    <h2 class="text-lg font-bold text-gray-900 mb-4">📋 Detail Absensi Siswa</h2>
+                    <h2 class="text-lg font-bold text-gray-900 mb-4">📋 Detail Presensi Siswa</h2>
 
                     <!-- Summary -->
                     <div class="grid grid-cols-4 gap-2 mb-6">

@@ -82,6 +82,41 @@ class HakAksesController extends Controller
         $guruMapelTerbaru = GuruMapel::with(['guru:id,nama', 'kelas:id,nama_kelas', 'mapel:id,nama'])
             ->orderBy('created_at', 'desc')->limit(3)->get();
 
+        // 15. Data Absensi Mingguan (7 hari terakhir)
+        $absensiMingguan = [];
+        for ($i = 6; $i >= 0; $i--) {
+            $date = now()->subDays($i)->format('Y-m-d');
+            $dayName = now()->subDays($i)->format('D');
+
+            $hadir = DetailAbsensi::whereHas('absensi', function ($query) use ($date) {
+                $query->whereDate('tanggal', $date);
+            })->where('status', 'hadir')->count();
+
+            $izin = DetailAbsensi::whereHas('absensi', function ($query) use ($date) {
+                $query->whereDate('tanggal', $date);
+            })->where('status', 'izin')->count();
+
+            $sakit = DetailAbsensi::whereHas('absensi', function ($query) use ($date) {
+                $query->whereDate('tanggal', $date);
+            })->where('status', 'sakit')->count();
+
+            $absensiMingguan[$dayName] = [
+                'hadir' => $hadir,
+                'izin' => $izin,
+                'sakit' => $sakit
+            ];
+        }
+
+        // 16. Data Agenda Bulanan (30 hari terakhir)
+        $agendaBulanan = [];
+        for ($i = 29; $i >= 0; $i--) {
+            $date = now()->subDays($i)->format('Y-m-d');
+            $dayLabel = now()->subDays($i)->format('d M');
+
+            $count = Agenda::whereDate('tanggal', $date)->count();
+            $agendaBulanan[$dayLabel] = $count;
+        }
+
         // Kirim semua data ke view admin.dashboard
         return view('admin.dashboard', compact(
             'totalSiswa',
@@ -98,7 +133,9 @@ class HakAksesController extends Controller
             'persentaseKehadiran',
             'detailAbsensiHariIni',
             'kelasData',
-            'guruMapelTerbaru'
+            'guruMapelTerbaru',
+            'absensiMingguan',
+            'agendaBulanan'
         ));
     }
 

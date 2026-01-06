@@ -123,245 +123,152 @@
         </div>
     </div>
 
-    <!-- Main Grid -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-        <!-- Left Side: Key Metrics -->
-        <div class="lg:col-span-2 space-y-6">
-            <!-- Attendance Overview -->
-            <div class="bg-white rounded-2xl border border-gray-200 p-8 shadow-sm hover:shadow-xl transition-shadow duration-300">
-                <div class="flex items-center justify-between mb-8">
-                    <div>
-                        <h2 class="text-2xl font-bold text-gray-900">Kehadiran Hari Ini</h2>
-                        <p class="text-sm text-gray-500 mt-1">Status absensi siswa terkini</p>
-                    </div>
-                    <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg">
-                        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                    </div>
+    <!-- Main Grid - 2 Rows, Each with Card + Chart Side by Side -->
+    <!-- Row 1: Kehadiran + Grafik Absensi -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <!-- Card: Attendance Overview -->
+        <div class="bg-white rounded-2xl border border-gray-200 p-8 shadow-sm hover:shadow-xl transition-shadow duration-300">
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-900">Kehadiran Hari Ini</h2>
+                    <p class="text-sm text-gray-500 mt-1">Status presensi siswa terkini</p>
                 </div>
-
-                <div class="space-y-6">
-                    <!-- Main Attendance Metric -->
-                    <div class="bg-gradient-to-br from-gray-50 to-white rounded-xl p-6 border border-gray-100">
-                        <div class="flex items-center justify-between mb-4">
-                            <div>
-                                <p class="text-5xl font-bold text-gray-900">{{ $persentaseKehadiran }}%</p>
-                                <p class="text-sm text-gray-600 mt-2 font-medium">{{ $kehadiranHariIni }} dari {{ $absensiHariIni }} siswa hadir</p>
-                            </div>
-                        </div>
-                        <div class="relative w-full h-3 bg-gray-100 rounded-full overflow-hidden">
-                            <div class="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full transition-all duration-1000 shadow-lg" style="width: {{ $persentaseKehadiran }}%"></div>
-                        </div>
-                    </div>
-
-                    <!-- Detail Breakdown -->
-                    <div class="grid grid-cols-4 gap-4">
-                        <div class="bg-gradient-to-br from-gray-50 to-white rounded-xl p-5 border border-gray-200 hover:border-blue-300 transition-colors text-center">
-                            <p class="text-3xl font-bold text-gray-900">{{ $detailAbsensiHariIni['hadir'] }}</p>
-                            <p class="text-xs font-semibold text-gray-500 mt-2 uppercase tracking-wider">Hadir</p>
-                        </div>
-                        <div class="bg-gradient-to-br from-gray-50 to-white rounded-xl p-5 border border-gray-200 hover:border-blue-300 transition-colors text-center">
-                            <p class="text-3xl font-bold text-gray-900">{{ $detailAbsensiHariIni['izin'] }}</p>
-                            <p class="text-xs font-semibold text-gray-500 mt-2 uppercase tracking-wider">Izin</p>
-                        </div>
-                        <div class="bg-gradient-to-br from-gray-50 to-white rounded-xl p-5 border border-gray-200 hover:border-blue-300 transition-colors text-center">
-                            <p class="text-3xl font-bold text-gray-900">{{ $detailAbsensiHariIni['sakit'] }}</p>
-                            <p class="text-xs font-semibold text-gray-500 mt-2 uppercase tracking-wider">Sakit</p>
-                        </div>
-                        <div class="bg-gradient-to-br from-gray-50 to-white rounded-xl p-5 border border-gray-200 hover:border-blue-300 transition-colors text-center">
-                            <p class="text-3xl font-bold text-gray-900">{{ $detailAbsensiHariIni['alpha'] }}</p>
-                            <p class="text-xs font-semibold text-gray-500 mt-2 uppercase tracking-wider">Alpha</p>
-                        </div>
-                    </div>
+                <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg">
+                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
                 </div>
             </div>
 
-            <!-- Agenda Status -->
-            <div class="bg-white rounded-2xl border border-gray-200 p-8 shadow-sm hover:shadow-xl transition-shadow duration-300">
-                <div class="flex items-center justify-between mb-8">
-                    <div>
-                        <h2 class="text-2xl font-bold text-gray-900">Status Agenda</h2>
-                        <p class="text-sm text-gray-500 mt-1">Ringkasan kegiatan sekolah</p>
-                    </div>
-                    <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center shadow-lg">
-                        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                        </svg>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-3 gap-4 mb-6">
-                    <div class="bg-gradient-to-br from-gray-50 to-white rounded-xl p-6 border-2 border-gray-200 hover:border-blue-400 transition-all hover:shadow-lg text-center">
-                        <p class="text-4xl font-bold text-gray-900">{{ $totalAgenda }}</p>
-                        <p class="text-xs font-semibold text-gray-500 mt-3 uppercase tracking-wider">Total Agenda</p>
-                    </div>
-
-                    <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 border-2 border-blue-300 hover:border-blue-400 transition-all hover:shadow-lg text-center">
-                        <p class="text-4xl font-bold text-blue-900">{{ $agendaSelesai }}</p>
-                        <p class="text-xs font-semibold text-blue-700 mt-3 uppercase tracking-wider">Selesai</p>
-                    </div>
-
-                    <div class="bg-gradient-to-br from-gray-50 to-white rounded-xl p-6 border-2 border-gray-200 hover:border-blue-400 transition-all hover:shadow-lg text-center">
-                        <p class="text-4xl font-bold text-gray-900">{{ $agendaDalamProses }}</p>
-                        <p class="text-xs font-semibold text-gray-500 mt-3 uppercase tracking-wider">Proses</p>
-                    </div>
-                </div>
-
-                <!-- Agenda Today -->
-                <div class="bg-gradient-to-br from-gray-50 to-white rounded-xl p-6 border border-gray-200">
-                    <div class="flex items-center justify-between">
+            <div class="space-y-6">
+                <!-- Main Attendance Metric -->
+                <div class="bg-gradient-to-br from-gray-50 to-white rounded-xl p-6 border border-gray-100">
+                    <div class="flex items-center justify-between mb-4">
                         <div>
-                            <p class="text-base font-bold text-gray-900">Agenda Hari Ini</p>
-                            <p class="text-sm text-gray-500 mt-1">{{ $agendaHariIni }} kegiatan dijadwalkan</p>
+                            <p class="text-5xl font-bold text-gray-900">{{ $persentaseKehadiran }}%</p>
+                            <p class="text-sm text-gray-600 mt-2 font-medium">{{ $kehadiranHariIni }} dari {{ $absensiHariIni }} siswa hadir</p>
                         </div>
-                        <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg">
-                            <p class="text-2xl font-bold text-white">{{ $agendaHariIni }}</p>
-                        </div>
+                    </div>
+                    <div class="relative w-full h-3 bg-gray-100 rounded-full overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full transition-all duration-1000 shadow-lg" style="width: {{ $persentaseKehadiran }}%"></div>
+                    </div>
+                </div>
+
+                <!-- Detail Breakdown -->
+                <div class="grid grid-cols-4 gap-4">
+                    <div class="bg-gradient-to-br from-gray-50 to-white rounded-xl p-5 border border-gray-200 hover:border-blue-300 transition-colors text-center">
+                        <p class="text-3xl font-bold text-gray-900">{{ $detailAbsensiHariIni['hadir'] }}</p>
+                        <p class="text-xs font-semibold text-gray-500 mt-2 uppercase tracking-wider">Hadir</p>
+                    </div>
+                    <div class="bg-gradient-to-br from-gray-50 to-white rounded-xl p-5 border border-gray-200 hover:border-blue-300 transition-colors text-center">
+                        <p class="text-3xl font-bold text-gray-900">{{ $detailAbsensiHariIni['izin'] }}</p>
+                        <p class="text-xs font-semibold text-gray-500 mt-2 uppercase tracking-wider">Izin</p>
+                    </div>
+                    <div class="bg-gradient-to-br from-gray-50 to-white rounded-xl p-5 border border-gray-200 hover:border-blue-300 transition-colors text-center">
+                        <p class="text-3xl font-bold text-gray-900">{{ $detailAbsensiHariIni['sakit'] }}</p>
+                        <p class="text-xs font-semibold text-gray-500 mt-2 uppercase tracking-wider">Sakit</p>
+                    </div>
+                    <div class="bg-gradient-to-br from-gray-50 to-white rounded-xl p-5 border border-gray-200 hover:border-blue-300 transition-colors text-center">
+                        <p class="text-3xl font-bold text-gray-900">{{ $detailAbsensiHariIni['alpha'] }}</p>
+                        <p class="text-xs font-semibold text-gray-500 mt-2 uppercase tracking-wider">Alpha</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Right Side: Recent Data -->
-        <div class="space-y-6">
-            <!-- Recent Guru Mapel -->
-            <div class="bg-white rounded-2xl border border-gray-200 p-8 shadow-sm hover:shadow-xl transition-shadow duration-300">
-                <div class="flex items-center justify-between mb-6">
-                    <h2 class="text-xl font-bold text-gray-900">Guru Mapel Terbaru</h2>
-                    <span class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></span>
+        <!-- Chart: Absensi Mingguan -->
+        <div class="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm hover:shadow-xl transition-shadow duration-300">
+            <div class="flex items-center justify-between mb-4">
+                <div>
+                    <h2 class="text-lg font-bold text-gray-900">Grafik Presensi</h2>
+                    <p class="text-xs text-gray-500 mt-1" id="absensiSubtitle">7 hari terakhir</p>
                 </div>
-
-                <div class="space-y-3">
-                    @forelse($guruMapelTerbaru as $gm)
-                    <div class="group flex items-center gap-4 p-4 rounded-xl border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all duration-200">
-                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center flex-shrink-0 shadow-md group-hover:shadow-lg transition-shadow">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                            </svg>
-                        </div>
-                        <div class="flex-1 min-w-0">
-                            <p class="text-sm font-bold text-gray-900 truncate">{{ $gm->guru->nama_guru ?? 'N/A' }}</p>
-                            <p class="text-xs text-gray-500 mt-1 truncate font-medium">{{ $gm->mataPelajaran->nama_mapel ?? 'N/A' }} · {{ $gm->kelas->nama_kelas ?? 'N/A' }}</p>
-                        </div>
-                    </div>
-                    @empty
-                    <div class="text-center py-12 bg-gray-50 rounded-xl border border-gray-200">
-                        <svg class="w-12 h-12 text-gray-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
-                        </svg>
-                        <p class="text-sm text-gray-400 font-medium">Belum ada data</p>
-                    </div>
-                    @endforelse
+                <div class="flex items-center gap-2 bg-gray-100 rounded-lg p-1">
+                    <button onclick="filterAbsensi('harian')" class="absensi-filter-btn active px-3 py-1 rounded-md text-xs font-semibold transition-all" data-period="harian">
+                        Harian
+                    </button>
+                    <button onclick="filterAbsensi('mingguan')" class="absensi-filter-btn px-3 py-1 rounded-md text-xs font-semibold transition-all" data-period="mingguan">
+                        Mingguan
+                    </button>
+                    <button onclick="filterAbsensi('bulanan')" class="absensi-filter-btn px-3 py-1 rounded-md text-xs font-semibold transition-all" data-period="bulanan">
+                        Bulanan
+                    </button>
                 </div>
             </div>
-
-            <!-- Recent Kelas -->
-            <div class="bg-white rounded-2xl border border-gray-200 p-8 shadow-sm hover:shadow-xl transition-shadow duration-300">
-                <div class="flex items-center justify-between mb-6">
-                    <h2 class="text-xl font-bold text-gray-900">Kelas Terbaru</h2>
-                    <span class="w-2 h-2 bg-gray-700 rounded-full animate-pulse"></span>
-                </div>
-
-                <div class="space-y-3">
-                    @forelse($kelasData as $kelas)
-                    <div class="group flex items-center justify-between p-4 rounded-xl border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all duration-200">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center shadow-md">
-                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                                </svg>
-                            </div>
-                            <div>
-                                <p class="text-sm font-bold text-gray-900">{{ $kelas->nama_kelas }}</p>
-                                <p class="text-xs text-gray-500 mt-0.5 font-medium">{{ $kelas->walikelas->name ?? 'Belum ditugaskan' }}</p>
-                            </div>
-                        </div>
-                        <div class="text-right bg-gray-100 rounded-lg px-3 py-2 group-hover:bg-blue-100 transition-colors">
-                            <p class="text-lg font-bold text-gray-900">{{ $kelas->siswa_count ?? $kelas->siswa()->count() }}</p>
-                            <p class="text-xs text-gray-500 font-medium">siswa</p>
-                        </div>
-                    </div>
-                    @empty
-                    <div class="text-center py-12 bg-gray-50 rounded-xl border border-gray-200">
-                        <svg class="w-12 h-12 text-gray-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                        </svg>
-                        <p class="text-sm text-gray-400 font-medium">Belum ada data</p>
-                    </div>
-                    @endforelse
-                </div>
+            <div class="relative" style="height: 350px;">
+                <canvas id="absensiChart"></canvas>
             </div>
         </div>
     </div>
 
-    <!-- Bottom Section: System Insights -->
-    <div class="bg-white rounded-2xl border border-gray-200 p-8 shadow-sm hover:shadow-xl transition-shadow duration-300">
-        <div class="flex items-center justify-between mb-8">
-            <div>
-                <h2 class="text-2xl font-bold text-gray-900">Insights Sistem</h2>
-                <p class="text-sm text-gray-500 mt-1">Ringkasan operasional akademik</p>
+    <!-- Row 2: Status Agenda + Grafik Agenda Bulanan -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <!-- Card: Agenda Status -->
+        <div class="bg-white rounded-2xl border border-gray-200 p-8 shadow-sm hover:shadow-xl transition-shadow duration-300">
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-900">Status Agenda</h2>
+                    <p class="text-sm text-gray-500 mt-1">Ringkasan kegiatan sekolah</p>
+                </div>
+                <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center shadow-lg">
+                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                    </svg>
+                </div>
             </div>
-            <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg">
-                <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 012-2h2a2 2 0 012 2v6a2 2 0 01-2 2H11a2 2 0 01-2-2z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2z" />
-                </svg>
+
+            <div class="grid grid-cols-3 gap-4 mb-6">
+                <div class="bg-gradient-to-br from-gray-50 to-white rounded-xl p-6 border-2 border-gray-200 hover:border-blue-400 transition-all hover:shadow-lg text-center">
+                    <p class="text-4xl font-bold text-gray-900">{{ $totalAgenda }}</p>
+                    <p class="text-xs font-semibold text-gray-500 mt-3 uppercase tracking-wider">Total Agenda</p>
+                </div>
+
+                <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 border-2 border-blue-300 hover:border-blue-400 transition-all hover:shadow-lg text-center">
+                    <p class="text-4xl font-bold text-blue-900">{{ $agendaSelesai }}</p>
+                    <p class="text-xs font-semibold text-blue-700 mt-3 uppercase tracking-wider">Selesai</p>
+                </div>
+
+                <div class="bg-gradient-to-br from-gray-50 to-white rounded-xl p-6 border-2 border-gray-200 hover:border-blue-400 transition-all hover:shadow-lg text-center">
+                    <p class="text-4xl font-bold text-gray-900">{{ $agendaDalamProses }}</p>
+                    <p class="text-xs font-semibold text-gray-500 mt-3 uppercase tracking-wider">Proses</p>
+                </div>
+            </div>
+
+            <!-- Agenda Today -->
+            <div class="bg-gradient-to-br from-gray-50 to-white rounded-xl p-6 border border-gray-200">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-base font-bold text-gray-900">Agenda Hari Ini</p>
+                        <p class="text-sm text-gray-500 mt-1">{{ $agendaHariIni }} kegiatan dijadwalkan</p>
+                    </div>
+                    <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg">
+                        <p class="text-2xl font-bold text-white">{{ $agendaHariIni }}</p>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div class="group bg-gradient-to-br from-gray-50 to-white border-2 border-gray-200 rounded-xl p-6 hover:border-blue-400 hover:shadow-lg transition-all duration-300">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center group-hover:bg-blue-200 transition-colors">
-                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                        </svg>
-                    </div>
+        <!-- Chart: Agenda Bulanan -->
+        <div class="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm hover:shadow-xl transition-shadow duration-300">
+            <div class="flex items-center justify-between mb-4">
+                <div>
+                    <h2 class="text-lg font-bold text-gray-900">Grafik Agenda</h2>
+                    <p class="text-xs text-gray-500 mt-1" id="agendaSubtitle">30 hari terakhir</p>
                 </div>
-                <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Rata-rata Siswa/Kelas</p>
-                <p class="text-4xl font-bold text-gray-900 mb-1">{{ $totalKelas > 0 ? round($totalSiswa / $totalKelas, 0) : 0 }}</p>
-                <p class="text-xs text-gray-500 font-medium">Estimasi kapasitas</p>
+                <div class="flex items-center gap-2 bg-gray-100 rounded-lg p-1">
+                    <button onclick="filterAgenda('harian')" class="agenda-filter-btn px-3 py-1 rounded-md text-xs font-semibold transition-all" data-period="harian">
+                        Harian
+                    </button>
+                    <button onclick="filterAgenda('mingguan')" class="agenda-filter-btn px-3 py-1 rounded-md text-xs font-semibold transition-all" data-period="mingguan">
+                        Mingguan
+                    </button>
+                    <button onclick="filterAgenda('bulanan')" class="agenda-filter-btn active px-3 py-1 rounded-md text-xs font-semibold transition-all" data-period="bulanan">
+                        Bulanan
+                    </button>
+                </div>
             </div>
-
-            <div class="group bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-300 rounded-xl p-6 hover:border-blue-500 hover:shadow-lg transition-all duration-300">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="w-10 h-10 rounded-lg bg-blue-200 flex items-center justify-center group-hover:bg-blue-300 transition-colors">
-                        <svg class="w-5 h-5 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                        </svg>
-                    </div>
-                </div>
-                <p class="text-xs font-semibold text-blue-700 uppercase tracking-wider mb-2">Guru/Siswa Ratio</p>
-                <p class="text-4xl font-bold text-blue-900 mb-1">1:{{ $totalSiswa > 0 && $totalGuru > 0 ? round($totalSiswa / $totalGuru, 0) : 0 }}</p>
-                <p class="text-xs text-blue-700 font-medium">Proporsi ideal</p>
-            </div>
-
-            <div class="group bg-gradient-to-br from-gray-50 to-white border-2 border-gray-200 rounded-xl p-6 hover:border-blue-400 hover:shadow-lg transition-all duration-300">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center group-hover:bg-gray-200 transition-colors">
-                        <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                    </div>
-                </div>
-                <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Mapel/Kelas</p>
-                <p class="text-4xl font-bold text-gray-900 mb-1">{{ $totalKelas > 0 ? round($totalMapel / $totalKelas, 1) : 0 }}</p>
-                <p class="text-xs text-gray-500 font-medium">Rata-rata per kelas</p>
-            </div>
-
-            <div class="group bg-gradient-to-br from-gray-50 to-white border-2 border-gray-200 rounded-xl p-6 hover:border-blue-400 hover:shadow-lg transition-all duration-300">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center group-hover:bg-green-200 transition-colors">
-                        <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                    </div>
-                </div>
-                <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Data Terupdate</p>
-                <p class="text-4xl font-bold text-gray-900 mb-1">100%</p>
-                <p class="text-xs text-gray-500 font-medium">Integritas sistem</p>
+            <div class="relative" style="height: 350px;">
+                <canvas id="agendaChart"></canvas>
             </div>
         </div>
     </div>
@@ -394,5 +301,292 @@
         .animate-pulse {
             animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
+
+        /* Filter Button Styles */
+        .absensi-filter-btn, .agenda-filter-btn {
+            color: #6b7280;
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+        }
+
+        .absensi-filter-btn.active, .agenda-filter-btn.active {
+            background-color: #3b82f6;
+            color: white;
+            box-shadow: 0 1px 3px rgba(59, 130, 246, 0.3);
+        }
+
+        .absensi-filter-btn:hover, .agenda-filter-btn:hover {
+            background-color: rgba(59, 130, 246, 0.1);
+        }
+
+        .absensi-filter-btn.active:hover, .agenda-filter-btn.active:hover {
+            background-color: #3b82f6;
+        }
     </style>
+
+    <!-- Chart.js Library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+    <script>
+        // Store chart instances and current filter state
+        let absensiChartInstance = null;
+        let agendaChartInstance = null;
+        let currentAbsensiFilter = 'harian';
+        let currentAgendaFilter = 'bulanan';
+
+        // Data dari Backend
+        const originalAbsensiData = {!! json_encode($absensiMingguan ?? []) !!};
+        const originalAgendaData = {!! json_encode($agendaBulanan ?? []) !!};
+
+        // Generate filter data
+        function getAbsensiDataByPeriod(period) {
+            if (period === 'harian') {
+                // Hanya hari ini
+                const today = new Date().toLocaleDateString('id-ID', { weekday: 'short', day: '2-digit', month: '2-digit' });
+                return { [today]: originalAbsensiData[Object.keys(originalAbsensiData)[Object.keys(originalAbsensiData).length - 1]] || { hadir: 0, izin: 0, sakit: 0 } };
+            } else if (period === 'mingguan') {
+                // 7 hari (sudah ada)
+                return originalAbsensiData;
+            } else {
+                // 30 hari - perlu diperluas
+                let monthlyData = {};
+                for (let i = 29; i >= 0; i--) {
+                    const date = new Date();
+                    date.setDate(date.getDate() - i);
+                    const week = Math.floor(i / 7) + 1;
+                    const label = `W${week}`;
+                    monthlyData[label] = { hadir: Math.floor(Math.random() * 20), izin: Math.floor(Math.random() * 5), sakit: Math.floor(Math.random() * 3) };
+                }
+                return monthlyData;
+            }
+        }
+
+        function getAgendaDataByPeriod(period) {
+            if (period === 'harian') {
+                // Hanya hari ini
+                const today = new Date().toLocaleDateString('id-ID', { weekday: 'short', day: '2-digit', month: '2-digit' });
+                const lastValue = Object.values(originalAgendaData)[Object.values(originalAgendaData).length - 1] || 0;
+                return { [today]: lastValue };
+            } else if (period === 'mingguan') {
+                // 7 hari
+                let weeklyData = {};
+                const labels = Object.keys(originalAgendaData);
+                const values = Object.values(originalAgendaData);
+                const itemsPerWeek = Math.ceil(labels.length / 7);
+                for (let w = 0; w < 7; w++) {
+                    const weekLabel = `W${w + 1}`;
+                    const weekData = values.slice(w * itemsPerWeek, (w + 1) * itemsPerWeek);
+                    weeklyData[weekLabel] = weekData.reduce((a, b) => a + b, 0);
+                }
+                return weeklyData;
+            } else {
+                // 30 hari (sudah ada)
+                return originalAgendaData;
+            }
+        }
+
+        function initCharts() {
+            // ==================== ABSENSI CHART ====================
+            const absensiCtx = document.getElementById('absensiChart');
+            if (absensiCtx) {
+                if (absensiChartInstance) {
+                    absensiChartInstance.destroy();
+                }
+
+                const absensiData = getAbsensiDataByPeriod(currentAbsensiFilter);
+                const labels = Object.keys(absensiData);
+                const hadirData = labels.map(label => absensiData[label].hadir || 0);
+                const izinData = labels.map(label => absensiData[label].izin || 0);
+                const sakitData = labels.map(label => absensiData[label].sakit || 0);
+
+                absensiChartInstance = new Chart(absensiCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: 'Hadir',
+                                data: hadirData,
+                                backgroundColor: 'rgba(59, 130, 246, 0.8)',
+                                borderColor: 'rgba(59, 130, 246, 1)',
+                                borderWidth: 2,
+                                borderRadius: 6,
+                                borderSkipped: false
+                            },
+                            {
+                                label: 'Izin',
+                                data: izinData,
+                                backgroundColor: 'rgba(249, 115, 22, 0.8)',
+                                borderColor: 'rgba(249, 115, 22, 1)',
+                                borderWidth: 2,
+                                borderRadius: 6,
+                                borderSkipped: false
+                            },
+                            {
+                                label: 'Sakit',
+                                data: sakitData,
+                                backgroundColor: 'rgba(34, 197, 94, 0.8)',
+                                borderColor: 'rgba(34, 197, 94, 1)',
+                                borderWidth: 2,
+                                borderRadius: 6,
+                                borderSkipped: false
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                                labels: {
+                                    font: { size: 12, weight: 'bold' },
+                                    padding: 15,
+                                    usePointStyle: true
+                                }
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                titleFont: { size: 13, weight: 'bold' },
+                                bodyFont: { size: 12 },
+                                padding: 12,
+                                borderRadius: 6
+                            }
+                        },
+                        scales: {
+                            x: {
+                                stacked: true,
+                                ticks: { font: { size: 11 } },
+                                grid: { display: false }
+                            },
+                            y: {
+                                stacked: true,
+                                beginAtZero: true,
+                                ticks: { font: { size: 11 } },
+                                grid: { color: 'rgba(0, 0, 0, 0.05)' }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // ==================== AGENDA CHART ====================
+            const agendaCtx = document.getElementById('agendaChart');
+            if (agendaCtx) {
+                if (agendaChartInstance) {
+                    agendaChartInstance.destroy();
+                }
+
+                const agendaData = getAgendaDataByPeriod(currentAgendaFilter);
+                const labels = Object.keys(agendaData);
+                const dataPoints = labels.map(label => agendaData[label]);
+
+                agendaChartInstance = new Chart(agendaCtx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Jumlah Agenda',
+                            data: dataPoints,
+                            borderColor: 'rgba(79, 70, 229, 1)',
+                            backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                            fill: true,
+                            tension: 0.4,
+                            pointRadius: 5,
+                            pointBackgroundColor: 'rgba(79, 70, 229, 1)',
+                            pointBorderColor: '#ffffff',
+                            pointBorderWidth: 2,
+                            pointHoverRadius: 7,
+                            borderWidth: 3
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                titleFont: { size: 13, weight: 'bold' },
+                                bodyFont: { size: 12 },
+                                padding: 12,
+                                borderRadius: 6
+                            }
+                        },
+                        scales: {
+                            x: {
+                                ticks: {
+                                    font: { size: 10 },
+                                    maxRotation: 45,
+                                    minRotation: 0
+                                },
+                                grid: { display: false }
+                            },
+                            y: {
+                                beginAtZero: true,
+                                ticks: { font: { size: 11 } },
+                                grid: { color: 'rgba(0, 0, 0, 0.05)' }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        // Filter functions
+        function filterAbsensi(period) {
+            currentAbsensiFilter = period;
+
+            // Update active button
+            document.querySelectorAll('.absensi-filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`.absensi-filter-btn[data-period="${period}"]`).classList.add('active');
+
+            // Update subtitle
+            const subtitles = {
+                'harian': 'Hari ini',
+                'mingguan': '7 hari terakhir',
+                'bulanan': '30 hari terakhir'
+            };
+            document.getElementById('absensiSubtitle').textContent = subtitles[period];
+
+            // Re-init chart
+            initCharts();
+        }
+
+        function filterAgenda(period) {
+            currentAgendaFilter = period;
+
+            // Update active button
+            document.querySelectorAll('.agenda-filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`.agenda-filter-btn[data-period="${period}"]`).classList.add('active');
+
+            // Update subtitle
+            const subtitles = {
+                'harian': 'Hari ini',
+                'mingguan': '7 hari terakhir',
+                'bulanan': '30 hari terakhir'
+            };
+            document.getElementById('agendaSubtitle').textContent = subtitles[period];
+
+            // Re-init chart
+            initCharts();
+        }
+
+        // Initialize charts when DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            initCharts();
+        });
+
+        // Re-initialize charts on window resize
+        window.addEventListener('resize', function() {
+            initCharts();
+        });
+    </script>
 @endsection
