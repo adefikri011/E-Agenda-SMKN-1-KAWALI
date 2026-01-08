@@ -246,7 +246,7 @@
 
                         <!-- Headline -->
                         <h1 class="text-3xl lg:text-4xl font-black text-gray-900 leading-tight mb-5">
-                            Website Agenda Kelas untuk
+                            Website Agenda Kelas dan Presensi untuk
                             <span class="gradient-text">
                                 Manajemen Pembelajaran Digital
                             </span>

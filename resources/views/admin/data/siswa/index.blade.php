@@ -44,7 +44,7 @@
                     </div>
                     <div class="w-full md:w-48">
                         <select name="kelas_id" id="kelasFilter"
-                            class="w-full px-3 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm">
+                            class="select2 w-full px-3 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm">
 
                             @if ($kelas->count() > 0)
                                 <option value="">Semua Kelas</option>

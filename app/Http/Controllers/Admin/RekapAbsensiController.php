@@ -167,6 +167,7 @@ class RekapAbsensiController extends Controller
     {
         $selectedKelas = $request->input('kelas_id');
         $selectedBulan = $request->input('bulan', now()->format('Y-m'));
+        $selectedTanggal = $request->input('tanggal');
 
         $query = Absensi::with(['siswa', 'guru', 'kelas', 'mapel', 'detailAbsensi']);
 
@@ -174,11 +175,52 @@ class RekapAbsensiController extends Controller
             $query->where('kelas_id', $selectedKelas);
         }
 
-        $query->whereYear('tanggal', Carbon::parse($selectedBulan)->year)
-              ->whereMonth('tanggal', Carbon::parse($selectedBulan)->month);
+        if ($selectedTanggal) {
+            $query->whereDate('tanggal', $selectedTanggal);
+        } else {
+            $query->whereYear('tanggal', Carbon::parse($selectedBulan)->year)
+                  ->whereMonth('tanggal', Carbon::parse($selectedBulan)->month);
+        }
 
         $absensiData = $query->orderBy('tanggal')->get();
 
         return Excel::download(new \App\Exports\RekapAbsensiExport($absensiData), 'rekap-absensi-' . $selectedBulan . '.xlsx');
+    }
+
+    /**
+     * Export rekap absensi ke PDF
+     */
+    public function exportPDF(Request $request)
+    {
+        $selectedKelas = $request->input('kelas_id');
+        $selectedBulan = $request->input('bulan', now()->format('Y-m'));
+        $selectedTanggal = $request->input('tanggal');
+
+        $query = Absensi::with(['siswa', 'guru', 'kelas', 'mapel', 'detailAbsensi']);
+
+        if ($selectedKelas) {
+            $query->where('kelas_id', $selectedKelas);
+        }
+
+        if ($selectedTanggal) {
+            $query->whereDate('tanggal', $selectedTanggal);
+        } else {
+            $query->whereYear('tanggal', Carbon::parse($selectedBulan)->year)
+                  ->whereMonth('tanggal', Carbon::parse($selectedBulan)->month);
+        }
+
+        $absensiData = $query->orderBy('tanggal')->get();
+        $statistik = $this->hitungStatistikPerKelas($absensiData, $selectedKelas);
+        $kelas = Kelas::find($selectedKelas);
+
+        $pdf = \PDF::loadView('admin.rekap-absensi.pdf', [
+            'absensiData' => $absensiData,
+            'statistik' => $statistik,
+            'kelas' => $kelas,
+            'bulan' => $selectedBulan,
+            'tanggal' => $selectedTanggal,
+        ]);
+
+        return $pdf->download('rekap-absensi-' . $selectedBulan . '.pdf');
     }
 }

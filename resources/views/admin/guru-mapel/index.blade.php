@@ -21,12 +21,6 @@
                     </svg>
                     <span class="font-medium text-sm">Tambah Penugasan</span>
                 </a>
-                <!-- Tombol Bulk Assign -->
-                <button type="button" onclick="document.getElementById('bulkModal').classList.remove('hidden')"
-                        class="group bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white px-4 py-2 sm:px-5 sm:py-2.5 rounded-lg flex items-center gap-2 shadow-md hover:shadow-lg transition-all duration-300 active:scale-95">
-                    <i class="fas fa-copy text-sm"></i>
-                    <span class="font-medium text-sm">Bulk Assign</span>
-                </button>
             </div>
         </div>
 

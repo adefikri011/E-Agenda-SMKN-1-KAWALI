@@ -116,10 +116,6 @@
                     <i class="fas fa-file-excel mr-2"></i>
                     Excel
                 </button>
-                <button onclick="downloadReport('csv')" class="px-4 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 transition-all flex items-center shadow-md">
-                    <i class="fas fa-file-csv mr-2"></i>
-                    CSV
-                </button>
             </div>
             <div class="flex gap-2">
                 <button onclick="refreshReport()" class="px-4 py-2.5 bg-cyan-600 text-white rounded-lg text-sm font-semibold hover:bg-cyan-700 transition-all flex items-center shadow-md">
@@ -216,7 +212,7 @@
                             <th class="px-6 py-4 text-left text-xs font-bold text-gray-800 uppercase tracking-wider">Nama Siswa</th>
                             <th class="px-6 py-4 text-left text-xs font-bold text-gray-800 uppercase tracking-wider">NIS</th>
                             <th class="px-6 py-4 text-center text-xs font-bold text-gray-800 uppercase tracking-wider">Total Nilai</th>
-                            <th class="px-6 py-4 text-center text-xs font-bold text-gray-800 uppercase tracking-wider">Rata-rata</th>
+                            <th class="px-6 py-4 text-center text-xs font-bold text-gray-800 uppercase tracking-wider">Rata-rata Nilai</th>
                             <th class="px-6 py-4 text-center text-xs font-bold text-gray-800 uppercase tracking-wider">Tertinggi</th>
                             <th class="px-6 py-4 text-center text-xs font-bold text-gray-800 uppercase tracking-wider">Terendah</th>
                         </tr>

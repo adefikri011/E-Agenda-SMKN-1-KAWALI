@@ -16,10 +16,6 @@
                 <a href="#addModal" class="bg-blue-600 text-white px-5 py-2.5 rounded-lg text-sm font-medium">
                     Tambah Sekretaris
                 </a>
-
-                <a href="#importModal" class="bg-red-600 text-white px-5 py-2.5 rounded-lg text-sm font-medium">
-                    Import Excel
-                </a>
             </div>
         </div>
 

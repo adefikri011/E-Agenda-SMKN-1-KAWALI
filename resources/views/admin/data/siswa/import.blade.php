@@ -13,12 +13,16 @@
 
             <div class="mb-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div class="flex items-center gap-3">
-                    <a href="{{ asset('template/siswa_template.csv') }}" class="inline-flex items-center gap-2 px-3 py-2 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md text-sm text-gray-700">
+                    <a href="{{ route('template.siswa') }}" class="inline-flex items-center gap-2 px-3 py-2 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md text-sm text-gray-700">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v12m0 0l-4-4m4 4l4-4M20 21H4" />
                         </svg>
                         Download Template
                     </a>
+                </div>
+
+                <div class="text-xs text-gray-600 bg-blue-50 border border-blue-200 rounded p-2">
+                    <strong>Tip:</strong> Kolom <code class="bg-white px-1 py-0.5 rounded">nama_kelas</code> harus sesuai dengan nama kelas yang ada di sistem.
                 </div>
             </div>
 

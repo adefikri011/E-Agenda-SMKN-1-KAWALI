@@ -1,2 +1,2 @@
-nama_siswa,nis,kelas_id,jenkel
-Contoh Siswa,123456,1,laki-laki
+nis,nama_siswa,jenkel,kelas_id
+123456,Contoh Siswa,L,1

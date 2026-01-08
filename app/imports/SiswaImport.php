@@ -3,6 +3,7 @@
 namespace App\Imports;
 
 use App\Models\Siswa;
+use App\Models\Kelas;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
@@ -14,24 +15,30 @@ class SiswaImport implements ToModel, WithHeadingRow
         if (
             empty($row['nama_siswa']) ||
             empty($row['nis']) ||
-            empty($row['kelas_id']) ||
+            empty($row['nama_kelas']) ||
             empty($row['jenkel'])
         ) {
             return null;
+        }
+
+        // Lookup kelas berdasarkan nama_kelas
+        $kelas = Kelas::where('nama_kelas', trim($row['nama_kelas']))->first();
+        if (!$kelas) {
+            return null; // Lewati jika kelas tidak ditemukan
         }
 
         // Alias jenkel
         $jenkel = strtolower(trim($row['jenkel']));
 
         $jenkelMap = [
-            'laki-laki' => 'L',
-            'laki laki' => 'L',
-            'l'         => 'L',
-            'pria'      => 'L',
+            'laki-laki' => 'laki-laki',
+            'laki laki' => 'laki-laki',
+            'l'         => 'laki-laki',
+            'pria'      => 'laki-laki',
 
-            'perempuan' => 'P',
-            'wanita'    => 'P',
-            'p'         => 'P',
+            'perempuan' => 'perempuan',
+            'wanita'    => 'perempuan',
+            'p'         => 'perempuan',
         ];
 
         if (!isset($jenkelMap[$jenkel])) {
@@ -46,7 +53,7 @@ class SiswaImport implements ToModel, WithHeadingRow
         return new Siswa([
             'nama_siswa' => $row['nama_siswa'],
             'nis'        => $row['nis'],
-            'kelas_id'   => $row['kelas_id'],
+            'kelas_id'   => $kelas->id,
             'jenkel'     => $jenkelMap[$jenkel],
         ]);
     }

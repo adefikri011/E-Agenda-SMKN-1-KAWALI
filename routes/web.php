@@ -5,7 +5,6 @@ use App\Http\Controllers\AgendaController;
 use App\Http\Controllers\auth\AuthController;
 use App\Http\Controllers\data\GuruController;
 use App\Http\Controllers\data\SiswaController;
-// Tugas controller removed; routes redirected to Nilai
 use App\Http\Controllers\GuruMapelController;
 use App\Http\Controllers\Admin\GuruScheduleController;
 use App\Http\Controllers\Admin\RekapAbsensiController;
@@ -21,6 +20,7 @@ use App\Http\Controllers\SekretarisController;
 use App\Http\Controllers\data\MapelController;
 use App\Http\Controllers\data\WaliKelasController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\TemplateController;
 
 Route::get('/' , [LandingPageController::class , 'index']);
 
@@ -33,9 +33,10 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/siswa', [SiswaController::class, 'index'])->name('siswa.index');
     Route::post('/siswa-store', [SiswaController::class, 'store'])->name('siswa.store');
     Route::put('/siswa-update/{id}', [SiswaController::class, 'update'])->name('siswa.update');
-    Route::delete('/siswa-delete/{id}', [SiswaController::class, 'delete'])
+    Route::delete('/siswa-delete/{id}', [SiswaController::class, 'destroy'])
         ->name('siswa.delete');
     Route::post('/siswa/import', [SiswaController::class, 'import'])->name('siswa.import');
+    Route::get('/siswa/template', [TemplateController::class, 'downloadSiswaTemplate'])->name('template.siswa');
 
     //kelas
     Route::get('/kelas', [KelasController::class, 'index'])->name('kelas.index');
@@ -104,6 +105,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/rekap-absensi', [RekapAbsensiController::class, 'index'])->name('admin.rekap-absensi.index');
     Route::get('/rekap-absensi/detail', [RekapAbsensiController::class, 'detail'])->name('admin.rekap-absensi.detail');
     Route::get('/rekap-absensi/export', [RekapAbsensiController::class, 'exportExcel'])->name('admin.rekap-absensi.export');
+    Route::get('/rekap-absensi/export-pdf', [RekapAbsensiController::class, 'exportPDF'])->name('admin.rekap-absensi.export-pdf');
 
     // ===== LIHAT AGENDA ADMIN =====
     Route::get('/lihat-agenda', [LihatAgendaController::class, 'index'])->name('admin.lihat-agenda.index');

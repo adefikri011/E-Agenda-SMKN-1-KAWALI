@@ -117,19 +117,17 @@
 
             table {
                 font-size: 8px;
-                box-shadow: none; /* Hilangkan shadow saat cetak */
+                box-shadow: none;
             }
 
             th, td {
-                padding: 4px 3px; /* Kurangi padding saat cetak */
+                padding: 4px 3px;
             }
 
-            /* Memastikan header tabel diulang di setiap halaman */
             thead {
                 display: table-header-group;
             }
 
-            /* Mencegah baris terpotong di tengah halaman */
             tbody tr {
                 page-break-inside: avoid;
             }
@@ -165,7 +163,7 @@
                         <th style="width: 5%;">Cnt Ulg</th>
                         <th style="width: 5%;">Cnt UTS</th>
                         <th style="width: 5%;">Cnt UAS</th>
-                        <th style="width: 6%;">Rata-rata</th>
+                        <th style="width: 6%;">Rata-rata Nilai</th>
                         <th style="width: 6%;">Tertinggi</th>
                         <th style="width: 6%;">Terendah</th>
                     </tr>
