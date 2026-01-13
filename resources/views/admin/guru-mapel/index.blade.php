@@ -21,6 +21,17 @@
                     </svg>
                     <span class="font-medium text-sm">Tambah Penugasan</span>
                 </a>
+
+                {{-- <!-- Tombol Bulk Assign -->
+                <button onclick="document.getElementById('bulkModal').classList.remove('hidden')"
+                   class="group bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white px-4 py-2 sm:px-5 sm:py-2.5 rounded-lg flex items-center gap-2 shadow-md hover:shadow-lg transition-all duration-300 active:scale-95">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                        class="w-4 h-4 stroke-[2.5] group-hover:scale-110 transition duration-300" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3" />
+                    </svg>
+                    <span class="font-medium text-sm">Bulk Assign</span>
+                </button> --}}
             </div>
         </div>
 
@@ -280,7 +291,7 @@
         </div>
     </div>
 
-    <!-- Bulk Assign Modal -->
+    {{-- <!-- Bulk Assign Modal -->
     <div id="bulkModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-lg shadow-lg p-6 max-w-md w-full mx-4">
             <div class="flex justify-between items-center mb-4">
@@ -340,7 +351,7 @@
                 </div>
             </form>
         </div>
-    </div>
+    </div> --}}
 
     <style>
         /* Modal styles */

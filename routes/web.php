@@ -22,7 +22,7 @@ use App\Http\Controllers\data\WaliKelasController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TemplateController;
 
-Route::get('/' , [LandingPageController::class , 'index']);
+Route::get('/', [LandingPageController::class, 'index']);
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/dashboard-admin', [HakAksesController::class, 'admin'])->name('dashboard.admin');
@@ -57,6 +57,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         ->name('guru.delete');
     Route::post('/guru/import', [GuruController::class, 'import'])
         ->name('guru.import');
+    Route::get('/guru/template', [GuruController::class, 'template'])->name('guru.template');
 
     /// SEKRETARIS
     Route::get('/sekretaris', [SekretarisController::class, 'index'])->name('sekretaris.index');
@@ -70,6 +71,12 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
     Route::get('/mapel/create', [MapelController::class, 'create'])->name('mapel.create');
 
+    // Rute untuk mengunduh template impor Excel (harus sebelum route parameter {mapel})
+    Route::get('/mapel/template', [MapelController::class, 'downloadTemplate'])->name('mapel.template');
+
+    // Rute untuk mengimpor data mata pelajaran dari file Excel
+    Route::post('/mapel/import', [MapelController::class, 'import'])->name('mapel.import');
+
     Route::post('/mapel', [MapelController::class, 'store'])->name('mapel.store');
 
     Route::get('/mapel/{mapel}', [MapelController::class, 'show'])->name('mapel.show');
@@ -81,12 +88,6 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
     // Rute untuk menghapus data mata pelajaran dari database (destroy)
     Route::delete('/mapel/{mapel}', [MapelController::class, 'destroy'])->name('mapel.destroy');
-
-    // Rute untuk mengimpor data mata pelajaran dari file Excel
-    Route::post('/mapel/import', [MapelController::class, 'import'])->name('mapel.import');
-
-    // Rute untuk mengunduh template impor Excel
-    Route::get('/mapel/template', [MapelController::class, 'downloadTemplate'])->name('mapel.template');
 
     // Rute untuk mengassign guru ke mata pelajaran tertentu
     Route::post('/mapel/{mapel}/assign-guru', [MapelController::class, 'assignGuru'])->name('mapel.assignGuru');

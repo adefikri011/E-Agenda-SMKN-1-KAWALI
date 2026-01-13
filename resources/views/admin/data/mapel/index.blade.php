@@ -19,15 +19,19 @@
                     </svg>
                     <span class="font-medium text-sm">Tambah Mapel</span>
                 </a>
-                <a href="#importModal"
-                    class="group bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white px-4 py-2 sm:px-5 sm:py-2.5 rounded-lg flex items-center gap-2 shadow-md hover:shadow-lg transition-all duration-300 active:scale-95">
+                <button type="button" onclick="document.getElementById('importModalMapel').classList.remove('hidden')"
+                    class="group bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white px-4 py-2 sm:px-5 sm:py-2.5 rounded-lg flex items-center gap-2 shadow-md hover:shadow-lg transition-all duration-300 active:scale-95 cursor-pointer border-0 outline-none">
+
+                    <!-- Ikon Upload -->
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
                     </svg>
+
+                    <!-- Teks -->
                     <span class="font-medium text-sm">Import Excel</span>
-                </a>
+                </button>
             </div>
         </div>
         <form id="filterForm" action="{{ route('mapel.index') }}" method="GET">
@@ -36,18 +40,19 @@
                     <div class="flex-1">
                         <div class="relative">
                             <input type="text" name="search" id="searchInput"
-                                placeholder="Cari mata pelajaran berdasarkan nama atau kode..." value="{{ request('search') }}"
+                                placeholder="Cari mata pelajaran berdasarkan nama atau kode..."
+                                value="{{ request('search') }}"
                                 class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm">
                             <i class="fas fa-search absolute left-3 top-3 text-gray-400 text-sm"></i>
                         </div>
                     </div>
                     <div class="w-full md:w-48">
-                        <select name="kelompok" id="kelompokFilter"
+                        <select name="tingkat" id="tingkatFilter"
                             class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm">
-                            <option value="">Semua Kelompok</option>
-                            @foreach($kelompokList as $kelompok)
-                                <option value="{{ $kelompok }}" {{ request('kelompok') == $kelompok ? 'selected' : '' }}>
-                                    {{ $kelompok }}
+                            <option value="">Semua Tingkat</option>
+                            @foreach ($tingkatList as $tingkat)
+                                <option value="{{ $tingkat }}" {{ request('tingkat') == $tingkat ? 'selected' : '' }}>
+                                    {{ $tingkat }}
                                 </option>
                             @endforeach
                         </select>
@@ -69,40 +74,43 @@
             <table class="w-full">
                 <thead class="bg-gray-50 border-b border-gray-200">
                     <tr>
-                        <th class="py-3 px-5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider rounded-tl-lg">No</th>
-                        <th class="py-3 px-5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Nama Mata Pelajaran</th>
-                        <th class="py-3 px-5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Kode</th>
-                        <th class="py-3 px-5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Kelompok</th>
-                        <th class="py-3 px-5 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider rounded-tr-lg">Aksi</th>
+                        <th
+                            class="py-3 px-5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider rounded-tl-lg">
+                            No</th>
+                        <th class="py-3 px-5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Nama
+                            Mata Pelajaran</th>
+                        <th class="py-3 px-5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Kode
+                        </th>
+                        <th class="py-3 px-5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Tingkat
+                        </th>
+                        <th
+                            class="py-3 px-5 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider rounded-tr-lg">
+                            Aksi</th>
                     </tr>
                 </thead>
 
                 <tbody class="divide-y divide-gray-200">
                     @forelse ($mapel as $item)
                         <tr class="hover:bg-gray-50 transition-colors duration-200">
-                            <td class="py-3 px-5 font-mono text-sm text-gray-900">{{ $mapel->firstItem() + $loop->index }}</td>
+                            <td class="py-3 px-5 font-mono text-sm text-gray-900">{{ $mapel->firstItem() + $loop->index }}
+                            </td>
                             <td class="py-3 px-5 text-sm font-medium text-gray-900">{{ $item->nama }}</td>
                             <td class="py-3 px-5 font-mono text-sm text-gray-900">{{ $item->kode }}</td>
                             <td class="py-3 px-5 text-sm">
                                 <span class="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800 font-medium">
-                                    {{ $item->kelompok }}
+                                    {{ $item->tingkat ?? '-' }}
                                 </span>
                             </td>
                             <td class="py-3 px-5 text-center">
                                 <div class="flex justify-center space-x-2">
-                                    <a href="{{ route('mapel.show', $item->id) }}"
-                                       class="text-blue-600 hover:text-blue-800 transition-colors duration-200 p-1.5 rounded-full hover:bg-blue-50"
-                                       title="Detail">
-                                        <i class="fas fa-eye text-sm"></i>
-                                    </a>
                                     <a href="#editModal{{ $item->id }}"
-                                       class="text-yellow-600 hover:text-yellow-800 transition-colors duration-200 p-1.5 rounded-full hover:bg-yellow-50"
-                                       title="Edit">
+                                        class="text-yellow-600 hover:text-yellow-800 transition-colors duration-200 p-1.5 rounded-full hover:bg-yellow-50"
+                                        title="Edit">
                                         <i class="fas fa-edit text-sm"></i>
                                     </a>
                                     <a href="#deleteModal{{ $item->id }}"
-                                       class="text-red-600 hover:text-red-800 transition-colors duration-200 p-1.5 rounded-full hover:bg-red-50"
-                                       title="Hapus">
+                                        class="text-red-600 hover:text-red-800 transition-colors duration-200 p-1.5 rounded-full hover:bg-red-50"
+                                        title="Hapus">
                                         <i class="fas fa-trash text-sm"></i>
                                     </a>
                                 </div>
@@ -120,7 +128,8 @@
                                     </svg>
 
                                     <h3 class="mt-2 text-lg font-semibold text-gray-800">Belum ada data mata pelajaran</h3>
-                                    <p class="mt-1 text-sm text-gray-500">Belum ada mata pelajaran yang ditambahkan. Tambahkan data mata pelajaran
+                                    <p class="mt-1 text-sm text-gray-500">Belum ada mata pelajaran yang ditambahkan.
+                                        Tambahkan data mata pelajaran
                                         agar dapat dikelola di sini.</p>
 
                                     <div class="mt-4 flex items-center justify-center space-x-3">
@@ -144,28 +153,30 @@
         <!-- Mobile Card View (Hidden on desktop) -->
         <div class="md:hidden space-y-4">
             @forelse ($mapel as $item)
-                <div class="bg-white rounded-lg border border-gray-200 p-4 shadow-sm hover:shadow-md transition-shadow duration-200">
+                <div
+                    class="bg-white rounded-lg border border-gray-200 p-4 shadow-sm hover:shadow-md transition-shadow duration-200">
                     <div class="flex justify-between items-start mb-3">
                         <div>
                             <h3 class="font-bold text-gray-900 text-lg">{{ $item->nama }}</h3>
                             <div class="flex items-center mt-1">
-                                <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full mr-2">
-                                    {{ $item->kelompok }}
+                                <span
+                                    class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full mr-2">
+                                    {{ $item->tingkat ?? '-' }}
                                 </span>
                                 <span class="font-mono text-sm text-gray-600">Kode: {{ $item->kode }}</span>
                             </div>
                         </div>
                         <div class="flex space-x-1">
                             <a href="{{ route('mapel.show', $item->id) }}"
-                               class="text-blue-600 hover:text-blue-800 p-2 rounded-full hover:bg-blue-50 transition-colors">
+                                class="text-blue-600 hover:text-blue-800 p-2 rounded-full hover:bg-blue-50 transition-colors">
                                 <i class="fas fa-eye text-sm"></i>
                             </a>
                             <a href="#editModal{{ $item->id }}"
-                               class="text-yellow-600 hover:text-yellow-800 p-2 rounded-full hover:bg-yellow-50 transition-colors">
+                                class="text-yellow-600 hover:text-yellow-800 p-2 rounded-full hover:bg-yellow-50 transition-colors">
                                 <i class="fas fa-edit text-sm"></i>
                             </a>
                             <a href="#deleteModal{{ $item->id }}"
-                               class="text-red-600 hover:text-red-800 p-2 rounded-full hover:bg-red-50 transition-colors">
+                                class="text-red-600 hover:text-red-800 p-2 rounded-full hover:bg-red-50 transition-colors">
                                 <i class="fas fa-trash text-sm"></i>
                             </a>
                         </div>
@@ -178,14 +189,16 @@
                         </div>
                         <div>
                             <div class="text-gray-500 font-medium mb-1">No. Urut</div>
-                            <div class="font-mono text-gray-900 bg-gray-50 p-2 rounded">{{ $mapel->firstItem() + $loop->index }}</div>
+                            <div class="font-mono text-gray-900 bg-gray-50 p-2 rounded">
+                                {{ $mapel->firstItem() + $loop->index }}</div>
                         </div>
                     </div>
 
                     <div class="mt-3 pt-3 border-t border-gray-100">
                         <div class="text-gray-500 text-xs flex justify-between items-center">
                             <span>ID: {{ $item->id }}</span>
-                            <span><i class="fas fa-calendar-alt mr-1"></i> {{ \Carbon\Carbon::parse($item->updated_at)->diffForHumans() }}</span>
+                            <span><i class="fas fa-calendar-alt mr-1"></i>
+                                {{ \Carbon\Carbon::parse($item->updated_at)->diffForHumans() }}</span>
                         </div>
                     </div>
                 </div>
@@ -199,7 +212,8 @@
                     </svg>
 
                     <h3 class="mt-2 text-lg font-semibold text-gray-800">Belum ada data mata pelajaran</h3>
-                    <p class="mt-1 text-sm text-gray-500 mb-4">Belum ada mata pelajaran yang ditambahkan. Tambahkan data mata pelajaran
+                    <p class="mt-1 text-sm text-gray-500 mb-4">Belum ada mata pelajaran yang ditambahkan. Tambahkan data
+                        mata pelajaran
                         agar dapat dikelola di sini.</p>
 
                     <div class="flex flex-col space-y-2">
@@ -312,7 +326,7 @@
             // Auto submit form saat input search berubah (dengan debounce)
             let searchTimeout;
             const searchInput = document.getElementById('searchInput');
-            const kelompokFilter = document.getElementById('kelompokFilter');
+            const kelompokFilter = document.getElementById('tingkatFilter');
             const filterForm = document.getElementById('filterForm');
 
             // Fungsi untuk submit form
@@ -326,7 +340,7 @@
                 searchTimeout = setTimeout(submitForm, 500);
             });
 
-            // Submit form saat filter kelompok berubah
+            // Submit form saat filter tingkat berubah
             kelompokFilter.addEventListener('change', function() {
                 submitForm();
             });

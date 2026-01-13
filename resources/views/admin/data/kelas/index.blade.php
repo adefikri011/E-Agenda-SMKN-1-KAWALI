@@ -19,7 +19,7 @@
                     </svg>
                     <span class="font-medium text-sm">Tambah Kelas</span>
                 </a>
-                <a href="#importModal"
+                <a href="#" role="button" onclick="event.preventDefault(); toggleModal('importModal', 'open')"
                     class="group bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white px-4 py-2 sm:px-5 sm:py-2.5 rounded-lg flex items-center gap-2 shadow-md hover:shadow-lg transition-all duration-300 active:scale-95">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
@@ -37,7 +37,8 @@
                 <div class="flex flex-col md:flex-row gap-3">
                     <div class="flex-1">
                         <div class="relative">
-                            <input type="text" name="search" id="searchInput" placeholder="Cari kelas..." value="{{ request('search') }}"
+                            <input type="text" name="search" id="searchInput" placeholder="Cari kelas..."
+                                value="{{ request('search') }}"
                                 class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm">
                             <i class="fas fa-search absolute left-3 top-3 text-gray-400 text-sm"></i>
                         </div>
@@ -180,11 +181,13 @@
         <!-- Mobile Card View (Hidden on desktop) -->
         <div class="md:hidden space-y-4">
             @forelse ($kelas as $item)
-                <div class="bg-white rounded-xl border border-gray-200 p-4 shadow-sm hover:shadow-md transition-shadow duration-200">
+                <div
+                    class="bg-white rounded-xl border border-gray-200 p-4 shadow-sm hover:shadow-md transition-shadow duration-200">
                     <div class="flex justify-between items-start mb-3">
                         <div>
                             <!-- Badge Jurusan -->
-                            <div class="inline-flex items-center gap-2 bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700 px-2.5 py-1 rounded-lg text-xs font-semibold mb-2">
+                            <div
+                                class="inline-flex items-center gap-2 bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700 px-2.5 py-1 rounded-lg text-xs font-semibold mb-2">
                                 <i class="fas fa-bookmark text-xs"></i>
                                 <span>{{ $item->jurusan->nama_jurusan ?? 'Umum' }}</span>
                             </div>
@@ -193,11 +196,11 @@
                         </div>
                         <div class="flex space-x-1">
                             <a href="#editModal{{ $item->id }}"
-                               class="text-yellow-600 hover:text-yellow-800 p-2 rounded-full hover:bg-yellow-50 transition-colors">
+                                class="text-yellow-600 hover:text-yellow-800 p-2 rounded-full hover:bg-yellow-50 transition-colors">
                                 <i class="fas fa-edit text-sm"></i>
                             </a>
                             <a href="#deleteModal{{ $item->id }}"
-                               class="text-red-600 hover:text-red-800 p-2 rounded-full hover:bg-red-50 transition-colors">
+                                class="text-red-600 hover:text-red-800 p-2 rounded-full hover:bg-red-50 transition-colors">
                                 <i class="fas fa-trash text-sm"></i>
                             </a>
                         </div>
@@ -206,13 +209,15 @@
                     <!-- Wali Kelas Info -->
                     <div class="bg-gray-50 rounded-lg p-3 mb-3">
                         <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white flex-shrink-0">
+                            <div
+                                class="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white flex-shrink-0">
                                 <i class="fas fa-user-tie text-xs"></i>
                             </div>
                             <div class="flex-1">
                                 <p class="text-xs text-gray-500 mb-1 font-medium">Wali Kelas</p>
                                 @if ($item->waliKelas)
-                                    <p class="font-semibold text-gray-900 text-sm truncate">{{ $item->waliKelas->name }}</p>
+                                    <p class="font-semibold text-gray-900 text-sm truncate">{{ $item->waliKelas->name }}
+                                    </p>
                                 @else
                                     <p class="font-medium text-gray-400 text-sm italic">Belum Ditentukan</p>
                                 @endif
@@ -222,7 +227,8 @@
 
                     <div class="flex justify-between items-center pt-3 border-t border-gray-100">
                         <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 bg-gradient-to-br from-green-50 to-green-100 rounded-lg flex items-center justify-center">
+                            <div
+                                class="w-10 h-10 bg-gradient-to-br from-green-50 to-green-100 rounded-lg flex items-center justify-center">
                                 <i class="fas fa-users text-green-600"></i>
                             </div>
                             <div>
@@ -232,14 +238,15 @@
                         </div>
 
                         <a href="#siswaModal{{ $item->id }}"
-                           class="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-sm hover:shadow-md transition-all duration-200">
+                            class="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-sm hover:shadow-md transition-all duration-200">
                             Lihat
                         </a>
                     </div>
                 </div>
             @empty
                 <div class="bg-white rounded-lg border border-gray-200 p-6 text-center">
-                    <div class="w-16 h-16 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <div
+                        class="w-16 h-16 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
                         <i class="fas fa-inbox text-3xl text-gray-400"></i>
                     </div>
 
@@ -306,8 +313,8 @@
     </div>
 
     <!-- ===========================
-                              MODAL LIHAT SISWA (FINAL)
-                        ============================ -->
+                                  MODAL LIHAT SISWA (FINAL)
+                            ============================ -->
     @foreach ($kelas as $item)
         <div id="siswaModal{{ $item->id }}" class="modal">
             <div class="modal-content">

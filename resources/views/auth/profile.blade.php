@@ -78,6 +78,19 @@
                                 @enderror
                             </div>
 
+                            <!-- NIP Field -->
+                            <div>
+                                <label for="nip" class="block text-sm font-semibold text-gray-700 mb-2">
+                                    NIP / Nomor Induk Pegawai
+                                </label>
+                                <input type="text" id="nip" name="nip" value="{{ old('nip', optional(auth()->user()->guru)->nip) }}"
+                                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all duration-200 @error('nip') border-red-500 @enderror"
+                                    placeholder="Masukkan NIP Anda (opsional)">
+                                @error('nip')
+                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+
                             <!-- Role Field (Read-only) -->
                             <div>
                                 <label for="role" class="block text-sm font-semibold text-gray-700 mb-2">

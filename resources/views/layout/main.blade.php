@@ -89,6 +89,45 @@
             line-height: 1.5;
         }
 
+        /* Pastikan elemen .modal memenuhi seluruh layar */
+        .modal {
+            display: none;
+            /* Default tersembunyi */
+            position: fixed;
+            /* Supaya tetap di tempat saat discroll */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            /* Background gelap transparan */
+            z-index: 9999;
+            /* Supaya selalu di paling atas */
+
+            /* MAGIC CODE UNTUK CENTERING */
+            display: flex;
+            /* Menggunakan Flexbox */
+            align-items: center;
+            /* Tengah Vertikal */
+            justify-content: center;
+            /* Tengah Horizontal */
+        }
+
+        /* Override display='none' saat class 'modal' dipanggil di JS */
+        /* Catatan: Fungsi toggleModal kita mengubah style inline 'display: block',
+       jadi kita harus pastikan inline style itu mengizinkan flex. */
+
+        /* Kita gunakan !important agar style inline 'block' dari JS
+       tidak merusak alignment flexbox. */
+        .modal[style*="display: block"] {
+            display: flex !important;
+        }
+
+        /* Alternatif jika JS memberikan display: '' (kosong) */
+        .modal:not([style*="display: none"]) {
+            display: flex !important;
+        }
+
 
         /* ========================================================= */
         /*            PENYESUAIAN KHUSUS UNTUK SELECT2               */
@@ -289,6 +328,73 @@
                 });
             });
         });
+
+        $(document).ready(function() {
+            // ... Kode initSelect2 tetap sama ...
+            window.initSelect2('.select2');
+
+            // --- HAPUS BAGIAN INI KODE LAMA ANDA (ID file-upload) ---
+            // Kita ganti dengan Alpine.js di bawah agar lebih fleksibel
+        });
+
+        // ==========================================
+        // LOGIKA GLOBAL UNTUK MODAL (MENGGUNAKAN ALPINE)
+        // ==========================================
+
+        document.addEventListener('alpine:init', () => {
+
+            // 1. Logic untuk menutup modal secara global (Close & Batal)
+            // Fungsi ini akan dijalankan ketika tombol dengan @click="$dispatch('close-modal')" ditekan
+            Alpine.store('modal', {
+                close(id) {
+                    // Cari elemen modal berdasarkan ID
+                    const modal = document.getElementById(id);
+                    if (modal) {
+                        modal.style.display = 'none';
+                    }
+                    // Opsional: Bersihkan URL hash jika mengganggu
+                    window.history.pushState("", document.title, window.location.pathname + window.location
+                        .search);
+                }
+            });
+
+            // 2. Logic untuk Input File (Agar bisa dipakai berulang tanpa ID unik)
+            // Kita buat komponen kecil bernama 'fileUploader'
+            Alpine.data('fileUploader', () => ({
+                fileName: '',
+
+                changeFile(event) {
+                    // Ambil file dari input
+                    const file = event.target.files[0];
+                    if (file) {
+                        this.fileName = file.name;
+                    } else {
+                        this.fileName = '';
+                    }
+                },
+
+                clearFile() {
+                    // Reset saat modal ditutup atau dibersihkan
+                    this.fileName = '';
+                    const input = document.getElementById(this.$refs.fileInput.id);
+                    if (input) input.value = '';
+                }
+            }));
+        });
+
+        // Fungsi Global Toggle Modal
+        window.toggleModal = function(modalId, action) {
+            const modal = document.getElementById(modalId);
+            if (!modal) return;
+
+            if (action === 'open') {
+                modal.style.display = 'block';
+                window.location.hash = modalId;
+            } else {
+                modal.style.display = 'none';
+                window.location.hash = ''; // Bersihkan URL
+            }
+        };
     </script>
 
 

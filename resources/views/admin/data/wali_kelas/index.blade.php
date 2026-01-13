@@ -3,6 +3,9 @@
 @section('title', 'Data Wali Kelas')
 
 @section('content')
+    {{-- Single bottom notification component (remove top alerts) --}}
+    @include('components.notification')
+
     <div class="bg-white rounded-xl shadow-md p-4 sm:p-5 mb-6">
         <!-- Header -->
         <div class="flex flex-col md:flex-row md:items-center justify-between mb-6">
@@ -17,13 +20,6 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
                     </svg>
                     <span class="font-medium text-sm">Tugaskan Wali Kelas</span>
-                </a>
-                <!-- Tombol untuk membuka modal Import -->
-                <a href="#importModal" class="group bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white px-4 py-2 sm:px-5 sm:py-2.5 rounded-lg flex items-center gap-2 shadow-md hover:shadow-lg transition-all duration-300 active:scale-95">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
-                    </svg>
-                    <span class="font-medium text-sm">Import Excel</span>
                 </a>
             </div>
         </div>
@@ -84,13 +80,9 @@
                                     </a>
 
                                     <!-- Tombol Delete -->
-                                    <form action="{{ route('wali_kelas.destroy', $item->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin mencabut penugasan wali kelas ini?');" class="inline-block">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="text-red-600 hover:text-red-800 transition-colors duration-200 p-1.5 rounded-full hover:bg-red-50">
-                                            <i class="fas fa-trash text-sm"></i>
-                                        </button>
-                                    </form>
+                                    <a href="#deleteModal{{ $item->id }}" class="text-red-600 hover:text-red-800 transition-colors duration-200 p-1.5 rounded-full hover:bg-red-50">
+                                        <i class="fas fa-trash text-sm"></i>
+                                    </a>
                                 </div>
                             </td>
                         </tr>
@@ -148,16 +140,10 @@
                                class="text-yellow-600 hover:text-yellow-800 p-2 rounded-full hover:bg-yellow-50 transition-colors">
                                 <i class="fas fa-edit text-sm"></i>
                             </a>
-                            <form action="{{ route('wali_kelas.destroy', $item->id) }}" method="POST"
-                                  onsubmit="return confirm('Apakah Anda yakin ingin mencabut penugasan wali kelas ini?');"
-                                  class="inline-block">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit"
-                                        class="text-red-600 hover:text-red-800 p-2 rounded-full hover:bg-red-50 transition-colors">
-                                    <i class="fas fa-trash text-sm"></i>
-                                </button>
-                            </form>
+                            <a href="#deleteModal{{ $item->id }}"
+                               class="text-red-600 hover:text-red-800 p-2 rounded-full hover:bg-red-50 transition-colors">
+                                <i class="fas fa-trash text-sm"></i>
+                            </a>
                         </div>
                     </div>
 
@@ -273,6 +259,31 @@
         @include('admin.data.wali_kelas.edit', ['item' => $item])
     @endforeach
 
+    @foreach ($waliKelas as $item)
+        <div id="deleteModal{{ $item->id }}" class="modal">
+            <div class="modal-content">
+                <div class="flex items-center mb-3">
+                    <div class="p-2 rounded-full bg-red-100 text-red-600 mr-3">
+                        <i class="fas fa-exclamation-triangle text-lg"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-900">Konfirmasi Hapus</h3>
+                </div>
+
+                <p class="text-gray-600 mb-5 text-sm">Apakah Anda yakin ingin mencabut penugasan <span class="font-semibold">{{ $item->guru->nama }}</span> sebagai wali kelas? Tindakan ini tidak dapat dibatalkan.</p>
+
+                <div class="flex justify-end space-x-2">
+                    <a href="#" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 text-sm">Batal</a>
+
+                    <form action="{{ route('wali_kelas.destroy', $item->id) }}" method="POST" style="display:inline;">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm">Hapus</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    @endforeach
+
     <style>
         .modal {
             display: none;
@@ -315,10 +326,12 @@
                     filterForm.submit();
                 }
 
-                searchInput.addEventListener('input', function() {
-                    clearTimeout(searchTimeout);
-                    searchTimeout = setTimeout(submitForm, 500);
-                });
+                if (searchInput) {
+                    searchInput.addEventListener('input', function() {
+                        clearTimeout(searchTimeout);
+                        searchTimeout = setTimeout(submitForm, 500);
+                    });
+                }
             });
         </script>
     @endpush

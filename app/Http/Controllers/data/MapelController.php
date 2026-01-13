@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\MapelImport;
+use App\Exports\MapelTemplateExport;
 
 class MapelController extends Controller
 {
@@ -29,21 +30,21 @@ class MapelController extends Controller
             $query->where(function($q) use ($search) {
                 $q->where('nama', 'like', '%' . $search . '%')
                   ->orWhere('kode', 'like', '%' . $search . '%')
-                  ->orWhere('kelompok', 'like', '%' . $search . '%');
+                  ->orWhere('tingkat', 'like', '%' . $search . '%');
             });
         }
 
-        // Filter berdasarkan kelompok
-        if ($request->has('kelompok') && $request->kelompok != '') {
-            $query->where('kelompok', $request->kelompok);
+        // Filter berdasarkan tingkat
+        if ($request->has('tingkat') && $request->tingkat != '') {
+            $query->where('tingkat', $request->tingkat);
         }
 
         $mapel = $query->paginate(10);
 
-        // Mendapatkan daftar kelompok untuk filter
-        $kelompokList = MataPelajaran::distinct()->pluck('kelompok')->filter();
+        // Mendapatkan daftar tingkat untuk filter
+        $tingkatList = MataPelajaran::distinct()->pluck('tingkat')->filter();
 
-        return view('admin.data.mapel.index', compact('mapel', 'kelompokList'));
+        return view('admin.data.mapel.index', compact('mapel', 'tingkatList'));
     }
 
     /**
@@ -67,7 +68,7 @@ class MapelController extends Controller
         $validator = Validator::make($request->all(), [
             'nama' => 'required|string|max:255',
             'kode' => 'required|string|max:50|unique:mata_pelajaran,kode',
-            'kelompok' => 'required|string|max:100',
+            'tingkat' => 'nullable|string|in:X,XI,XII',
         ]);
 
         if ($validator->fails()) {
@@ -79,7 +80,7 @@ class MapelController extends Controller
         MataPelajaran::create([
             'nama' => $request->nama,
             'kode' => $request->kode,
-            'kelompok' => $request->kelompok,
+            'tingkat' => $request->tingkat,
         ]);
 
         return redirect()->route('mapel.index')
@@ -126,7 +127,7 @@ class MapelController extends Controller
         $validator = Validator::make($request->all(), [
             'nama' => 'required|string|max:255',
             'kode' => 'required|string|max:50|unique:mata_pelajaran,kode,' . $id,
-            'kelompok' => 'required|string|max:100',
+            'tingkat' => 'nullable|string|in:X,XI,XII',
         ]);
 
         if ($validator->fails()) {
@@ -138,7 +139,7 @@ class MapelController extends Controller
         $mapel->update([
             'nama' => $request->nama,
             'kode' => $request->kode,
-            'kelompok' => $request->kelompok,
+            'tingkat' => $request->tingkat,
         ]);
 
         return redirect()->route('mapel.index')
@@ -209,9 +210,7 @@ class MapelController extends Controller
      */
     public function downloadTemplate()
     {
-        $file = public_path('templates/template_import_mapel.xlsx');
-
-        return response()->download($file, 'template_import_mapel.xlsx');
+        return Excel::download(new MapelTemplateExport, 'template_import_mapel.xlsx');
     }
 
     /**

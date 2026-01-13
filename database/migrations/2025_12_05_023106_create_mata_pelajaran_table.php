@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('nama'); // Nama mata pelajaran
             $table->string('kode')->unique(); // Kode unik untuk mata pelajaran
-            $table->string('kelompok'); // Kelompok mata pelajaran (contoh: A, B, C)
+            $table->string('tingkat')->nullable(); // Tingkat kelas: X, XI, XII
             $table->timestamps();
         });
     }

@@ -19,25 +19,45 @@
             </div>
         </div>
 
-        <!-- FILTER SEARCH -->
-        <form action="{{ route('sekretaris.index') }}" method="GET">
+        <!-- Filter Section -->
+        <form id="filterForm" action="{{ route('sekretaris.index') }}" method="GET">
             <div class="bg-gray-50 rounded-lg p-3 mb-5">
                 <div class="flex flex-col md:flex-row gap-3">
                     <div class="flex-1">
                         <div class="relative">
-                            <input type="text" name="search" placeholder="Cari sekretaris..."
-                                value="{{ request('search') }}"
-                                class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 text-sm">
+                            <input type="text" name="search" id="searchInput"
+                                placeholder="Cari sekretaris berdasarkan nama atau NIS..." value="{{ request('search') }}"
+                                class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm">
                             <i class="fas fa-search absolute left-3 top-3 text-gray-400 text-sm"></i>
                         </div>
                     </div>
+                    <div class="w-full md:w-48">
+                        <select name="kelas_id" id="kelasFilter"
+                            class="select2 w-full px-3 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm">
 
+                            @if ($kelas->count() > 0)
+                                <option value="">Semua Kelas</option>
+
+                                @foreach ($kelas as $item)
+                                    <option value="{{ $item->id }}"
+                                        {{ request('kelas_id') == $item->id ? 'selected' : '' }}>{{ $item->nama_kelas }}
+                                    </option>
+                                @endforeach
+                            @else
+                                <option disabled selected>Belum ada kelas</option>
+                            @endif
+
+                        </select>
+                    </div>
                     <div class="flex gap-2">
                         <button type="submit"
-                                class="px-4 py-2.5 bg-blue-600 text-white rounded-lg text-sm">Filter</button>
-
-                        <a href="{{ route('sekretaris.index') }}"
-                           class="px-4 py-2.5 bg-gray-500 text-white rounded-lg text-sm">Reset</a>
+                            class="px-4 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">
+                            <i class="fas fa-filter mr-1"></i> Filter
+                        </button>
+                        <a href="{{ route('sekretaris.index') }}" id="resetFilter"
+                            class="px-4 py-2.5 bg-gray-500 text-white rounded-lg text-sm font-medium hover:bg-gray-600 transition-colors inline-flex items-center">
+                            <i class="fas fa-redo mr-1"></i> Reset
+                        </a>
                     </div>
                 </div>
             </div>

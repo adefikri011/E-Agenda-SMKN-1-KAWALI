@@ -17,13 +17,26 @@
                     Kelola dan monitor sistem akademik sekolah
                 </p>
             </div>
-            <div class="text-right bg-white rounded-xl px-6 py-4 border border-gray-200 shadow-sm">
-                <p class="text-xs text-gray-400 uppercase tracking-wider font-semibold">Hari Ini</p>
-                <p class="text-xl font-semibold text-gray-900 mt-1">{{ date('d M Y') }}</p>
-            </div>
         </div>
     </div>
 
+    <script>
+        // Modern live clock for dashboard
+        function updateModernClock() {
+            const clock = document.getElementById('modernClock');
+            if (!clock) return;
+            const now = new Date();
+            // Format: HH:MM:SS
+            const h = now.getHours().toString().padStart(2, '0');
+            const m = now.getMinutes().toString().padStart(2, '0');
+            const s = now.getSeconds().toString().padStart(2, '0');
+            clock.textContent = `${h}:${m}:${s}`;
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            updateModernClock();
+            setInterval(updateModernClock, 1000);
+        });
+    </script>
     <!-- KPI Cards - Modern React Style -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-8">
         <!-- Siswa Card -->
@@ -274,6 +287,15 @@
     </div>
 
     <style>
+        /* Responsive utility for xs */
+        @media (max-width: 400px) {
+            #modernClock {
+                font-size: 1.6rem !important;
+            }
+        }
+        @media (max-width: 640px) {
+            .max-w-xs { max-width: 90vw !important; }
+        }
         @keyframes fadeIn {
             from {
                 opacity: 0;

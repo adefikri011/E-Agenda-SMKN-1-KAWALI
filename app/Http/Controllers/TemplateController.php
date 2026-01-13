@@ -29,7 +29,7 @@ class TemplateController extends Controller
             $sheet->fromArray(['nis', 'nama_siswa', 'jenkel', 'nama_kelas'], null, 'A1');
             $sheet->fromArray([['123456', 'Contoh Siswa', 'L', 'X TKJ A']], null, 'A2');
 
-            // Kelas sheet
+        // Kelas sheet
             $sheetKelas = $spreadsheet->createSheet();
             $sheetKelas->setTitle('Daftar Kelas');
             $sheetKelas->fromArray(['id', 'nama_kelas'], null, 'A1');

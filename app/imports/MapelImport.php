@@ -23,7 +23,7 @@ class MapelImport implements ToModel, WithHeadingRow, WithValidation, SkipsOnErr
         return new MataPelajaran([
             'nama' => $row['nama'],
             'kode' => $row['kode'],
-            'kelompok' => $row['kelompok'],
+            'tingkat' => $row['tingkat'] ?? null,
         ]);
     }
 
@@ -35,7 +35,7 @@ class MapelImport implements ToModel, WithHeadingRow, WithValidation, SkipsOnErr
         return [
             'nama' => 'required|string|max:255',
             'kode' => 'required|string|max:50|unique:mata_pelajaran,kode',
-            'kelompok' => 'required|string|max:100',
+            'tingkat' => 'nullable|string|in:X,XI,XII',
         ];
     }
 }

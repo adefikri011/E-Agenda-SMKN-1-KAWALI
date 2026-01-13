@@ -21,7 +21,7 @@ class NilaiController extends Controller
             return redirect()->back()->with('error', 'Data guru tidak ditemukan');
         }
 
-        $nilai = Nilai::where('guru_id', $user_id)
+        $nilai = Nilai::where('guru_id', $guru->id)
             ->with(['siswa', 'mapel', 'kelas'])
             ->latest()
             ->get();
@@ -90,7 +90,7 @@ class NilaiController extends Controller
 
                 Nilai::create([
                     'siswa_id' => $g['siswa_id'],
-                    'guru_id' => $user_id,
+                    'guru_id' => $guru->id,
                     'mapel_id' => $request->mapel_id,
                     'kelas_id' => $request->kelas_id,
                     'jenis' => $jenisToStore,
@@ -136,7 +136,7 @@ class NilaiController extends Controller
 
         Nilai::create([
             'siswa_id' => $request->siswa_id,
-            'guru_id' => $user_id,
+            'guru_id' => $guru->id,
             'mapel_id' => $request->mapel_id,
             'kelas_id' => $request->kelas_id,
             'jenis' => $jenisToStore,

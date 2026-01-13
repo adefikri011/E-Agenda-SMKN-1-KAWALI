@@ -77,7 +77,7 @@ class AbsensiController extends Controller
         }
     }
 
-    public function create(Request $request)
+        public function create(Request $request)
     {
         $request->validate([
             'kelas_id' => 'required|exists:kelas,id',
@@ -108,14 +108,24 @@ class AbsensiController extends Controller
             }
         }
 
+        // --- PERBAIKAN DI SINI (Bagian Create) ---
+
+        // Ambil data guru yang sedang login
+        $guru = Guru::where('users_id', Auth::id())->first();
+
         // Cek apakah absensi sudah ada
+        // PENTING: 'guru_id' di sini harus pakai $guru->users_id agar cocok dengan foreign key ke tabel users
+        $guru_id_for_db = $guru ? $guru->users_id : Auth::id();
+
         $existingAbsensi = Absensi::where([
             'kelas_id' => $request->kelas_id,
             'mapel_id' => $request->mapel_id,
             'jampel_id' => $request->jampel_id,
             'tanggal' => $tanggal,
-            'guru_id' => Auth::id(),
+            'guru_id' => $guru_id_for_db, // Menggunakan users_id
         ])->first();
+
+        // ------------------------------------------
 
         if ($existingAbsensi) {
             return redirect()->route('absensi.show', $existingAbsensi->id)
@@ -197,14 +207,21 @@ class AbsensiController extends Controller
                 ], 403);
             }
 
+            // --- PERBAIKAN DI SINI (Bagian Store - Cek Duplikasi) ---
+
+            // Tentukan ID Guru yang akan disimpan ke DB (Harus users_id)
+            $guru_id_for_db = $guru->users_id;
+
             // Check for existing attendance record
             $existingAbsensi = Absensi::where([
                 'kelas_id' => $validated['kelas_id'],
                 'mapel_id' => $validated['mapel_id'],
                 'jampel_id' => $validated['jampel_id'],
                 'tanggal' => $tanggal,
-                'guru_id' => $guru->id,
+                'guru_id' => $guru_id_for_db, // PENTING: Ganti $guru->id dengan $guru_id_for_db
             ])->first();
+
+            // --------------------------------------------------------
 
             if ($existingAbsensi) {
                 return response()->json([
@@ -254,6 +271,7 @@ class AbsensiController extends Controller
 
             try {
                 // Create main attendance record
+                // --- PERBAIKAN DI SINI (Bagian Store - Simpan Data) ---
                 $absensi = Absensi::create([
                     'kelas_id' => $validated['kelas_id'],
                     'mapel_id' => $validated['mapel_id'],
@@ -261,10 +279,11 @@ class AbsensiController extends Controller
                     'start_jampel_id' => $validated['start_jampel_id'],
                     'end_jampel_id' => $validated['end_jampel_id'],
                     'tanggal' => $tanggal,
-                    'guru_id' => $guru->id,
+                    'guru_id' => $guru_id_for_db, // PENTING: Ganti $guru->id dengan $guru_id_for_db
                     'pertemuan' => $validated['pertemuan'],
                     'jam' => $jamValue, // Use default if jampel not found
                 ]);
+                // ----------------------------------------------------
 
                 // Save attendance details for each student
                 foreach ($validated['absensi'] as $item) {
@@ -320,6 +339,7 @@ class AbsensiController extends Controller
             return redirect()->back()->with('error', 'Terjadi kesalahan server: ' . $e->getMessage())->withInput();
         }
     }
+
     public function show($id)
     {
         $absensi = Absensi::with(['kelas', 'mapel', 'jampel', 'guru', 'detailAbsensi.siswa'])->findOrFail($id);

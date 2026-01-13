@@ -26,7 +26,8 @@ class KelasTemplateExport implements FromArray, WithHeadings
     {
         return [
             'nama_kelas',
-            'jurusan_id',
+            'kode_jurusan',
         ];
     }
 }
+    

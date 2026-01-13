@@ -27,17 +27,15 @@
                        placeholder="Masukkan kode mata pelajaran" required>
             </div>
 
-            {{-- KELOMPOK --}}
+            {{-- TINGKAT --}}
             <div>
-                <label class="block font-medium text-sm text-gray-700">Kelompok *</label>
-                <select name="kelompok"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                        required>
-                    <option value="">Pilih Kelompok</option>
-                    <option value="A">Kelompok A (Wajib)</option>
-                    <option value="B">Kelompok B (Wajib)</option>
-                    <option value="C">Kelompok C (Peminatan)</option>
-                    <option value="Muatan Lokal">Muatan Lokal</option>
+                <label class="block font-medium text-sm text-gray-700">Tingkat Kelas</label>
+                <select name="tingkat"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                    <option value="">Pilih Tingkat</option>
+                    <option value="X">Kelas X</option>
+                    <option value="XI">Kelas XI</option>
+                    <option value="XII">Kelas XII</option>
                 </select>
             </div>
 

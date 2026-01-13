@@ -16,6 +16,8 @@
         <form action="{{ route('nilai.update', $nilai->id) }}" method="POST" class="space-y-6">
             @csrf
             @method('PUT')
+            <input type="hidden" name="kelas_id" value="{{ $nilai->kelas_id }}">
+            <input type="hidden" name="siswa_id" value="{{ $nilai->siswa_id }}">
 
             <!-- Student Info (Read-only) -->
             <div class="bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 rounded-lg p-4">
@@ -69,7 +71,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Nilai (0-100)</label>
-                    <input type="number" name="nilai" min="0" max="100" class="input input-bordered w-full text-lg font-bold" 
+                    <input type="number" name="nilai" min="0" max="100" class="input input-bordered w-full text-lg font-bold"
                         value="{{ $nilai->nilai }}" required>
                     @error('nilai')
                         <span class="text-sm text-red-600 mt-1">{{ $message }}</span>
@@ -78,7 +80,7 @@
 
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Keterangan (Opsional)</label>
-                    <input type="text" name="keterangan" class="input input-bordered w-full" 
+                    <input type="text" name="keterangan" class="input input-bordered w-full"
                         value="{{ $nilai->keterangan ?? '' }}" placeholder="Catatan atau komentar">
                     @error('keterangan')
                         <span class="text-sm text-red-600 mt-1">{{ $message }}</span>
@@ -96,16 +98,19 @@
             <div class="flex items-center justify-between gap-3 pt-4 border-t">
                 <a href="{{ route('nilai.index') }}" class="btn btn-ghost">Batal</a>
                 <div class="flex gap-2">
-                    <form action="{{ route('nilai.destroy', $nilai->id) }}" method="POST" class="inline"
-                        onsubmit="return confirm('Hapus nilai ini? Tindakan tidak dapat dibatalkan.');">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-error btn-outline">🗑️ Hapus</button>
-                    </form>
                     <button type="submit" class="btn btn-primary">💾 Simpan Perubahan</button>
                 </div>
             </div>
         </form>
+
+        <div class="mt-3">
+            <form action="{{ route('nilai.destroy', $nilai->id) }}" method="POST" class="inline"
+                onsubmit="return confirm('Hapus nilai ini? Tindakan tidak dapat dibatalkan.');">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="btn btn-error btn-outline">🗑️ Hapus</button>
+            </form>
+        </div>
     </div>
 
 @endsection

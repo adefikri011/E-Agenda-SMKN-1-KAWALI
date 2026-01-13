@@ -10,14 +10,31 @@ use Illuminate\Support\Facades\Hash;
 
 class SekretarisController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $kelas = Kelas::all();
         $users = User::all();
+        $search = $request->input('search');
+        $kelasId = $request->input('kelas_id');
+
         $sekretaris = User::with('siswa')
             ->where('role', 'sekretaris')
             ->whereHas('siswa')
-            ->paginate(10);
+            ->when($search, function ($query) use ($search) {
+                return $query->where('name', 'like', '%' . $search . '%')
+                    ->orWhere('email', 'like', '%' . $search . '%')
+                    ->orWhereHas('siswa', function ($q) use ($search) {
+                        $q->where('nis', 'like', '%' . $search . '%')
+                          ->orWhere('nama_siswa', 'like', '%' . $search . '%');
+                    });
+            })
+            ->when($kelasId, function ($query) use ($kelasId) {
+                return $query->whereHas('siswa', function ($q) use ($kelasId) {
+                    $q->where('kelas_id', $kelasId);
+                });
+            })
+            ->paginate(10)
+            ->appends($request->query());
 
         return view('admin.data.sekretaris.index', compact('sekretaris', 'kelas', 'users'));
     }

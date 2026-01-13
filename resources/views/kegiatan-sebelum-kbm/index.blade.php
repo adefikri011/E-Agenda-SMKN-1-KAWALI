@@ -3,154 +3,194 @@
 @section('title', 'Kegiatan Sebelum KBM')
 
 @section('content')
-    <div class="mb-6">
-        <h1 class="text-2xl font-bold text-gray-900">Kegiatan Sebelum KBM</h1>
-        <p class="text-gray-600 mt-1">Atur kegiatan singkat yang dilakukan sebelum proses pembelajaran dimulai.</p>
-    </div>
-    
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
-        <div class="lg:col-span-2">
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 lg:p-8">
-                <div class="flex items-center justify-between mb-4">
-                    <h2 class="text-lg font-semibold">Tambah / Perbarui Kegiatan</h2>
+    <!-- Full Screen Header -->
+    <div class="px-8 py-6 bg-white border-b border-gray-200">
+        <div class="flex items-center justify-between">
+            <div>
+                <div class="flex items-center gap-3 mb-2">
+                    <div class="w-1 h-8 bg-blue-600 rounded-full"></div>
+                    <h1 class="text-3xl font-bold text-gray-900">Kegiatan Sebelum KBM</h1>
                 </div>
-                <form action="{{ route('kegiatan-sebelum-kbm.store') }}" method="POST">
-                    @csrf
+                <p class="text-lg text-gray-600 ml-4">Atur kegiatan singkat yang dilakukan sebelum proses pembelajaran dimulai.</p>
+            </div>
+            <div class="bg-blue-50 px-6 py-3 rounded-xl border border-blue-100">
+                <p class="text-sm text-blue-600 font-medium">Hari ini</p>
+                <p class="text-xl font-bold text-blue-800">{{ $todayHari }}</p>
+            </div>
+        </div>
+    </div>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700">Jurusan</label>
-                            <select name="jurusan_id" class="mt-1 block w-full rounded-md border-gray-200">
-                                <option value="">Semua Jurusan</option>
-                                @foreach ($jurusans as $jurusan)
-                                    <option value="{{ $jurusan->id }}">{{ $jurusan->nama_jurusan }}</option>
-                                @endforeach
-                            </select>
-                            <p class="text-xs text-gray-500 mt-1">Pilih jurusan jika kegiatan hanya berlaku untuk jurusan
-                                tertentu.</p>
-                        </div>
-                        <!-- Hari akan diisi otomatis berdasarkan hari saat ini -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700">Hari</label>
-                            <div class="mt-1 text-sm text-gray-600">(otomatis berdasarkan hari ini)</div>
-                        </div>
+    <!-- Full Screen Content -->
+    <div class="px-8 py-6">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+            <div class="flex items-center justify-between mb-6 pb-4 border-b border-gray-200">
+                <h2 class="text-xl font-semibold text-gray-800">Tambah / Perbarui Kegiatan</h2>
+                <div class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center">
+                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    </svg>
+                </div>
+            </div>
 
-                        <div class="sm:col-span-2">
-                            <label class="block text-sm font-medium text-gray-700">Kegiatan</label>
-                            <input type="text" name="kegiatan" class="mt-1 block w-full rounded-md border-gray-200"
-                                placeholder="Contoh: Doa bersama / Absensi cepat" required>
-                        </div>
+            <form action="{{ route('kegiatan-sebelum-kbm.store') }}" method="POST" class="space-y-6">
+                @csrf
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="border border-gray-300 rounded-lg p-4 bg-gray-50">
+                        <label class="block text-lg font-semibold text-gray-700 mb-3">Jurusan</label>
+                        <select name="jurusan_id" class="mt-1 block w-full px-4 py-4 text-lg rounded-md border-2 border-gray-300 focus:border-blue-500 focus:ring-blue-500 bg-white">
+                            <option value="">Semua Jurusan</option>
+                            @foreach ($jurusans as $jurusan)
+                                <option value="{{ $jurusan->id }}">{{ $jurusan->nama_jurusan }}</option>
+                            @endforeach
+                        </select>
+                        <p class="text-base text-gray-500 mt-3">Pilih jurusan jika kegiatan hanya berlaku untuk jurusan tertentu.</p>
                     </div>
 
-                    <div class="mt-4 flex items-center space-x-3">
+                    <div class="border border-gray-300 rounded-lg p-4 bg-gray-50">
+                        <label class="block text-lg font-semibold text-gray-700 mb-3">Hari</label>
+                        <div class="mt-1 px-4 py-4 bg-white rounded-md text-lg text-gray-700 font-medium border-2 border-gray-300">
+                            {{ $todayHari }} (otomatis)
+                        </div>
+                        <p class="text-base text-gray-500 mt-3">Hari akan diisi otomatis berdasarkan hari saat ini</p>
+                    </div>
+
+                    <div class="md:col-span-2 border border-gray-300 rounded-lg p-4 bg-gray-50">
+                        <label class="block text-lg font-semibold text-gray-700 mb-3">Kegiatan</label>
+                        <input type="text" name="kegiatan" class="mt-1 block w-full px-4 py-4 text-lg rounded-md border-2 border-gray-300 focus:border-blue-500 focus:ring-blue-500 bg-white"
+                            placeholder="Contoh: Doa bersama / Absensi cepat" required>
+                        <p class="text-base text-gray-500 mt-3">Gunakan kata-kata singkat dan jelas untuk kegiatan ini</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between pt-6">
+                    <div class="flex items-center space-x-4">
                         <button type="submit"
-                            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300">Simpan</button>
+                            class="px-8 py-4 bg-blue-600 text-white text-lg font-medium rounded-lg hover:bg-blue-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors">
+                            Simpan Kegiatan
+                        </button>
                         <button type="reset"
-                            class="px-4 py-2 bg-white border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50">Reset</button>
-                        <a href="{{ route('kegiatan.index') ?? url()->current() }}"
-                            class="ml-auto text-xs text-gray-500">Batal</a>
+                            class="px-8 py-4 bg-white border-2 border-gray-300 text-lg font-medium rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
+                            Reset Form
+                        </button>
                     </div>
-                </form>
+                    <a href="{{ route('kegiatan.index') ?? url()->current() }}"
+                        class="text-lg text-gray-500 hover:text-gray-700 transition-colors">
+                        Batal
+                    </a>
+                </div>
+            </form>
 
-                <hr class="my-6">
+            <hr class="my-8 border-gray-300">
 
-                <div>
-                    <h3 class="text-md font-semibold mb-3">Daftar Kegiatan (per hari)</h3>
-                    <div class="space-y-4">
-                        <div class="flex items-center justify-between">
-                            <h4 class="font-semibold text-gray-700">Kegiatan Hari Ini: <span
-                                    class="text-blue-600">{{ $todayHari }}</span></h4>
-                            <a href="#" class="text-sm text-blue-600 hover:text-blue-800">Lihat semua hari →</a>
-                        </div>
-
-                        <div id="activitiesList">
-                            @if ($activities->isEmpty())
-                                <div class="text-gray-500 py-8 text-center">
-                                    <p class="text-sm">Belum ada kegiatan untuk hari {{ $todayHari }}.</p>
-                                    <p class="text-xs text-gray-400 mt-2">Tambahkan kegiatan menggunakan form di atas.</p>
-                                </div>
-                            @else
-                                <ul class="mt-2 space-y-3">
-                                    @foreach ($activities as $hari => $list)
-                                        @foreach ($list as $item)
-                                            <li
-                                                class="flex items-center justify-between p-4 bg-white border border-gray-100 rounded-lg shadow-sm hover:shadow-md transition-shadow">
-                                                <div class="flex-1">
-                                                    <div class="text-sm font-semibold text-gray-900">{{ $item->kegiatan }}
-                                                    </div>
-                                                    <div class="flex items-center gap-3 mt-1 text-xs text-gray-500">
-                                                        <span>Dibuat: {{ $item->created_at->format('d M Y H:i') }}</span>
-                                                        @if ($item->jurusan)
-                                                            <span
-                                                                class="px-2 py-0.5 bg-blue-100 text-blue-700 rounded">{{ $item->jurusan->nama_jurusan }}</span>
-                                                        @else
-                                                            <span
-                                                                class="px-2 py-0.5 bg-gray-100 text-gray-600 rounded">Umum</span>
-                                                        @endif
-                                                    </div>
-                                                </div>
-                                                <div class="flex items-center gap-2 ml-4">
-                                                    <button onclick="openEdit({{ $item->id }})"
-                                                        class="inline-flex items-center gap-2 px-3 py-1 text-sm bg-yellow-50 text-yellow-800 border border-yellow-100 rounded-md hover:bg-yellow-100">Edit</button>
-                                                    <form action="{{ route('kegiatan-sebelum-kbm.destroy', $item->id) }}"
-                                                        method="POST" onsubmit="return confirm('Hapus kegiatan ini?')"
-                                                        class="inline">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit"
-                                                            class="inline-flex items-center gap-2 px-3 py-1 text-sm bg-red-50 text-red-800 border border-red-100 rounded-md hover:bg-red-100">Hapus</button>
-                                                    </form>
-                                                </div>
-                                            </li>
-                                        @endforeach
-                                    @endforeach
-                                </ul>
-                            @endif
-                        </div>
+            <div>
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-semibold text-gray-800">Daftar Kegiatan</h3>
+                    <div class="bg-blue-50 px-4 py-2 rounded-lg">
+                        <span class="text-base font-medium text-blue-700">Hari: {{ $todayHari }}</span>
                     </div>
                 </div>
-            </div>
-        </div>
 
-        <div class="space-y-6">
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                <h3 class="text-lg font-bold text-gray-900 mb-2">Petunjuk Singkat</h3>
-                <ul class="text-sm text-gray-600 space-y-2">
-                    <li>- Gunakan satu kegiatan per hari. Gunakan kata-kata singkat dan jelas.</li>
-                    <li>- Kegiatan akan tampil pada halaman input agenda (jika aktif di agenda).</li>
-                    <li>- Tekan Edit untuk memperbarui atau Hapus untuk menghapus.</li>
-                </ul>
-            </div>
-
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                <h3 class="text-lg font-bold text-gray-900 mb-2">Tip</h3>
-                <div class="text-sm text-gray-600">Simpan kegiatan yang ringkas agar guru dapat cepat memilih saat
-                    memasukkan agenda.</div>
+                <div id="activitiesList">
+                    @if ($activities->isEmpty())
+                        <div class="text-center py-12 bg-gray-50 rounded-xl border border-gray-200">
+                            <div class="w-20 h-20 rounded-full bg-gray-200 flex items-center justify-center mx-auto mb-4">
+                                <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                </svg>
+                            </div>
+                            <p class="text-lg font-medium text-gray-700 mb-2">Belum ada kegiatan untuk hari {{ $todayHari }}</p>
+                            <p class="text-base text-gray-500">Tambahkan kegiatan menggunakan form di atas</p>
+                        </div>
+                    @else
+                        <ul class="space-y-4">
+                            @foreach ($activities as $hari => $list)
+                                @foreach ($list as $item)
+                                    <li class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+                                        <div class="flex items-start justify-between">
+                                            <div class="flex-1">
+                                                <h4 class="text-lg font-semibold text-gray-900 mb-3">{{ $item->kegiatan }}</h4>
+                                                <div class="flex items-center gap-4 text-base text-gray-600">
+                                                    <div class="flex items-center gap-2">
+                                                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                        </svg>
+                                                        <span>{{ $item->created_at->format('d M Y H:i') }}</span>
+                                                    </div>
+                                                    @if ($item->jurusan)
+                                                        <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-lg text-base font-medium">
+                                                            {{ $item->jurusan->nama_jurusan }}
+                                                        </span>
+                                                    @else
+                                                        <span class="px-3 py-1 bg-gray-100 text-gray-600 rounded-lg text-base font-medium">
+                                                            Umum
+                                                        </span>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center gap-3 ml-6">
+                                                <button onclick="openEdit({{ $item->id }})"
+                                                    class="inline-flex items-center gap-2 px-4 py-2 text-base font-medium bg-yellow-50 text-yellow-800 border border-yellow-200 rounded-lg hover:bg-yellow-100 transition-colors">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                    </svg>
+                                                    Edit
+                                                </button>
+                                                <form action="{{ route('kegiatan-sebelum-kbm.destroy', $item->id) }}"
+                                                    method="POST" onsubmit="return confirm('Hapus kegiatan ini?')" class="inline">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit"
+                                                        class="inline-flex items-center gap-2 px-4 py-2 text-base font-medium bg-red-50 text-red-800 border border-red-200 rounded-lg hover:bg-red-100 transition-colors">
+                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                        </svg>
+                                                        Hapus
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </li>
+                                @endforeach
+                            @endforeach
+                        </ul>
+                    @endif
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Edit Modal -->
+    <!-- Full Screen Edit Modal -->
     <div id="editModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-        <div class="bg-white rounded-lg shadow-lg p-6 max-w-lg w-full mx-4">
-            <h3 class="text-lg font-semibold mb-3">Edit Kegiatan</h3>
-            <form id="editForm" method="POST">
+        <div class="bg-white rounded-xl shadow-xl p-8 max-w-xl w-full mx-4">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-xl font-semibold text-gray-800">Edit Kegiatan</h3>
+                <button onclick="closeEdit()" class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <form id="editForm" method="POST" class="space-y-6">
                 @csrf
                 @method('PUT')
                 <input type="hidden" name="_method" value="PUT">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Hari</label>
-                    <div id="editHariDisplay" class="mt-1 text-sm text-gray-700">-</div>
-                </div>
-                <div class="mt-3">
-                    <label class="block text-sm font-medium text-gray-700">Kegiatan</label>
-                    <input type="text" name="kegiatan" id="editKegiatan"
-                        class="mt-1 block w-full rounded-md border-gray-200" required>
+
+                <div class="border border-gray-300 rounded-lg p-4 bg-gray-50">
+                    <label class="block text-lg font-semibold text-gray-700 mb-3">Hari</label>
+                    <div id="editHariDisplay" class="px-4 py-4 bg-white rounded-md text-lg text-gray-700 font-medium border-2 border-gray-300">-</div>
                 </div>
 
-                <div class="mt-4 flex justify-end space-x-2">
-                    <button type="button" onclick="closeEdit()" class="px-4 py-2 bg-gray-100 rounded">Batal</button>
-                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">Simpan Perubahan</button>
+                <div class="border border-gray-300 rounded-lg p-4 bg-gray-50">
+                    <label class="block text-lg font-semibold text-gray-700 mb-3">Kegiatan</label>
+                    <input type="text" name="kegiatan" id="editKegiatan"
+                        class="mt-1 block w-full px-4 py-4 text-lg rounded-md border-2 border-gray-300 focus:border-blue-500 focus:ring-blue-500 bg-white" required>
+                </div>
+
+                <div class="flex justify-end space-x-3 pt-4">
+                    <button type="button" onclick="closeEdit()" class="px-6 py-3 bg-gray-100 text-lg font-medium rounded-lg hover:bg-gray-200 transition-colors">Batal</button>
+                    <button type="submit" class="px-6 py-3 bg-blue-600 text-white text-lg font-medium rounded-lg hover:bg-blue-700 transition-colors">Simpan Perubahan</button>
                 </div>
             </form>
         </div>
@@ -179,5 +219,4 @@
             }
         </script>
     @endpush
-
 @endsection

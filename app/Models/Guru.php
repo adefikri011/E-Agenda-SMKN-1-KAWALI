@@ -68,3 +68,4 @@ class Guru extends Model
         return $this->hasMany(Agenda::class, 'guru_ttd_id');
     }
 }
+

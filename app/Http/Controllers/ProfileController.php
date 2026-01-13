@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
+use Illuminate\Validation\Rule;
 
 class ProfileController extends Controller
 {
@@ -24,9 +25,19 @@ class ProfileController extends Controller
     {
         $user = auth()->user();
 
+        $guru = $user->guru;
+
+        $nipRules = ['nullable', 'string', 'max:50'];
+        if ($guru) {
+            $nipRules[] = Rule::unique('guru', 'nip')->ignore($guru->id);
+        } else {
+            $nipRules[] = Rule::unique('guru', 'nip');
+        }
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users,email,' . $user->id,
+            'nip' => $nipRules,
         ], [
             'name.required' => 'Nama harus diisi',
             'name.string' => 'Nama harus berupa teks',
@@ -34,9 +45,21 @@ class ProfileController extends Controller
             'email.required' => 'Email harus diisi',
             'email.email' => 'Format email tidak valid',
             'email.unique' => 'Email sudah terdaftar',
+            'nip.string' => 'NIP harus berupa teks',
+            'nip.max' => 'NIP maksimal 50 karakter',
+            'nip.unique' => 'NIP sudah terdaftar',
         ]);
 
-        $user->update($validated);
+        // Update only user fields (avoid mass-assigning nip to users table)
+        $user->update([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+        ]);
+
+        // If user has a guru record and nip provided, update guru.nip
+        if (array_key_exists('nip', $validated) && $validated['nip'] !== null && $guru) {
+            $guru->update(['nip' => $validated['nip']]);
+        }
         // Force touch updated_at timestamp
         $user->touch();
 

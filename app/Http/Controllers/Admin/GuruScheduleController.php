@@ -32,7 +32,7 @@ class GuruScheduleController extends Controller
     public function getSchedules()
     {
         $schedules = GuruMapel::with(['guru.user', 'kelas', 'mapel', 'startJampel', 'endJampel'])
-            ->orderBy('created_at', 'desc')
+            ->orderBy('created_at', 'asc')
             ->get()
             ->map(function ($item) {
                 return [
@@ -275,6 +275,70 @@ class GuruScheduleController extends Controller
                     'end_jampel_name' => $schedule->endJampel?->nama_jam,
                     'end_rentang' => $schedule->endJampel?->rentang_waktu,
                 ]
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Bulk assign schedules (API)
+     */
+    public function bulkAssign(Request $request)
+    {
+        try {
+            $validated = $request->validate([
+                'guru_id' => 'required|exists:guru,id',
+                'kelas_id' => 'required|exists:kelas,id',
+                'mapel_ids' => 'required|array|min:1',
+                'mapel_ids.*' => 'exists:mata_pelajaran,id',
+            ]);
+
+            $guruId = $validated['guru_id'];
+            $kelasId = $validated['kelas_id'];
+            $mapelIds = $validated['mapel_ids'];
+
+            $createdCount = 0;
+            $existingCount = 0;
+
+            foreach ($mapelIds as $mapelId) {
+                // Check if schedule already exists
+                $existing = GuruMapel::where('guru_id', $guruId)
+                    ->where('kelas_id', $kelasId)
+                    ->where('mapel_id', $mapelId)
+                    ->first();
+
+                if ($existing) {
+                    $existingCount++;
+                    continue;
+                }
+
+                // Create new schedule without specific jam (default to null)
+                GuruMapel::create([
+                    'guru_id' => $guruId,
+                    'kelas_id' => $kelasId,
+                    'mapel_id' => $mapelId,
+                    'hari_tipe' => null,
+                    'start_jampel_id' => null,
+                    'end_jampel_id' => null,
+                ]);
+
+                $createdCount++;
+            }
+
+            $message = "Berhasil menambahkan {$createdCount} jadwal";
+            if ($existingCount > 0) {
+                $message .= " ({$existingCount} sudah ada)";
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => $message,
+                'created' => $createdCount,
+                'existing' => $existingCount
             ]);
         } catch (\Exception $e) {
             return response()->json([

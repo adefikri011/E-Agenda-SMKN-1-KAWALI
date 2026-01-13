@@ -1,7 +1,3 @@
-{{--
-    File ini dimaksudkan untuk di-include di dalam loop @foreach di index.blade.php
-    Contoh: @include('admin.data.wali_kelas.edit', ['item' => $item])
---}}
 <div id="editModal{{ $item->id }}" class="modal">
     <div class="modal-content">
         <div class="flex justify-between items-center mb-4">
@@ -19,7 +15,7 @@
             {{-- Input Guru --}}
             <div>
                 <label class="block text-gray-700 text-sm font-medium mb-1">Pilih Guru <span class="text-red-500">*</span></label>
-                <select name="guru_id" class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm" required>
+                <select name="guru_id" class="select2 w-full px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm" required>
                     <option value="">-- Pilih Guru --</option>
 
                     {{-- Tampilkan guru yang saat ini dipilih sebagai pilihan pertama --}}
@@ -37,7 +33,7 @@
             {{-- Input Kelas --}}
             <div>
                 <label class="block text-gray-700 text-sm font-medium mb-1">Pilih Kelas <span class="text-red-500">*</span></label>
-                <select name="kelas_id" class="selct2 w-full px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm" required>
+                <select name="kelas_id" class="select2 w-full px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm" required>
                     <option value="">-- Pilih Kelas --</option>
 
                     {{-- Tampilkan kelas yang saat ini dipilih sebagai pilihan pertama --}}

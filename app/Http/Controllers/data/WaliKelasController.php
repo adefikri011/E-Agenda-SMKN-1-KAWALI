@@ -128,22 +128,34 @@ public function store(Request $request)
                 ->withInput();
         }
 
-        // Hapus penugasan lama
-        $oldUser = User::findOrFail($id);
-        $oldKelas = $oldUser->kelasAsWali;
-        if ($oldKelas) {
-            $oldKelas->wali_kelas_id = null;
-            $oldKelas->save();
+        try {
+            // Hapus penugasan lama
+            $oldUser = User::findOrFail($id);
+            $oldKelas = $oldUser->kelasAsWali;
+            if ($oldKelas) {
+                $oldKelas->wali_kelas_id = null;
+                $oldKelas->save();
+            }
+
+            // Buat penugasan baru
+            $newGuru = Guru::find($request->guru_id);
+            $newKelas = Kelas::find($request->kelas_id);
+            $newKelas->wali_kelas_id = $newGuru->users_id;
+            $newKelas->save();
+
+            // Update role user menjadi 'walikelas'
+            $user = User::find($newGuru->users_id);
+            if ($user && $user->role !== 'walikelas') {
+                $user->role = 'walikelas';
+                $user->save();
+            }
+
+            return redirect()->route('wali_kelas.index')
+                ->with('success', 'Penugasan wali kelas berhasil diperbarui dan role user telah diupdate.');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Terjadi kesalahan saat memperbarui penugasan: ' . $e->getMessage());
         }
-
-        // Buat penugasan baru
-        $newGuru = Guru::find($request->guru_id);
-        $newKelas = Kelas::find($request->kelas_id);
-        $newKelas->wali_kelas_id = $newGuru->users_id;
-        $newKelas->save();
-
-        return redirect()->route('wali_kelas.index')
-            ->with('success', 'Penugasan wali kelas berhasil diperbarui');
     }
 
     /**

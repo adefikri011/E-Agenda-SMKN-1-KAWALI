@@ -9,7 +9,7 @@
         <div class="mb-8">
             <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-2">Rekap Absensi</h1>
             <p class="text-gray-600">Kelola dan analisis data kehadiran siswa per kelas</p>
-        </div>  
+        </div>
 
         <!-- Main Container -->
         <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
@@ -24,7 +24,7 @@
                     <form method="GET" id="filterForm" class="space-y-5">
                         <div>
                             <label class="block text-sm font-semibold text-gray-700 mb-2">Kelas</label>
-                            <select name="kelas_id" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm font-medium">
+                            <select name="kelas_id" class="select2 w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm font-medium">
                                 <option value="">Pilih Kelas</option>
                                 @foreach($kelases as $kelas)
                                     <option value="{{ $kelas->id }}" {{ $selectedKelas == $kelas->id ? 'selected' : '' }}>
@@ -187,11 +187,11 @@
 
                         <!-- Export Button -->
                         <div class="flex gap-3">
-                            <a href="{{ route('admin.rekap-absensi.export-pdf', ['kelas_id' => $selectedKelas, 'bulan' => $selectedBulan, 'tanggal' => $selectedTanggal]) }}" 
+                            <a href="{{ route('admin.rekap-absensi.export-pdf', ['kelas_id' => $selectedKelas, 'bulan' => $selectedBulan, 'tanggal' => $selectedTanggal]) }}"
                                class="inline-flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition-colors text-sm">
                                 <i class="fas fa-file-pdf"></i>Export PDF
                             </a>
-                            <a href="{{ route('admin.rekap-absensi.export', ['kelas_id' => $selectedKelas, 'bulan' => $selectedBulan, 'tanggal' => $selectedTanggal]) }}" 
+                            <a href="{{ route('admin.rekap-absensi.export', ['kelas_id' => $selectedKelas, 'bulan' => $selectedBulan, 'tanggal' => $selectedTanggal]) }}"
                                class="inline-flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition-colors text-sm">
                                 <i class="fas fa-file-excel"></i>Export Excel
                             </a>
@@ -208,7 +208,7 @@
                                                 <h3 class="text-lg font-bold">{{ $stats['kelas_nama'] }}</h3>
                                                 <span class="text-sm font-semibold px-3 py-1 bg-gray-700 rounded">Total Siswa: {{ $stats['total_siswa_unik'] }}</span>
                                             </div>
-                                            
+
                                             <!-- Stats Grid -->
                                             <div class="grid grid-cols-2 sm:grid-cols-6 gap-3">
                                                 <div class="text-center">

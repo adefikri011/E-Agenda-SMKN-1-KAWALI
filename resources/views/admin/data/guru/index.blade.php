@@ -19,13 +19,17 @@
                     </svg>
                     <span class="font-medium text-sm">Tambah Guru</span>
                 </a>
-                <a href="#importModal"
-                    class="group bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white px-4 py-2 sm:px-5 sm:py-2.5 rounded-lg flex items-center gap-2 shadow-md hover:shadow-lg transition-all duration-300 active:scale-95">
+                <a href="#importModalGuru"
+                    class="group bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white px-4 py-2 sm:px-5 sm:py-2.5 rounded-lg flex items-center gap-2 shadow-md hover:shadow-lg transition-all duration-300 active:scale-95 cursor-pointer">
+
+                    <!-- Ikon Upload -->
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
                     </svg>
+
+                    <!-- Label Teks -->
                     <span class="font-medium text-sm">Import Excel</span>
                 </a>
             </div>
@@ -60,18 +64,26 @@
             <table class="w-full">
                 <thead class="bg-gray-50 border-b border-gray-200">
                     <tr>
-                        <th class="py-3 px-5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider rounded-tl-lg">No</th>
-                        <th class="py-3 px-5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Nama Guru</th>
-                        <th class="py-3 px-5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">NIP</th>
-                        <th class="py-3 px-5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Email</th>
-                        <th class="py-3 px-5 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider rounded-tr-lg">Aksi</th>
+                        <th
+                            class="py-3 px-5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider rounded-tl-lg">
+                            No</th>
+                        <th class="py-3 px-5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Nama
+                            Guru</th>
+                        <th class="py-3 px-5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">NIP
+                        </th>
+                        <th class="py-3 px-5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Email
+                        </th>
+                        <th
+                            class="py-3 px-5 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider rounded-tr-lg">
+                            Aksi</th>
                     </tr>
                 </thead>
 
                 <tbody class="divide-y divide-gray-200">
                     @forelse ($guru as $item)
                         <tr class="hover:bg-gray-50 transition-colors duration-200">
-                            <td class="py-3 px-5 font-mono text-sm text-gray-900">{{ $guru->firstItem() + $loop->index }}</td>
+                            <td class="py-3 px-5 font-mono text-sm text-gray-900">{{ $guru->firstItem() + $loop->index }}
+                            </td>
                             <td class="py-3 px-5 text-sm font-medium text-gray-900">{{ $item->nama }}</td>
                             <td class="py-3 px-5 font-mono text-sm text-gray-900">{{ $item->nip ?? '-' }}</td>
                             <td class="py-3 px-5 text-sm text-gray-600">{{ $item->user->email ?? '-' }}</td>
@@ -94,13 +106,15 @@
                                 <div class="text-center">
                                     <svg class="mx-auto mb-4 w-20 h-20 text-gray-300" fill="none" viewBox="0 0 64 64"
                                         stroke="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M32 28c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12z"
-                                              stroke-width="2" fill="none"/>
-                                        <path d="M32 16v8M22 26l4-4M42 26l-4-4M40 40l-4 4M24 44l4-4" stroke-width="2"/>
+                                        <path
+                                            d="M32 28c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12z"
+                                            stroke-width="2" fill="none" />
+                                        <path d="M32 16v8M22 26l4-4M42 26l-4-4M40 40l-4 4M24 44l4-4" stroke-width="2" />
                                     </svg>
 
                                     <h3 class="mt-2 text-lg font-semibold text-gray-800">Belum ada data guru</h3>
-                                    <p class="mt-1 text-sm text-gray-500">Belum ada guru yang ditambahkan. Tambahkan data guru
+                                    <p class="mt-1 text-sm text-gray-500">Belum ada guru yang ditambahkan. Tambahkan data
+                                        guru
                                         agar dapat dikelola di sini.</p>
 
                                     <div class="mt-4 flex items-center justify-center space-x-3">
@@ -124,23 +138,26 @@
         <!-- Mobile Card View (Hidden on desktop) -->
         <div class="md:hidden space-y-4">
             @forelse ($guru as $item)
-                <div class="bg-white rounded-lg border border-gray-200 p-4 shadow-sm hover:shadow-md transition-shadow duration-200">
+                <div
+                    class="bg-white rounded-lg border border-gray-200 p-4 shadow-sm hover:shadow-md transition-shadow duration-200">
                     <div class="flex justify-between items-start mb-3">
                         <div>
                             <h3 class="font-bold text-gray-900 text-lg">{{ $item->nama }}</h3>
                             <div class="flex items-center mt-1">
-                                @if($item->nip)
-                                    <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">NIP: {{ $item->nip }}</span>
+                                @if ($item->nip)
+                                    <span
+                                        class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">NIP:
+                                        {{ $item->nip }}</span>
                                 @endif
                             </div>
                         </div>
                         <div class="flex space-x-2">
                             <a href="#editModal{{ $item->id }}"
-                               class="text-yellow-600 hover:text-yellow-800 p-2 rounded-full hover:bg-yellow-50 transition-colors">
+                                class="text-yellow-600 hover:text-yellow-800 p-2 rounded-full hover:bg-yellow-50 transition-colors">
                                 <i class="fas fa-edit text-sm"></i>
                             </a>
                             <a href="#deleteModal{{ $item->id }}"
-                               class="text-red-600 hover:text-red-800 p-2 rounded-full hover:bg-red-50 transition-colors">
+                                class="text-red-600 hover:text-red-800 p-2 rounded-full hover:bg-red-50 transition-colors">
                                 <i class="fas fa-trash text-sm"></i>
                             </a>
                         </div>
@@ -161,7 +178,8 @@
                     <div class="mt-3 pt-3 border-t border-gray-100">
                         <div class="text-gray-500 text-xs flex justify-between">
                             <span>No. Urut: {{ $guru->firstItem() + $loop->index }}</span>
-                            <span><i class="fas fa-calendar-alt mr-1"></i> {{ \Carbon\Carbon::parse($item->updated_at)->diffForHumans() }}</span>
+                            <span><i class="fas fa-calendar-alt mr-1"></i>
+                                {{ \Carbon\Carbon::parse($item->updated_at)->diffForHumans() }}</span>
                         </div>
                     </div>
                 </div>
@@ -170,8 +188,8 @@
                     <svg class="mx-auto mb-4 w-16 h-16 text-gray-300" fill="none" viewBox="0 0 64 64"
                         stroke="currentColor" xmlns="http://www.w3.org/2000/svg">
                         <path d="M32 28c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12z"
-                              stroke-width="2" fill="none"/>
-                        <path d="M32 16v8M22 26l4-4M42 26l-4-4M40 40l-4 4M24 44l4-4" stroke-width="2"/>
+                            stroke-width="2" fill="none" />
+                        <path d="M32 16v8M22 26l4-4M42 26l-4-4M40 40l-4 4M24 44l4-4" stroke-width="2" />
                     </svg>
 
                     <h3 class="mt-2 text-lg font-semibold text-gray-800">Belum ada data guru</h3>
@@ -302,4 +320,4 @@
             });
         });
     </script>
-@endpush    
+@endpush

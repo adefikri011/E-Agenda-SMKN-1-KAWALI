@@ -2,10 +2,11 @@
     <div class="container mx-auto px-4 lg:px-8 py-4">
         <div class="flex justify-between items-center">
             <!-- Logo & Brand -->
-            <div class="flex items-center space-x-3">
-                <img src="{{ asset('image/smk.png') }}" alt="Logo E-Agenda" class="w-9 h-9 object-contain">
-                <span class="text-xl font-bold text-gray-900">E-Agenda</span>
-            </div>
+                <!-- PERBAIKAN: gap-2 agar rapat, h-8 w-auto agar ukuran logo proporsional & pas dengan teks -->
+                <div class="flex items-center gap-2">
+                    <img src="{{ asset('image/logo10.png') }}" alt="Logo E-Agenda" class="h-8 w-auto object-contain">
+                    <span class="text-xl font-bold text-gray-900 tracking-tight">E-Agenda</span>
+                </div>
 
             <!-- Desktop Navigation -->
             <div class="hidden lg:flex items-center space-x-8">
@@ -92,16 +93,7 @@
                                     Wali Kelas
                                 </div>
                             </a>
-                            <a href="{{ route('guru-mapel.index') }}"
-                                class="{{ request()->routeIs('guru-mapel.*') ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-50' }} block px-4 py-2 text-sm font-medium transition-colors">
-                                <div class="flex items-center">
-                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm6 8v-1a4 4 0 00-4-4H10a4 4 0 00-4 4v1m11-9l1 2 2 .3-1.5 1.4.4 2-1.9-1-1.9 1 .4-2L14 13.3l2-.3z" />
-                                    </svg>
-                                    Guru Mapel
-                                </div>
-                            </a>
+
                             <a href="{{ route('admin.guru-schedule') }}"
                                 class="{{ request()->routeIs('admin.guru-schedule') ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-50' }} block px-4 py-2 text-sm font-medium transition-colors">
                                 <div class="flex items-center">
@@ -400,16 +392,7 @@
                                 Wali Kelas
                             </div>
                         </a>
-                        <a href="{{ route('guru-mapel.index') }}"
-                            class="{{ request()->routeIs('guru-mapel.*') ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-50' }} block px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                            <div class="flex items-center">
-                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm6 8v-1a4 4 0 00-4-4H10a4 4 0 00-4 4v1m11-9l1 2 2 .3-1.5 1.4.4 2-1.9-1-1.9 1 .4-2L14 13.3l2-.3z" />
-                                </svg>
-                                Guru Mapel
-                            </div>
-                        </a>
+
                         <a href="{{ route('admin.guru-schedule') }}"
                             class="{{ request()->routeIs('admin.guru-schedule') ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-50' }} block px-4 py-2 rounded-lg text-sm font-medium transition-colors">
                             <div class="flex items-center">

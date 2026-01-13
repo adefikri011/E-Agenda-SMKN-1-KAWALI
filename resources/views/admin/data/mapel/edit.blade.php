@@ -37,20 +37,18 @@
                        required>
             </div>
 
-            {{-- Kelompok --}}
+            {{-- Tingkat --}}
             <div>
                 <label class="block font-medium text-sm text-gray-700">
-                    Kelompok <span class="text-red-500">*</span>
+                    Tingkat Kelas <span class="text-red-500">*</span>
                 </label>
-                <select name="kelompok"
+                <select name="tingkat"
                         class="w-full px-3 py-2 border border-gray-300 rounded-lg
-                        focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        required>
-                    <option value="">Pilih Kelompok</option>
-                    <option value="A" {{ $item->kelompok == 'A' ? 'selected' : '' }}>Kelompok A (Wajib)</option>
-                    <option value="B" {{ $item->kelompok == 'B' ? 'selected' : '' }}>Kelompok B (Wajib)</option>
-                    <option value="C" {{ $item->kelompok == 'C' ? 'selected' : '' }}>Kelompok C (Peminatan)</option>
-                    <option value="Muatan Lokal" {{ $item->kelompok == 'Muatan Lokal' ? 'selected' : '' }}>Muatan Lokal</option>
+                        focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">Pilih Tingkat</option>
+                    <option value="X" {{ $item->tingkat == 'X' ? 'selected' : '' }}>Kelas X</option>
+                    <option value="XI" {{ $item->tingkat == 'XI' ? 'selected' : '' }}>Kelas XI</option>
+                    <option value="XII" {{ $item->tingkat == 'XII' ? 'selected' : '' }}>Kelas XII</option>
                 </select>
             </div>
 

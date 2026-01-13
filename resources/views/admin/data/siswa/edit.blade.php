@@ -27,8 +27,7 @@
                 <div>
                     <label class="block text-gray-700 text-sm font-medium mb-1">Kelas <span
                             class="text-red-500">*</span></label>
-                    <select id="editKelas" name="kelas_id"
-                        class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm">
+                    <select name="kelas_id" class="select2 w-full px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm">
                         @foreach ($kelas as $k)
                             <option value="{{ $k->id }}" {{ $k->id == $item->kelas_id ? 'selected' : '' }}>
                                 {{ $k->nama_kelas }}

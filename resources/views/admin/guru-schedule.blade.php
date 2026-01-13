@@ -1,3 +1,4 @@
+
 @extends('layout.main')
 
 @section('title', 'Kelola Jadwal Guru')
@@ -7,7 +8,7 @@
         <!-- Header -->
         <div class="flex flex-col md:flex-row md:items-center justify-between mb-6">
             <div>
-                <h1 class="text-xl sm:text-2xl font-bold text-gray-900 mb-1">📚 Kelola Jadwal Mengajar Guru</h1>
+                <h1 class="text-xl sm:text-2xl font-bold text-gray-900 mb-1">Kelola Jadwal Mengajar Guru</h1>
                 <p class="text-gray-600 text-sm">Admin mengatur jadwal mengajar setiap guru per kelas dan mata pelajaran</p>
             </div>
             <div class="mt-3 md:mt-0 flex flex-wrap gap-2">
@@ -20,6 +21,18 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
                     </svg>
                     <span class="font-medium text-sm">Tambah Jadwal</span>
+                </button>
+
+                <!-- Tombol Bulk Assign -->
+                <button onclick="document.getElementById('bulkModal').classList.remove('hidden')"
+                    class="group bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white px-4 py-2 sm:px-5 sm:py-2.5 rounded-lg flex items-center gap-2 shadow-md hover:shadow-lg transition-all duration-300 active:scale-95">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                        class="w-4 h-4 stroke-[2.5] group-hover:scale-110 transition duration-300" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3" />
+                    </svg>
+                    <span class="font-medium text-sm">Bulk Assign</span>
                 </button>
             </div>
         </div>
@@ -63,12 +76,20 @@
             <table class="w-full">
                 <thead class="bg-gray-50 border-b border-gray-200">
                     <tr>
-                        <th class="py-3 px-5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider rounded-tl-lg">No</th>
-                        <th class="py-3 px-5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Guru</th>
-                        <th class="py-3 px-5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Kelas</th>
-                        <th class="py-3 px-5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Mata Pelajaran</th>
-                        <th class="py-3 px-5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Jam Pelajaran</th>
-                        <th class="py-3 px-5 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider rounded-tr-lg">Aksi</th>
+                        <th
+                            class="py-3 px-5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider rounded-tl-lg">
+                            No</th>
+                        <th class="py-3 px-5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Guru
+                        </th>
+                        <th class="py-3 px-5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Kelas
+                        </th>
+                        <th class="py-3 px-5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Mata
+                            Pelajaran</th>
+                        <th class="py-3 px-5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Jam
+                            Pelajaran</th>
+                        <th
+                            class="py-3 px-5 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider rounded-tr-lg">
+                            Aksi</th>
                     </tr>
                 </thead>
                 <tbody id="scheduleList" class="divide-y divide-gray-200">
@@ -85,15 +106,16 @@
         <!-- Empty State Template (hidden by default) -->
         <div id="emptyState" class="hidden">
             <div class="text-center py-12">
-                <svg class="mx-auto mb-4 w-20 h-20 text-gray-300" fill="none" viewBox="0 0 64 64"
-                    stroke="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <svg class="mx-auto mb-4 w-20 h-20 text-gray-300" fill="none" viewBox="0 0 64 64" stroke="currentColor"
+                    xmlns="http://www.w3.org/2000/svg">
                     <rect x="12" y="10" width="40" height="44" rx="3" stroke-width="2" />
                     <path d="M24 20h16M24 30h16M24 40h16M24 50h8" stroke-width="2" />
                     <path d="M48 30l4-4M48 40l4-4" stroke-width="2" />
                 </svg>
 
                 <h3 class="mt-2 text-lg font-semibold text-gray-800">Belum ada jadwal mengajar</h3>
-                <p class="mt-1 text-sm text-gray-500">Belum ada jadwal yang ditambahkan. Tambahkan jadwal untuk mengatur pengajaran.</p>
+                <p class="mt-1 text-sm text-gray-500">Belum ada jadwal yang ditambahkan. Tambahkan jadwal untuk mengatur
+                    pengajaran.</p>
 
                 <div class="mt-4 flex items-center justify-center space-x-3">
                     <button onclick="openAddModal()"
@@ -109,8 +131,77 @@
         </div>
     </div>
 
+
+    <!-- Bulk Assign Modal -->
+    <div id="bulkModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-lg p-6 max-w-md w-full mx-4">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">Bulk Assign Guru ke Mapel</h3>
+                <button type="button" onclick="document.getElementById('bulkModal').classList.add('hidden')"
+                    class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+
+            <form action="{{ route('guru-mapel.bulk-assign') }}" method="POST">
+                @csrf
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Guru</label>
+                        <select name="guru_id"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm"
+                            required>
+                            <option value="">Pilih Guru</option>
+                            @foreach ($guru as $g)
+                                <option value="{{ $g->id }}">{{ $g->user->name ?? $g->nama }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Kelas</label>
+                        <select name="kelas_id"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm"
+                            required>
+                            <option value="">Pilih Kelas</option>
+                            @foreach ($kelas as $k)
+                                <option value="{{ $k->id }}">{{ $k->nama_kelas }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Mata Pelajaran (Pilih Multiple)</label>
+                        <div class="border border-gray-300 rounded-lg p-3 max-h-48 overflow-y-auto bg-gray-50">
+                            @foreach ($mapel as $m)
+                                <label class="flex items-center mb-2 cursor-pointer hover:bg-gray-100 p-2 rounded">
+                                    <input type="checkbox" name="mapel_ids[]" value="{{ $m->id }}"
+                                        class="mr-2 rounded">
+                                    <span class="text-sm text-gray-700">{{ $m->nama }}</span>
+                                </label>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex gap-3 mt-6">
+                    <button type="button" onclick="document.getElementById('bulkModal').classList.add('hidden')"
+                        class="flex-1 px-4 py-2.5 border-2 border-gray-300 text-gray-700 rounded-lg hover:border-gray-400 hover:bg-gray-50 transition-colors text-sm font-medium">
+                        Batal
+                    </button>
+                    <button type="submit"
+                        class="flex-1 px-4 py-2.5 bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-lg hover:from-purple-700 hover:to-purple-800 transition-colors text-sm font-medium">
+                        Assign
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Modal Add/Edit Schedule -->
-    <div id="scheduleModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+    <div id="scheduleModal"
+        class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
         <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full p-6" onclick="event.stopPropagation()">
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-xl font-bold text-gray-900" id="modalTitle">Tambah Jadwal</h3>
@@ -126,8 +217,11 @@
 
                 <!-- GURU -->
                 <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Guru <span class="text-red-500">*</span></label>
-                    <select id="guruId" name="guru_id" class="select2 w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm" required>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Guru <span
+                            class="text-red-500">*</span></label>
+                    <select id="guruId" name="guru_id"
+                        class="select2 w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                        required>
                         <option value="">Pilih Guru</option>
                         @foreach ($guru as $g)
                             <option value="{{ $g->id }}">{{ $g->user->name }} ({{ $g->nip ?? 'N/A' }})</option>
@@ -137,8 +231,11 @@
 
                 <!-- KELAS -->
                 <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Kelas <span class="text-red-500">*</span></label>
-                    <select id="kelasId" name="kelas_id" class="select2 w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm" required>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Kelas <span
+                            class="text-red-500">*</span></label>
+                    <select id="kelasId" name="kelas_id"
+                        class="select2 w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                        required>
                         <option value="">Pilih Kelas</option>
                         @foreach ($kelas as $k)
                             <option value="{{ $k->id }}">{{ $k->nama_kelas }}</option>
@@ -148,19 +245,27 @@
 
                 <!-- MAPEL -->
                 <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Mata Pelajaran <span class="text-red-500">*</span></label>
-                    <select id="mapelId" name="mapel_id" class="select2 w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm" required>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Mata Pelajaran <span
+                            class="text-red-500">*</span></label>
+                    <select id="mapelId" name="mapel_id"
+                        class="select2 w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                        required>
                         <option value="">Pilih Mapel</option>
                         @foreach ($mapel as $m)
-                            <option value="{{ $m->id }}">{{ $m->nama }}</option>
+                            <option value="{{ $m->id }}">
+                                {{ $m->nama }} ({{ $m->tingkat }})
+                            </option>
                         @endforeach
                     </select>
                 </div>
 
                 <!-- HARI -->
                 <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Hari <span class="text-red-500">*</span></label>
-                    <select id="hariSelect" class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm" required>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Hari <span
+                            class="text-red-500">*</span></label>
+                    <select id="hariSelect"
+                        class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                        required>
                         <option value="">Pilih Hari</option>
                         <option value="senin">Senin</option>
                         <option value="selasa_rabu_kamis">Selasa - Rabu - Kamis</option>
@@ -170,11 +275,13 @@
 
                 <!-- JAM -->
                 <div class="mb-6">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Jam Pelajaran <span class="text-red-500">*</span></label>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Jam Pelajaran <span
+                            class="text-red-500">*</span></label>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
                             <label class="block text-xs text-gray-600 mb-1">Mulai</label>
-                            <select id="startJampelId" name="start_jampel_id" class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                            <select id="startJampelId" name="start_jampel_id"
+                                class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
                                 required>
                                 <option value="">Pilih Jam</option>
                                 @foreach ($jampel as $j)
@@ -188,7 +295,8 @@
 
                         <div>
                             <label class="block text-xs text-gray-600 mb-1">Selesai</label>
-                            <select id="endJampelId" name="end_jampel_id" class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm">
+                            <select id="endJampelId" name="end_jampel_id"
+                                class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm">
                                 <option value="">Otomatis</option>
                                 @foreach ($jampel as $j)
                                     <option value="{{ $j->id }}" data-hari="{{ $j->hari_tipe }}"
@@ -204,17 +312,42 @@
                 <!-- BUTTON -->
                 <div class="flex gap-3 justify-end pt-4 border-t border-gray-200">
                     <button type="button" onclick="closeScheduleModal()"
-                            class="px-5 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium">
+                        class="px-5 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium">
                         Batal
                     </button>
                     <button type="submit"
-                            class="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-colors text-sm font-medium">
+                        class="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-colors text-sm font-medium">
                         Simpan Jadwal
                     </button>
                 </div>
             </form>
         </div>
     </div>
+
+
+    <style>
+        /* Modal styles */
+        #bulkModal {
+            backdrop-filter: blur(4px);
+        }
+
+        #bulkModal>div {
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+
 
     <script>
         // Load schedules on page load
@@ -292,7 +425,8 @@
 
                     if (filtered.length === 0) {
                         emptyState.classList.remove('hidden');
-                        desktopList.innerHTML = '<tr><td colspan="6" class="px-6 py-12">' + emptyState.innerHTML + '</td></tr>';
+                        desktopList.innerHTML = '<tr><td colspan="6" class="px-6 py-12">' + emptyState.innerHTML +
+                            '</td></tr>';
                         return;
                     }
 
@@ -352,7 +486,8 @@
 
                             const jamDisplay = (() => {
                                 if (schedule.start_jampel_name && schedule.end_jampel_name) {
-                                    if (schedule.start_jampel_name === schedule.end_jampel_name) {
+                                    if (schedule.start_jampel_name === schedule
+                                        .end_jampel_name) {
                                         return `${schedule.start_jampel_name}`;
                                     }
                                     return `${schedule.start_jampel_name} - ${schedule.end_jampel_name}`;
@@ -389,7 +524,8 @@
                     // Display mobile card view
                     filtered.forEach((schedule, index) => {
                         const card = document.createElement('div');
-                        card.className = 'bg-white rounded-lg border border-gray-200 p-4 shadow-sm hover:shadow-md transition-shadow duration-200';
+                        card.className =
+                            'bg-white rounded-lg border border-gray-200 p-4 shadow-sm hover:shadow-md transition-shadow duration-200';
 
                         const jamDisplay = (() => {
                             if (schedule.start_jampel_name && schedule.end_jampel_name) {
@@ -524,12 +660,12 @@
                     if (result.success) {
                         closeScheduleModal();
                         loadSchedules();
-                        alert('Jadwal berhasil disimpan!');
+                        showToast('success', 'Berhasil', result.message || 'Jadwal berhasil disimpan');
                     } else {
-                        alert('Error: ' + (result.message || 'Gagal menyimpan'));
+                        showToast('error', 'Gagal', result.message || 'Gagal menyimpan');
                     }
                 })
-                .catch(e => alert('Error: ' + e.message));
+                .catch(e => showToast('error', 'Error', e.message || 'Terjadi kesalahan'));
         }
 
         // Keep end options >= start option and same hari
@@ -591,21 +727,124 @@
         }
 
         function deleteSchedule(id) {
-            if (confirm('Apakah Anda yakin ingin menghapus jadwal ini?')) {
-                fetch(`/api/guru-schedules/${id}`, {
-                        method: 'DELETE',
-                        headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                        }
-                    })
-                    .then(r => r.json())
-                    .then(result => {
-                        if (result.success) {
-                            loadSchedules();
-                            alert('Jadwal berhasil dihapus!');
-                        }
-                    });
-            }
+            // Open confirmation modal instead of browser confirm
+            openConfirmDelete(id);
         }
+
+        // Open confirm delete modal and store target id
+        function openConfirmDelete(id) {
+            const modal = document.getElementById('confirmDeleteModal');
+            if (!modal) return;
+            modal.dataset.targetId = id;
+            // Optional: set description if you have access to the schedule element
+            const nameEl = modal.querySelector('.confirm-target-name');
+            if (nameEl) {
+                nameEl.textContent = `ID: ${id}`;
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeConfirmDelete() {
+            const modal = document.getElementById('confirmDeleteModal');
+            if (!modal) return;
+            modal.classList.add('hidden');
+            delete modal.dataset.targetId;
+        }
+
+        function performDelete() {
+            const modal = document.getElementById('confirmDeleteModal');
+            if (!modal) return;
+            const id = modal.dataset.targetId;
+            if (!id) return;
+
+            fetch(`/api/guru-schedules/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    }
+                })
+                .then(r => r.json())
+                .then(result => {
+                    if (result.success) {
+                        showToast('success', 'Berhasil', result.message || 'Jadwal berhasil dihapus');
+                        closeConfirmDelete();
+                        loadSchedules();
+                    } else {
+                        showToast('error', 'Gagal', result.message || 'Gagal menghapus jadwal');
+                    }
+                })
+                .catch(e => showToast('error', 'Error', e.message || 'Terjadi kesalahan'));
+        }
+
+            // Client-side toast helper for AJAX feedback
+            function showToast(type = 'info', title = '', message = '') {
+                const id = 'ajax-toast-wrapper';
+                let wrapper = document.getElementById(id);
+                if (!wrapper) {
+                    wrapper = document.createElement('div');
+                    wrapper.id = id;
+                    wrapper.className = 'fixed bottom-6 right-6 z-[9999] pointer-events-none';
+                    document.body.appendChild(wrapper);
+                }
+
+                const toast = document.createElement('div');
+                toast.className = 'notification-toast pointer-events-auto mb-3';
+                const color = (type === 'success') ? 'emerald' : (type === 'error') ? 'red' : (type === 'warning') ? 'amber' : 'blue';
+
+                toast.innerHTML = `
+                    <div class="bg-white rounded-xl shadow-lg border border-gray-100 p-4 flex items-center gap-3 min-w-[280px] max-w-[420px]">
+                        <div class="flex-shrink-0">
+                            <div class="w-10 h-10 rounded-full bg-${color}-100 flex items-center justify-center">
+                                ${type === 'success' ? '<svg class="w-5 h-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>' : ''}
+                                ${type === 'error' ? '<svg class="w-5 h-5 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>' : ''}
+                                ${type === 'warning' ? '<svg class="w-5 h-5 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>' : ''}
+                                ${type === 'info' ? '<svg class="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>' : ''}
+                            </div>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-semibold text-gray-900 mb-0.5">${title}</p>
+                            <p class="text-sm text-gray-600">${message}</p>
+                        </div>
+                        <button class="flex-shrink-0 text-gray-400 hover:text-gray-600 transition-colors" aria-label="close">
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                        </button>
+                    </div>
+                `;
+
+                toast.querySelector('button')?.addEventListener('click', () => {
+                    toast.classList.add('hiding');
+                    setTimeout(() => toast.remove(), 300);
+                });
+
+                wrapper.appendChild(toast);
+
+                setTimeout(() => {
+                    if (toast.parentElement) {
+                        toast.classList.add('hiding');
+                        setTimeout(() => toast.remove(), 300);
+                    }
+                }, 4500);
+            }
     </script>
+
+    <!-- Confirm Delete Modal -->
+    <div id="confirmDeleteModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+        <div class="bg-white rounded-lg shadow-lg p-6 max-w-md w-full">
+            <div class="flex items-start gap-3 mb-4">
+                <div class="p-2 rounded-full bg-red-100 text-red-600">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900">Konfirmasi Hapus Jadwal</h3>
+                    <p class="text-sm text-gray-600 mt-1">Apakah Anda yakin ingin menghapus jadwal <span class="font-semibold confirm-target-name">?</span> ? Tindakan ini tidak dapat dibatalkan.</p>
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-3">
+                <button type="button" onclick="closeConfirmDelete()" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100">Batal</button>
+                <button type="button" onclick="performDelete()" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">Hapus</button>
+            </div>
+        </div>
+    </div>
 @endsection
