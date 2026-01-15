@@ -86,7 +86,7 @@
                         <div class="flex items-center gap-3">
                             @if ($rekapPresensiPerMapel->count() > 3)
                                 <button onclick="openRekap()" class="text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors">
-                                    Lihat Semua 
+                                    Lihat Semua
                                 </button>
                             @endif
                             <div
@@ -196,7 +196,7 @@
                         </div>
                     </div>
 
-                    @if (empty($agendaHariIni) || $agendaHariIni->isEmpty())
+                    @if (empty($agendaTerbaru) || $agendaTerbaru->isEmpty())
                         <div class="text-center py-12 bg-gray-50 rounded-xl border border-gray-200">
                             <div class="w-20 h-20 rounded-full bg-gray-200 flex items-center justify-center mx-auto mb-4">
                                 <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor"
@@ -210,7 +210,7 @@
                         </div>
                     @else
                         <div class="space-y-4">
-                            @foreach ($agendaHariIni as $agenda)
+                            @foreach ($agendaTerbaru as $agenda)
                                 <div
                                     class="border border-gray-200 rounded-xl p-6 hover:border-blue-300 hover:bg-blue-50 transition-all">
                                     <div class="flex justify-between items-start">
