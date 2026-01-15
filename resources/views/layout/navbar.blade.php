@@ -447,10 +447,6 @@
                 </div>
             @endif
 
-
-            <!-- Divider -->
-            <div class="md:hidden border-t border-gray-200 my-4"></div>
-
             @if (in_array(auth()->user()->role, ['sekretaris']))
                 <a href="{{ route('kegiatan.index') }}"
                     class="{{ request()->routeIs('kegiatan.index') ? 'bg-blue-50 text-blue-600 border-l-4 border-blue-600' : 'text-gray-700 hover:bg-gray-50 hover:text-blue-600' }} block px-4 py-3 rounded-lg font-medium transition-colors">
@@ -463,6 +459,55 @@
                     </div>
                 </a>
             @endif
+
+            @if (in_array(auth()->user()->role, ['guru', 'walikelas']))
+                <!-- Menu Tambahan Guru & Walikelas yang sebelumnya hilang di Mobile -->
+                <a href="{{ route('guru.jadwal-saya') }}"
+                    class="{{ request()->routeIs('guru.jadwal-saya') ? 'bg-blue-50 text-blue-600 border-l-4 border-blue-600' : 'text-gray-700 hover:bg-gray-50 hover:text-blue-600' }} block px-4 py-3 rounded-lg font-medium transition-colors">
+                    <div class="flex items-center">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        Jadwal Saya
+                    </div>
+                </a>
+
+                <a href="{{ route('absensi.index') }}"
+                    class="{{ request()->routeIs('absensi.*') ? 'bg-blue-50 text-blue-600 border-l-4 border-blue-600' : 'text-gray-700 hover:bg-gray-50 hover:text-blue-600' }} block px-4 py-3 rounded-lg font-medium transition-colors">
+                    <div class="flex items-center">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Presensi
+                    </div>
+                </a>
+
+                <a href="{{ route('guru.tugas.index') }}"
+                    class="{{ request()->routeIs('guru.tugas.*') ? 'bg-blue-50 text-blue-600 border-l-4 border-blue-600' : 'text-gray-700 hover:bg-gray-50 hover:text-blue-600' }} block px-4 py-3 rounded-lg font-medium transition-colors">
+                    <div class="flex items-center">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                        </svg>
+                        Tugas
+                    </div>
+                </a>
+            @endif
+
+            @if (auth()->user()->role == 'walikelas')
+                <!-- Menu Rekap Walikelas yang sebelumnya hilang di Mobile -->
+                <a href="{{ route('rekap.index') }}"
+                    class="{{ request()->routeIs('rekap.index') ? 'bg-blue-50 text-blue-600 border-l-4 border-blue-600' : 'text-gray-700 hover:bg-gray-50 hover:text-blue-600' }} block px-4 py-3 rounded-lg font-medium transition-colors">
+                    <div class="flex items-center">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                        </svg>
+                        Rekap
+                    </div>
+                </a>
+            @endif
+
+            <!-- Divider -->
+            <div class="md:hidden border-t border-gray-200 my-4"></div>
 
             <!-- Profile Actions (Mobile Only) -->
             <div class="md:hidden space-y-1">
