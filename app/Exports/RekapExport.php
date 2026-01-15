@@ -23,7 +23,7 @@ class RekapExport implements FromArray, WithHeadings
     {
         return [
             'NIS', 'Nama', 'Kelas', 'Total Pertemuan', 'Hadir', 'Sakit', 'Izin', 'Alpa', 'Persentase (%)',
-            'Total Tugas', 'Count Tugas', 'Count Ulangan', 'Count UTS', 'Count UAS', 'Rata-rata', 'Tertinggi', 'Terendah'
+            'Total Tugas', 'Count Tugas', 'Count Ulangan', 'Count UTS', 'Count UAS', 'Rata-rata Nilai', 'Tertinggi', 'Terendah'
         ];
     }
 }

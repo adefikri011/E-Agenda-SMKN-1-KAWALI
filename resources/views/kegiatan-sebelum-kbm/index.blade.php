@@ -15,7 +15,7 @@
             </div>
             <div class="bg-blue-50 px-6 py-3 rounded-xl border border-blue-100">
                 <p class="text-sm text-blue-600 font-medium">Hari ini</p>
-                <p class="text-xl font-bold text-blue-800">{{ $todayHari }}</p>
+                <p class="text-xl font-bold text-blue-800">{{ date('d F') }}</p>
             </div>
         </div>
     </div>

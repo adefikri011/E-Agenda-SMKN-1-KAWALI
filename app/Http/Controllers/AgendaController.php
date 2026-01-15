@@ -655,6 +655,12 @@ class AgendaController extends Controller
                     ->pluck('kelas_id');
                 $query->whereIn('kelas_id', $kelasIds);
             }
+        } elseif (auth()->user()->hasRole('sekretaris')) {
+            // Sekretaris hanya bisa melihat agenda untuk kelas siswa-nya sendiri
+            $siswa = auth()->user()->siswa;
+            if ($siswa) {
+                $query->where('kelas_id', $siswa->kelas_id);
+            }
         } elseif (auth()->user()->hasRole('siswa')) {
             // Siswa hanya bisa melihat agenda miliknya sendiri di kelasnya
             $query->where('users_id', auth()->id())
@@ -707,6 +713,10 @@ class AgendaController extends Controller
         if (auth()->user()->hasRole('guru') || auth()->user()->hasRole('walikelas')) {
             $guru = $this->getGuruFromUser();
             $kelas = $guru ? Kelas::whereIn('id', GuruMapel::where('guru_id', $guru->id)->pluck('kelas_id'))->get() : collect();
+        } elseif (auth()->user()->hasRole('sekretaris')) {
+            // Sekretaris hanya bisa filter kelas siswa-nya sendiri
+            $siswa = auth()->user()->siswa;
+            $kelas = $siswa ? Kelas::where('id', $siswa->kelas_id)->get() : collect();
         } else {
             $kelas = Kelas::where('id', auth()->user()->siswa->kelas_id)->get();
         }
@@ -727,6 +737,12 @@ class AgendaController extends Controller
                 $kelasIds = GuruMapel::where('guru_id', $guru->id)
                     ->pluck('kelas_id');
                 $query->whereIn('kelas_id', $kelasIds);
+            }
+        } elseif (auth()->user()->hasRole('sekretaris')) {
+            // Sekretaris hanya bisa melihat agenda untuk kelas siswa-nya sendiri
+            $siswa = auth()->user()->siswa;
+            if ($siswa) {
+                $query->where('kelas_id', $siswa->kelas_id);
             }
         } elseif (auth()->user()->hasRole('siswa')) {
             // Siswa hanya bisa melihat agenda miliknya sendiri di kelasnya
@@ -873,6 +889,12 @@ class AgendaController extends Controller
                 $kelasIds = GuruMapel::where('guru_id', $guru->id)
                     ->pluck('kelas_id');
                 $query->whereIn('kelas_id', $kelasIds);
+            }
+        } elseif (auth()->user()->hasRole('sekretaris')) {
+            // Sekretaris hanya bisa melihat agenda untuk kelas siswa-nya sendiri
+            $siswa = auth()->user()->siswa;
+            if ($siswa) {
+                $query->where('kelas_id', $siswa->kelas_id);
             }
         } elseif (auth()->user()->hasRole('siswa')) {
             // Siswa hanya bisa melihat agenda miliknya sendiri di kelasnya

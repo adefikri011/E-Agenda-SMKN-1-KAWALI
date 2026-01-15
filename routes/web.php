@@ -200,7 +200,6 @@ Route::middleware(['auth', 'role:guru,sekretaris,walikelas'])->group(function ()
     Route::get('/agenda/{id}/sign-form', [AgendaController::class, 'signForm'])->whereNumber('id')->name('agenda.sign-form');
     Route::post('/agenda/{id}/sign', [AgendaController::class, 'sign'])->whereNumber('id')->name('agenda.sign');
 
-    // Route untuk rekap agenda
     Route::get('/agenda/rekap', [AgendaController::class, 'rekap'])->name('agenda.rekap');
     // Consolidated agendas (merge signed agendas per class/date)
     Route::get('/agenda/consolidated', [AgendaController::class, 'consolidated'])->name('agenda.consolidated');

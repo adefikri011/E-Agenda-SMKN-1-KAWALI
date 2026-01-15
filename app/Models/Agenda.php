@@ -106,6 +106,32 @@ class Agenda extends Model
     }
 
     /**
+     * Get detail absensi untuk agenda ini (berdasarkan kelas dan tanggal)
+     */
+    public function getDetailAbsensiAttribute()
+    {
+        return DetailAbsensi::whereHas('absensi', function ($query) {
+            $query->where('kelas_id', $this->kelas_id)
+                ->where('tanggal', $this->tanggal);
+        })->get();
+    }
+
+    /**
+     * Query scope untuk eager load detail absensi
+     */
+    public function detailAbsensi()
+    {
+        return $this->hasManyThrough(
+            DetailAbsensi::class,
+            Absensi::class,
+            'kelas_id',
+            'absensi_id',
+            'kelas_id',
+            'id'
+        );
+    }
+
+    /**
      * Accessor untuk status tanda tangan
      */
     public function getStatusTtdAttribute($value)

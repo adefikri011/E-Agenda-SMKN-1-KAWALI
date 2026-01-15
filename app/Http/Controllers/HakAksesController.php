@@ -139,87 +139,131 @@ class HakAksesController extends Controller
         ));
     }
 
-    function guru()
+    public function guru()
     {
         $user = Auth::user();
         $guru = Guru::where('users_id', $user->id)->first();
 
-        if (!$guru) {
-            return redirect()->back()->with('error', 'Profil guru tidak ditemukan.');
-        }
-
-        $kelasCount = GuruMapel::where('guru_id', $guru->id)->select('kelas_id')->distinct()->count();
-        $mapelCount = GuruMapel::where('guru_id', $guru->id)->select('mapel_id')->distinct()->count();
-
-        $today = now()->format('Y-m-d');
-        $kelasIds = GuruMapel::where('guru_id', $guru->id)->pluck('kelas_id')->unique()->toArray();
-
-        // DAFTAR KEHADIRAN HARI INI - DIUBAH
-        $daftarKehadiranHariIni = collect();
-
-        if (!empty($kelasIds)) {
-            $daftarKehadiranHariIni = DetailAbsensi::with(['siswa', 'absensi.kelas'])
-                ->whereHas('absensi', function ($query) use ($today, $kelasIds) {
-                    $query->whereDate('tanggal', $today)
-                        ->whereIn('kelas_id', $kelasIds);
-                })
-                ->whereIn('status', ['izin', 'sakit', 'alpha'])
-                ->get()
-                ->groupBy('status');
-        }
-
-        // Pastikan semua kunci ada walaupun kosong
-        $daftarKehadiranHariIni = collect([
-            'izin' => $daftarKehadiranHariIni->get('izin', collect()),
-            'sakit' => $daftarKehadiranHariIni->get('sakit', collect()),
-            'alpha' => $daftarKehadiranHariIni->get('alpha', collect()),
-        ]);
-
-        // AGENDA HARI INI
-        $agendaHariIni = Agenda::where(function ($query) use ($user) {
-            $query->where('users_id', $user->id)
-                ->orWhere('ditandatangani_oleh', $user->id);
-        })
-            ->with(['jampel', 'kelas'])
-            ->orderBy('tanggal', 'desc')
-            ->orderBy('jampel_id', 'desc')
-            ->limit(3)
-            ->get();
-
-
-        // PRESENSI DATA
-        $presensiCounts = DetailAbsensi::whereHas('absensi', function ($q) use ($today, $kelasIds) {
-            $q->whereDate('tanggal', $today)->whereIn('kelas_id', $kelasIds);
-        })
-            ->whereIn('status', ['hadir', 'izin', 'sakit', 'alpha'])
-            ->select('status', DB::raw('count(*) as total'))
-            ->groupBy('status')
-            ->get()
-            ->pluck('total', 'status');
-
-        $presensiData = [
-            'hadir' => $presensiCounts->get('hadir', 0),
-            'izin' => $presensiCounts->get('izin', 0),
-            'sakit' => $presensiCounts->get('sakit', 0),
-            'alpha' => $presensiCounts->get('alpha', 0),
-        ];
-
-        $totalSiswa = 0;
-        if (!empty($kelasIds)) {
-            $totalSiswa = Siswa::whereIn('kelas_id', $kelasIds)->count();
-        }
-
-        return view('guru.dashboard', compact(
-            'user',
-            'guru',
-            'kelasCount',
-            'mapelCount',
-            'agendaHariIni',
-            'presensiData',
-            'totalSiswa',
-            'daftarKehadiranHariIni'
-        ));
+    if (!$guru) {
+        return redirect()->back()->with('error', 'Profil guru tidak ditemukan.');
     }
+
+    $kelasCount = GuruMapel::where('guru_id', $guru->id)->select('kelas_id')->distinct()->count();
+    $mapelCount = GuruMapel::where('guru_id', $guru->id)->select('mapel_id')->distinct()->count();
+
+    $today = now()->format('Y-m-d');
+    $kelasIds = GuruMapel::where('guru_id', $guru->id)->pluck('kelas_id')->unique()->toArray();
+    $mapelIds = GuruMapel::where('guru_id', $guru->id)->pluck('mapel_id')->unique()->toArray();
+
+    // --- 1. DAFTAR SISWA TIDAK HADIR (Global untuk sidebar/notifikasi) ---
+    $daftarKehadiranHariIni = collect();
+    if (!empty($kelasIds)) {
+        $daftarKehadiranHariIni = DetailAbsensi::with(['siswa', 'absensi.kelas'])
+            ->whereHas('absensi', function ($query) use ($today, $kelasIds) {
+                $query->whereDate('tanggal', $today)
+                    ->whereIn('kelas_id', $kelasIds);
+            })
+            ->whereIn('status', ['izin', 'sakit', 'alpha'])
+            ->get()
+            ->groupBy('status');
+    }
+
+    $daftarKehadiranHariIni = collect([
+        'izin' => $daftarKehadiranHariIni->get('izin', collect()),
+        'sakit' => $daftarKehadiranHariIni->get('sakit', collect()),
+        'alpha' => $daftarKehadiranHariIni->get('alpha', collect()),
+    ]);
+
+    // --- 2. REKAP PRESENSI PER MAPEL (FILTER: HANYA ABSENSI KELAS GURU INI) ---
+    // Ambil data absensi hari ini untuk kelas yang diampu guru (ini adalah source utama)
+    // Filter: hanya kelas yang diampu + mapel yang guru ajarkan
+    $rekapPresensiPerMapel = Absensi::whereDate('tanggal', $today)
+        ->whereIn('kelas_id', $kelasIds)
+        ->whereIn('mapel_id', $mapelIds)
+        ->get()
+        ->groupBy(function ($item) {
+            return $item->kelas_id . '_' . $item->mapel_id;
+        })
+        ->map(function ($group) {
+            // Ambil absensi pertama dari group untuk info kelas, mapel, jampel
+            $absensi = $group->first();
+
+            // Aggregate detail_absensi dari semua absensi dalam group
+            $allDetails = collect();
+            $group->each(function ($abs) use (&$allDetails) {
+                $allDetails = $allDetails->concat($abs->detailAbsensi);
+            });
+
+            if ($allDetails->isEmpty()) {
+                return null; // Skip jika tidak ada detail absensi
+            }
+
+            // Hitung status
+            $hadir = $allDetails->where('status', 'hadir')->count();
+            $izin = $allDetails->where('status', 'izin')->count();
+            $sakit = $allDetails->where('status', 'sakit')->count();
+            $alpha = $allDetails->where('status', 'alpha')->count();
+            $total = $allDetails->count();
+
+            // Hitung Persentase Kehadiran
+            $persentase = $total > 0 ? round(($hadir / $total) * 100, 1) : 0;
+
+            return [
+                'mapel' => $absensi->mapel ? $absensi->mapel->nama : 'Umum',
+                'kelas' => $absensi->kelas->nama_kelas,
+                'jam' => $absensi->jampel ? ($absensi->jampel->jam_mulai . ' - ' . $absensi->jampel->jam_selesai) : '-',
+                'stats' => [
+                    'hadir' => $hadir,
+                    'izin' => $izin,
+                    'sakit' => $sakit,
+                    'alpha' => $alpha,
+                    'total' => $total,
+                    'persentase' => $persentase
+                ]
+            ];
+        })
+        ->filter() // Hapus null entries
+        ->values(); // Reset keys
+
+    // --- 3. AGENDA TERBARU (List bawah) ---
+    $agendaTerbaru = Agenda::where(function ($query) use ($user, $kelasIds) {
+            // SECURITY: Hanya agenda dari guru ini dan hanya untuk kelas yang diampu
+            $query->where('users_id', $user->id)
+                ->whereIn('kelas_id', $kelasIds);
+        })
+        ->with(['jampel', 'kelas'])
+        ->orderBy('tanggal', 'desc')
+        ->orderBy('jampel_id', 'desc')
+        ->limit(3)
+        ->get();
+
+    // --- 4. TOTAL SISWA ---
+    $totalSiswa = 0;
+    if (!empty($kelasIds)) {
+        $totalSiswa = Siswa::whereIn('kelas_id', $kelasIds)->count();
+    }
+
+    // --- 5. AGREGASI PRESENSI UNTUK SIDEBAR (Visualisasi Presensi) ---
+    // Ambil agregasi dari data per mapel yang sudah computed di $rekapPresensiPerMapel
+    $presensiData = [
+        'hadir' => $rekapPresensiPerMapel->sum(function($item) { return $item['stats']['hadir']; }),
+        'izin' => $rekapPresensiPerMapel->sum(function($item) { return $item['stats']['izin']; }),
+        'sakit' => $rekapPresensiPerMapel->sum(function($item) { return $item['stats']['sakit']; }),
+        'alpha' => $rekapPresensiPerMapel->sum(function($item) { return $item['stats']['alpha']; }),
+    ];
+
+    return view('guru.dashboard', compact(
+        'user',
+        'guru',
+        'kelasCount',
+        'mapelCount',
+        'agendaTerbaru',
+        'totalSiswa',
+        'daftarKehadiranHariIni',
+        'rekapPresensiPerMapel',
+        'presensiData' // Data untuk sidebar visualisasi presensi
+    ));
+}
 
     function walikelas()
     {

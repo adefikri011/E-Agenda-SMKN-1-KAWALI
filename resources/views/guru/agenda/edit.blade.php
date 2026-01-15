@@ -3,59 +3,43 @@
 @section('title', 'Edit Agenda')
 
 @section('content')
-    <div class="mb-6">
-        <h1 class="text-2xl font-bold text-gray-900">Edit Agenda</h1>
-        <p class="text-gray-600 mt-1">Perbarui agenda pembelajaran yang sudah ada</p>
+    <!-- Full Screen Header -->
+    <div class="px-8 py-6 bg-white border-b border-gray-200">
+        <div class="flex items-center justify-between">
+            <div>
+                <div class="flex items-center gap-3 mb-2">
+                    <div class="w-1 h-8 bg-blue-600 rounded-full"></div>
+                    <h1 class="text-3xl font-bold text-gray-900">Edit Agenda Mengajar</h1>
+                </div>
+                <p class="text-lg text-gray-600 ml-4">Perbarui agenda pembelajaran yang sudah ada</p></div>
+            <div class="bg-blue-50 px-6 py-3 rounded-xl border border-blue-100">
+                <p class="text-sm text-blue-600 font-medium">Hari ini</p>
+                <p class="text-xl font-bold text-blue-800">{{ date('d F') }}</p>
+            </div>
+        </div>
     </div>
 
-    <!-- Pesan Sukses/Error -->
-    @if (session('success'))
-        <div class="mb-6 p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-lg flex items-start gap-3 animate-pulse">
-            <i class="fas fa-check-circle text-emerald-600 text-xl mt-0.5 flex-shrink-0"></i>
-            <div class="flex-1">
-                <p class="font-semibold">Berhasil!</p>
-                <p class="text-sm mt-1">{{ session('success') }}</p>
-            </div>
-            <button class="text-emerald-600 hover:text-emerald-800" onclick="this.parentElement.style.display='none'">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-    @endif
-
-    @if (session('error'))
-        <div class="mb-6 p-4 bg-red-50 border border-red-200 text-red-800 rounded-lg flex items-start gap-3 animate-pulse">
-            <i class="fas fa-exclamation-circle text-red-600 text-xl mt-0.5 flex-shrink-0"></i>
-            <div class="flex-1">
-                <p class="font-semibold">Gagal!</p>
-                <p class="text-sm mt-1">{{ session('error') }}</p>
-            </div>
-            <button class="text-red-600 hover:text-red-800" onclick="this.parentElement.style.display='none'">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-    @endif
-
-    @if ($errors->any())
-        <div class="mb-6 p-4 bg-yellow-50 border border-yellow-200 text-yellow-800 rounded-lg">
-            <p class="font-semibold mb-2"><i class="fas fa-warning mr-2"></i>Terdapat kesalahan:</p>
-            <ul class="list-disc list-inside text-sm space-y-1">
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
-
+    <!-- Full Screen Content -->
+    <div class="px-8 py-6">
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
         <!-- Form Edit -->
         <div class="lg:col-span-2">
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 lg:p-8">
-                <form action="{{ route('agenda.update', $agenda->id) }}" method="POST">
+                <!-- Tab Navigation -->
+                <div class="flex border-b border-gray-200 mb-6">
+                    <button type="button" id="agendaTab"
+                        class="px-4 py-2 font-medium text-blue-600 border-b-2 border-blue-600 focus:outline-none">
+                        <i class="fas fa-clipboard-list mr-2"></i>Agenda Mengajar
+                    </button>
+                </div>
+
+                <!-- Agenda Form -->
+                <form action="{{ route('agenda.update', $agenda->id) }}" method="POST" id="agendaForm">
                     @csrf
                     @method('PUT')
                     <input type="hidden" name="tanda_tangan" id="tanda_tangan" value="{{ $agenda->tanda_tangan }}">
 
-                    <div class="space-y-6">
+                    <div class="space-y-6" id="agendaContent">
                         <!-- Tanggal & Waktu -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
@@ -226,11 +210,11 @@
                                 <i class="fas fa-save mr-2"></i>
                                 Update Agenda
                             </button>
-                            <a href="{{ route('agenda.index') }}"
+                            <button type="reset"
                                 class="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg font-semibold hover:border-blue-600 hover:text-blue-600 transition-all flex items-center justify-center">
-                                <i class="fas fa-arrow-left mr-2"></i>
-                                Kembali
-                            </a>
+                                <i class="fas fa-times mr-2"></i>
+                                Batal
+                            </button>
                         </div>
                     </div>
                 </form>
@@ -246,7 +230,7 @@
                     <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-3">
                             <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                                <i class="fas fa-calendar text-blue-600"></i>
+                                <i class="fas fa-user text-blue-600"></i>
                             </div>
                             <span class="text-gray-700 font-medium">Dibuat Oleh</span>
                         </div>
@@ -273,24 +257,6 @@
                         @else
                             <span class="text-sm font-medium text-yellow-600">Belum Ditandatangani</span>
                         @endif
-                    </div>
-                </div>
-            </div>
-
-            <!-- Tips -->
-            <div class="bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl p-6 border border-blue-100">
-                <div class="flex items-start space-x-3">
-                    <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <i class="fas fa-lightbulb text-white"></i>
-                    </div>
-                    <div>
-                        <h4 class="text-sm font-bold text-gray-900 mb-2">Tips Mengedit Agenda</h4>
-                        <ul class="text-xs text-gray-700 space-y-1">
-                            <li>• Periksa kembali materi pembelajaran</li>
-                            <li>• Update kegiatan yang dilakukan</li>
-                            <li>• Beri tanda tangan digital kembali</li>
-                            <li>• Pastikan semua data sudah benar</li>
-                        </ul>
                     </div>
                 </div>
             </div>

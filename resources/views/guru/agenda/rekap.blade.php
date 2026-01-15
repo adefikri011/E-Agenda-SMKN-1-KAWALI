@@ -3,11 +3,24 @@
 @section('title', 'Rekap Agenda')
 
 @section('content')
-    <div class="mb-6">
-        <h1 class="text-2xl font-bold text-gray-900">Rekap Agenda</h1>
-        <p class="text-gray-600 mt-1">Lihat dan unduh rekap agenda pembelajaran</p>
+    <!-- Full Screen Header -->
+    <div class="px-8 py-6 bg-white border-b border-gray-200">
+        <div class="flex items-center justify-between">
+            <div>
+                <div class="flex items-center gap-3 mb-2">
+                    <div class="w-1 h-8 bg-blue-600 rounded-full"></div>
+                    <h1 class="text-3xl font-bold text-gray-900">Rekap Agenda</h1>
+                </div>
+                <p class="text-lg text-gray-600 ml-4">Lihat dan unduh rekap agenda pembelajaran</p></div>
+            <div class="bg-blue-50 px-6 py-3 rounded-xl border border-blue-100">
+                <p class="text-sm text-blue-600 font-medium">Hari ini</p>
+                <p class="text-xl font-bold text-blue-800">{{ date('d F') }}</p>
+            </div>
+        </div>
     </div>
 
+    <!-- Full Screen Content -->
+    <div class="px-8 py-6">
     <!-- Filter Form -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
         <form action="{{ route('agenda.rekap') }}" method="GET" class="space-y-4">
