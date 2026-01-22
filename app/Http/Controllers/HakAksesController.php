@@ -355,9 +355,13 @@ class HakAksesController extends Controller
         $today = now()->format('Y-m-d');
         $agendaHariIni = Agenda::where('kelas_id', $kelas->id)
             ->whereDate('tanggal', $today)
-            ->with(['startJampel', 'endJampel', 'guru.user'])
+            ->with(['startJampel', 'endJampel', 'user.guru'])
             ->orderBy('jampel_id')
             ->get();
+
+        // Separate first agenda and rest for modal
+        $agendaPertama = $agendaHariIni->first();
+        $agendaLainnya = $agendaHariIni->skip(1)->all();
 
         // Get mata pelajaran taught in this kelas (via GuruMapel)
         $guruMapelToday = GuruMapel::where('kelas_id', $kelas->id)
@@ -396,6 +400,8 @@ class HakAksesController extends Controller
             'jumlahSiswa',
             'jumlahMapel',
             'agendaHariIni',
+            'agendaPertama',
+            'agendaLainnya',
             'guruMapelToday',
             'kegiatanPreKBM'
         ));

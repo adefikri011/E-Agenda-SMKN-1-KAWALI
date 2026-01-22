@@ -108,7 +108,7 @@
                                     <option value="">Pilih Kelas Terlebih Dahulu</option>
                                 </select>
                                 <input type="hidden" name="mata_pelajaran" id="mata_pelajaran_nama" value="{{ $agenda->mata_pelajaran }}">
-                                <input type="hidden" name="guru_id" id="guru_id" value="{{ $agenda->guru_id ?? '' }}">
+                                <input type="hidden" name="guru_id" id="guru_id" value="{{ $agenda->user?->guru?->id ?? '' }}">
                             </div>
                         </div>
 
@@ -121,7 +121,7 @@
                                 <div class="ml-3">
                                     <h3 class="text-sm font-medium text-blue-900">Pengampu Mata Pelajaran</h3>
                                     <div class="mt-1 text-sm text-blue-700">
-                                        <span id="guruNama">{{ $agenda->guru->nama ?? '-' }}</span>
+                                        <span id="guruNama">{{ $agenda->user?->guru?->nama ?? '-' }}</span>
                                     </div>
                                 </div>
                             </div>

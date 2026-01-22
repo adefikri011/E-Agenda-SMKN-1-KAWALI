@@ -35,7 +35,7 @@
                 <div class="mb-6 relative">
                     <div class="relative inline-block">
                         <div class="w-32 h-32 rounded-2xl mx-auto overflow-hidden border-4 border-white shadow-xl transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-500">
-                            <img src="{{ asset('image/fikri.jpg') }}" alt="Ade Fikri" class="w-full h-full object-cover">
+                            <img src="{{ asset('image/krii.jpeg') }}" alt="Ade Fikri" class="w-full h-full object-cover">
                         </div>
                         <div class="absolute -bottom-3 -right-3 w-12 h-12 bg-gradient-to-br from-sky-500 to-cyan-600 rounded-xl shadow-lg flex items-center justify-center transform group-hover:scale-110 group-hover:rotate-12 transition-all duration-500">
                             <i class="fas fa-code text-white text-lg"></i>

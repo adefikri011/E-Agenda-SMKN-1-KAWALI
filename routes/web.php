@@ -229,6 +229,7 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/api/agendas/{id}', [AgendaController::class, 'destroyApi']);
 
     Route::get('/api/my-schedules', [AgendaController::class, 'getMySchedules']);
+    Route::get('/api/schedule-for-agenda/{scheduleId}', [AgendaController::class, 'getScheduleForAgenda']);
     Route::get('/api/validate-schedule/{kelasId}/{mapelId}/{startJampelId}/{endJampelId}', [AgendaController::class, 'validateScheduleForAgenda']);
 });
 

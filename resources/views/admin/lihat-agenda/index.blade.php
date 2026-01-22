@@ -11,15 +11,29 @@
                     <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                     </svg>
-                    Pantau agenda dari semua guru dan sekretaris
+                    @if(!$selectedTanggalAwal && !$selectedTanggalAkhir)
+                        📍 Menampilkan agenda hari ini
+                    @else
+                        Pantau agenda dengan filter periode
+                    @endif
                 </p>
             </div>
-            <button onclick="toggleFilter()" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition flex items-center gap-2">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-                </svg>
-                Filter
-            </button>
+            <div class="flex gap-2">
+                @if($selectedTanggalAwal || $selectedTanggalAkhir)
+                    <a href="{{ route('admin.lihat-agenda.index') }}" class="bg-gray-600 hover:bg-gray-700 text-white font-medium py-2 px-4 rounded-lg transition flex items-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                        Batal Filter
+                    </a>
+                @endif
+                <button onclick="toggleFilter()" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                    </svg>
+                    Filter
+                </button>
+            </div>
         </div>
     </div>
 
@@ -204,22 +218,28 @@
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 text-sm text-gray-600">
-                                    {{ $agenda->guru->nama_guru ?? 'N/A' }}
+                                    {{ $agenda->user->guru->nama ?? $agenda->user->name ?? 'N/A' }}
                                 </td>
                                 <td class="px-6 py-4 text-sm text-gray-600">
-                                    {{ $agenda->mapel->nama_mapel ?? 'N/A' }}
+                                    {{ $agenda->mapel->nama ?? ($agenda->mata_pelajaran ?? 'N/A') }}
                                 </td>
                                 <td class="px-6 py-4">
                                     <div class="flex items-center text-sm text-gray-600">
                                         <svg class="w-4 h-4 mr-1 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                         </svg>
-                                        {{ $agenda->jampel->jam_mulai ?? 'N/A' }} - {{ $agenda->jampel->jam_selesai ?? '' }}
+                                        @if($agenda->startJampel && $agenda->endJampel)
+                                            {{ $agenda->startJampel->jam_mulai }} - {{ $agenda->endJampel->jam_selesai }}
+                                        @elseif($agenda->startJampel)
+                                            {{ $agenda->startJampel->jam_mulai }}
+                                        @else
+                                            N/A
+                                        @endif
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 text-sm text-gray-600">
                                     <div class="line-clamp-2">
-                                        {{ Str::limit($agenda->deskripsi_materi, 50) }}
+                                        {{ Str::limit($agenda->materi ?? $agenda->kegiatan ?? '', 50) }}
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 text-center">

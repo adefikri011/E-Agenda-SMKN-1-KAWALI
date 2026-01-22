@@ -21,12 +21,13 @@ class LihatAgendaController extends Controller
     {
         // Ambil semua data untuk filter dropdown
         $kelases = Kelas::orderBy('nama_kelas')->get();
-        $gurus = Guru::with('user')->orderBy('nama')->get(); // Tambahkan with('user') jika nama guru ada di tabel users
+        $gurus = Guru::with('user')->orderBy('nama')->get();
+        // Untuk mapel, ambil dari mata_pelajaran atau dari guru_mapel
         $mapels = MataPelajaran::orderBy('nama')->get();
 
         // Filter inputs
         $selectedKelas = $request->input('kelas_id');
-        $selectedGuru = $request->input('guru_id');
+        $selectedGuru = $request->input('guru_id'); // ini adalah users_id
         $selectedMapel = $request->input('mapel_id');
         $selectedTanggalAwal = $request->input('tanggal_awal');
         $selectedTanggalAkhir = $request->input('tanggal_akhir');
@@ -35,10 +36,16 @@ class LihatAgendaController extends Controller
         // Base query dengan eager loading untuk mengoptimalkan kinerja
         $query = Agenda::with([
             'kelas',
-            'guru.user', // Tambahkan relasi user jika nama guru ada di tabel users
-            'mapel',
-            'jampel'
+            'user.guru', // Relasi user -> guru
+            'startJampel',
+            'endJampel'
         ]);
+
+        // DEFAULT: Jika tidak ada filter tanggal, tampilkan agenda hari ini
+        if (!$selectedTanggalAwal && !$selectedTanggalAkhir) {
+            $today = Carbon::today();
+            $query->whereDate('tanggal', $today);
+        }
 
         // Terapkan filter
         if ($selectedKelas) {
@@ -46,7 +53,7 @@ class LihatAgendaController extends Controller
         }
 
         if ($selectedGuru) {
-            $query->where('guru_id', $selectedGuru);
+            $query->where('users_id', $selectedGuru);
         }
 
         if ($selectedMapel) {
@@ -66,8 +73,8 @@ class LihatAgendaController extends Controller
         }
 
         // Get data dan sort dengan pagination
-        $agendas = $query->orderBy('tanggal', 'desc')
-                         ->orderBy('created_at', 'desc')
+        $agendas = $query->orderBy('tanggal', 'asc')
+                         ->orderBy('start_jampel_id', 'asc')
                          ->paginate(15)
                          ->appends($request->query());
 
@@ -113,9 +120,10 @@ class LihatAgendaController extends Controller
         // Tambahkan relasi yang mungkin diperlukan di view detail
         $agenda = Agenda::with([
             'kelas',
-            'guru.user', // Tambahkan relasi user
-            'mapel',
-            'jampel'
+            'user.guru',
+            'startJampel',
+            'endJampel',
+            'mapel'
         ])->findOrFail($id);
 
         return view('admin.lihat-agenda.show', compact('agenda'));
@@ -129,7 +137,9 @@ class LihatAgendaController extends Controller
         // Base query dengan eager loading
         $query = Agenda::with([
             'kelas',
-            'guru.user', // Tambahkan relasi user
+            'user.guru',
+            'startJampel',
+            'endJampel',
             'mapel'
         ]);
 
@@ -139,7 +149,7 @@ class LihatAgendaController extends Controller
         }
 
         if ($request->input('guru_id')) {
-            $query->where('guru_id', $request->input('guru_id'));
+            $query->where('users_id', $request->input('guru_id'));
         }
 
         if ($request->input('mapel_id')) {

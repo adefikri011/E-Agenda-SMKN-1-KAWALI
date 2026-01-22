@@ -44,14 +44,20 @@
                             <div>
                                 <p class="text-xs text-gray-600 uppercase font-semibold">Mata Pelajaran</p>
                                 <p class="text-base text-gray-900 font-medium">
-                                    {{ $agenda->mapel->nama_mapel ?? 'N/A' }}
+                                    {{ $agenda->mapel->nama ?? ($agenda->mata_pelajaran ?? 'N/A') }}
                                 </p>
                             </div>
 
                             <div>
                                 <p class="text-xs text-gray-600 uppercase font-semibold">Jam Pelajaran</p>
                                 <p class="text-base text-gray-900 font-medium">
-                                    {{ $agenda->jampel->jam_mulai ?? 'N/A' }} - {{ $agenda->jampel->jam_selesai ?? '' }}
+                                    @if($agenda->startJampel && $agenda->endJampel)
+                                        {{ $agenda->startJampel->jam_mulai }} - {{ $agenda->endJampel->jam_selesai }}
+                                    @elseif($agenda->startJampel)
+                                        {{ $agenda->startJampel->jam_mulai }}
+                                    @else
+                                        N/A
+                                    @endif
                                 </p>
                             </div>
                         </div>
@@ -64,7 +70,7 @@
                             <div>
                                 <p class="text-xs text-gray-600 uppercase font-semibold">Guru/Sekretaris</p>
                                 <p class="text-base text-gray-900 font-medium">
-                                    {{ $agenda->guru->nama_guru ?? 'N/A' }}
+                                    {{ $agenda->user->guru->nama ?? $agenda->user->name ?? 'N/A' }}
                                 </p>
                             </div>
 
@@ -116,39 +122,27 @@
             @endif
 
             <!-- Absensi Detail -->
-            @if($agenda->detailAbsensi && $agenda->detailAbsensi->count() > 0)
+            @php
+                // Ambil hanya siswa yang tidak hadir
+                $siswaNotHadir = $agenda->detailAbsensi->where('keterangan', 'Tidak Hadir') ?? collect();
+            @endphp
+
+            @if($siswaNotHadir->count() > 0)
                 <div class="bg-white rounded-lg shadow p-6">
-                    <h2 class="text-lg font-bold text-gray-900 mb-4">📋 Detail Presensi Siswa</h2>
+                    <h2 class="text-lg font-bold text-gray-900 mb-4">📋 Siswa Tidak Hadir</h2>
 
                     <!-- Summary -->
-                    <div class="grid grid-cols-4 gap-2 mb-6">
-                        <div class="bg-green-50 border border-green-200 rounded p-3 text-center">
-                            <p class="text-2xl font-bold text-green-600">
-                                {{ $agenda->detailAbsensi->where('keterangan', 'Hadir')->count() }}
-                            </p>
-                            <p class="text-xs text-green-700 font-medium">Hadir</p>
-                        </div>
-                        <div class="bg-red-50 border border-red-200 rounded p-3 text-center">
-                            <p class="text-2xl font-bold text-red-600">
-                                {{ $agenda->detailAbsensi->where('keterangan', 'Tidak Hadir')->count() }}
-                            </p>
-                            <p class="text-xs text-red-700 font-medium">Tidak Hadir</p>
-                        </div>
-                        <div class="bg-yellow-50 border border-yellow-200 rounded p-3 text-center">
-                            <p class="text-2xl font-bold text-yellow-600">
-                                {{ $agenda->detailAbsensi->where('keterangan', 'Izin')->count() }}
-                            </p>
-                            <p class="text-xs text-yellow-700 font-medium">Izin</p>
-                        </div>
-                        <div class="bg-orange-50 border border-orange-200 rounded p-3 text-center">
-                            <p class="text-2xl font-bold text-orange-600">
-                                {{ $agenda->detailAbsensi->where('keterangan', 'Sakit')->count() }}
-                            </p>
-                            <p class="text-xs text-orange-700 font-medium">Sakit</p>
+                    <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                        <div class="flex items-center gap-3">
+                            <div class="text-3xl">⚠️</div>
+                            <div>
+                                <p class="font-semibold text-red-900">Total Tidak Hadir</p>
+                                <p class="text-sm text-red-700">{{ $siswaNotHadir->count() }} siswa</p>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Tabel Absensi -->
+                    <!-- Tabel Siswa Tidak Hadir -->
                     <div class="overflow-x-auto">
                         <table class="w-full text-sm">
                             <thead class="bg-gray-50 border-b border-gray-200">
@@ -156,41 +150,31 @@
                                     <th class="px-4 py-3 text-left font-semibold text-gray-700">No</th>
                                     <th class="px-4 py-3 text-left font-semibold text-gray-700">Nama Siswa</th>
                                     <th class="px-4 py-3 text-left font-semibold text-gray-700">NIS</th>
-                                    <th class="px-4 py-3 text-center font-semibold text-gray-700">Keterangan</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-200">
-                                @foreach($agenda->detailAbsensi as $index => $detail)
-                                    <tr class="hover:bg-gray-50">
+                                @foreach($siswaNotHadir as $index => $detail)
+                                    <tr class="hover:bg-red-50">
                                         <td class="px-4 py-3 text-gray-900 font-medium">{{ $index + 1 }}</td>
-                                        <td class="px-4 py-3 text-gray-900">
+                                        <td class="px-4 py-3 text-gray-900 font-medium">
                                             {{ $detail->siswa->nama_siswa ?? 'N/A' }}
                                         </td>
                                         <td class="px-4 py-3 text-gray-600">
                                             {{ $detail->siswa->nis ?? 'N/A' }}
                                         </td>
-                                        <td class="px-4 py-3 text-center">
-                                            @switch($detail->keterangan)
-                                                @case('Hadir')
-                                                    <span class="inline-block px-3 py-1 bg-green-100 text-green-800 rounded-full font-semibold text-xs">✅ Hadir</span>
-                                                    @break
-                                                @case('Tidak Hadir')
-                                                    <span class="inline-block px-3 py-1 bg-red-100 text-red-800 rounded-full font-semibold text-xs">❌ Tidak Hadir</span>
-                                                    @break
-                                                @case('Izin')
-                                                    <span class="inline-block px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full font-semibold text-xs">📝 Izin</span>
-                                                    @break
-                                                @case('Sakit')
-                                                    <span class="inline-block px-3 py-1 bg-orange-100 text-orange-800 rounded-full font-semibold text-xs">🤒 Sakit</span>
-                                                    @break
-                                                @default
-                                                    <span class="text-gray-500">-</span>
-                                            @endswitch
-                                        </td>
                                     </tr>
                                 @endforeach
                             </tbody>
                         </table>
+                    </div>
+                </div>
+            @else
+                <div class="bg-white rounded-lg shadow p-6">
+                    <h2 class="text-lg font-bold text-gray-900 mb-4">📋 Siswa Tidak Hadir</h2>
+                    <div class="p-6 text-center">
+                        <div class="text-5xl mb-3">✅</div>
+                        <p class="text-lg font-semibold text-gray-900 mb-1">Semua Siswa Hadir</p>
+                        <p class="text-sm text-gray-600">Tidak ada siswa yang tidak hadir pada agenda ini</p>
                     </div>
                 </div>
             @endif
@@ -222,16 +206,22 @@
                 <h3 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">📊 Statistik</h3>
                 <div class="space-y-3 text-sm">
                     <div class="flex items-center justify-between">
-                        <p class="text-gray-600">Total Siswa</p>
+                        <p class="text-gray-600">Total Presensi</p>
                         <p class="text-lg font-bold text-gray-900">
-                            {{ $agenda->detailAbsensi?->count() ?? 0 }}
+                            {{ $agenda->detailAbsensi->count() ?? 0 }}
+                        </p>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <p class="text-gray-600">Tidak Hadir</p>
+                        <p class="text-lg font-bold text-red-600">
+                            {{ $siswaNotHadir->count() ?? 0 }}
                         </p>
                     </div>
                     <div class="flex items-center justify-between">
                         <p class="text-gray-600">Attendance Rate</p>
                         <p class="text-lg font-bold text-green-600">
-                            @if($agenda->detailAbsensi && $agenda->detailAbsensi->count() > 0)
-                                {{ round(($agenda->detailAbsensi->where('keterangan', 'Hadir')->count() / $agenda->detailAbsensi->count()) * 100, 1) }}%
+                            @if($agenda->detailAbsensi->count() > 0)
+                                {{ round((($agenda->detailAbsensi->count() - $siswaNotHadir->count()) / $agenda->detailAbsensi->count()) * 100, 1) }}%
                             @else
                                 0%
                             @endif

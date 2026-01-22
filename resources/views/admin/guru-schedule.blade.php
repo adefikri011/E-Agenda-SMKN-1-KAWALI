@@ -150,7 +150,7 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Guru</label>
                         <select name="guru_id"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm"
+                            class="select2 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm"
                             required>
                             <option value="">Pilih Guru</option>
                             @foreach ($guru as $g)
@@ -162,7 +162,7 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Kelas</label>
                         <select name="kelas_id"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm"
+                            class="select2 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm"
                             required>
                             <option value="">Pilih Kelas</option>
                             @foreach ($kelas as $k)

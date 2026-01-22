@@ -85,15 +85,22 @@
                         <p class="text-sm text-gray-600 mt-1">{{ $kelas->nama_kelas }}</p>
                         @endif
                     </div>
-                    <div class="text-sm text-gray-500">
-                        {{ count($agendaHariIni) }} Jadwal
+                    <div class="flex items-center gap-3">
+                        <div class="text-sm text-gray-500">
+                            {{ count($agendaHariIni) }} Jadwal
+                        </div>
+                        @if(count($agendaHariIni) > 1)
+                        <button onclick="document.getElementById('agendaModal').classList.remove('hidden')" class="px-3 py-1 text-xs font-semibold text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors">
+                            Lihat Semua
+                        </button>
+                        @endif
                     </div>
                 </div>
 
                 <div class="p-6">
-                    @forelse($agendaHariIni as $agenda)
+                    @if($agendaPertama)
                         <!-- Agenda Item -->
-                        <div class="mb-6 pb-6 border-b border-gray-200 {{ $loop->last ? 'border-b-0 mb-0 pb-0' : '' }}">
+                        <div class="pb-0 border-b-0">
                             <!-- Time Header -->
                             <div class="flex items-center gap-3 mb-3">
                                 <div class="w-12 h-12 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0">
@@ -103,15 +110,15 @@
                                 </div>
                                 <div>
                                     <p class="text-sm font-semibold text-gray-800">
-                                        @if($agenda->startJampel && $agenda->endJampel)
-                                            {{ $agenda->startJampel->jam_mulai }} - {{ $agenda->endJampel->jam_selesai }}
-                                        @elseif($agenda->jampel)
-                                            {{ $agenda->jampel->jam_mulai }} - {{ $agenda->jampel->jam_selesai }}
+                                        @if($agendaPertama->startJampel && $agendaPertama->endJampel)
+                                            {{ $agendaPertama->startJampel->jam_mulai }} - {{ $agendaPertama->endJampel->jam_selesai }}
+                                        @elseif($agendaPertama->jampel)
+                                            {{ $agendaPertama->jampel->jam_mulai }} - {{ $agendaPertama->jampel->jam_selesai }}
                                         @else
                                             Jam Fleksibel
                                         @endif
                                     </p>
-                                    <p class="text-xs text-gray-500">{{ $agenda->mata_pelajaran }}</p>
+                                    <p class="text-xs text-gray-500">{{ $agendaPertama->mata_pelajaran }}</p>
                                 </div>
                             </div>
 
@@ -125,38 +132,38 @@
                                         </svg>
                                     </div>
                                     <div>
-                                        <p class="text-sm font-medium text-gray-800">{{ $agenda->guru?->user?->name ?? ($agenda->user?->name ?? 'Tidak ada guru') }}</p>
+                                        <p class="text-sm font-medium text-gray-800">{{ $agendaPertama->guru?->user?->name ?? ($agendaPertama->user?->name ?? 'Tidak ada guru') }}</p>
                                     </div>
                                 </div>
 
                                 <!-- Materi -->
-                                @if($agenda->materi)
+                                @if($agendaPertama->materi)
                                 <div class="mb-3">
                                     <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Materi</p>
-                                    <p class="text-sm text-gray-700">{{ $agenda->materi }}</p>
+                                    <p class="text-sm text-gray-700">{{ $agendaPertama->materi }}</p>
                                 </div>
                                 @endif
 
                                 <!-- Kegiatan -->
-                                @if($agenda->kegiatan)
+                                @if($agendaPertama->kegiatan)
                                 <div class="mb-3">
                                     <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Kegiatan</p>
-                                    <p class="text-sm text-gray-700">{{ $agenda->kegiatan }}</p>
+                                    <p class="text-sm text-gray-700">{{ $agendaPertama->kegiatan }}</p>
                                 </div>
                                 @endif
 
                                 <!-- Status -->
                                 <div class="pt-3 border-t border-gray-200">
                                     <div class="flex items-center gap-2">
-                                        <div class="w-2 h-2 rounded-full {{ $agenda->status_ttd ? 'bg-green-500' : 'bg-yellow-500' }}"></div>
-                                        <span class="text-xs font-medium {{ $agenda->status_ttd ? 'text-green-600' : 'text-yellow-600' }}">
-                                            {{ $agenda->status_ttd ? 'Sudah Ditandatangani' : 'Menunggu Tanda Tangan' }}
+                                        <div class="w-2 h-2 rounded-full {{ $agendaPertama->status_ttd ? 'bg-green-500' : 'bg-yellow-500' }}"></div>
+                                        <span class="text-xs font-medium {{ $agendaPertama->status_ttd ? 'text-green-600' : 'text-yellow-600' }}">
+                                            {{ $agendaPertama->status_ttd ? 'Sudah Ditandatangani' : 'Menunggu Tanda Tangan' }}
                                         </span>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    @empty
+                    @else
                         <div class="text-center py-12">
                             <div class="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
                                 <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -166,7 +173,7 @@
                             <p class="text-gray-500 font-medium mb-2">Tidak ada agenda untuk hari ini</p>
                             <p class="text-sm text-gray-400">Mulai buat agenda baru di menu Agenda</p>
                         </div>
-                    @endforelse
+                    @endif
                 </div>
             </div>
         </div>
@@ -198,7 +205,7 @@
                             </div>
 
                             <div class="pt-3 border-t border-orange-200">
-                                <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Berlaku untuk</p>
+                                <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Jurusan</p>
                                 @if($jurusan && $kegiatanPreKBM->jurusan_id)
                                 <p class="text-sm font-medium text-gray-800">{{ $jurusan->nama_jurusan }}</p>
                                 @elseif(!$kegiatanPreKBM->jurusan_id)
@@ -259,5 +266,113 @@
             -webkit-box-orient: vertical;
             -webkit-line-clamp: 2;
         }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .animate-slideIn {
+            animation: slideIn 0.3s ease-out;
+        }
     </style>
+
+    <!-- Modal - Semua Agenda -->
+    <div id="agendaModal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onclick="if(event.target === this) document.getElementById('agendaModal').classList.add('hidden')">
+        <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[85vh] overflow-hidden flex flex-col animate-slideIn">
+            <!-- Modal Header -->
+            <div class="bg-white px-6 py-6 border-b border-gray-200 flex items-center justify-between">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-900">Semua Agenda</h2>
+                    @if($kelas)
+                    <p class="text-sm text-gray-600 mt-1">{{ $kelas->nama_kelas }} • {{ count($agendaHariIni) }} Jadwal</p>
+                    @endif
+                </div>
+                <button onclick="document.getElementById('agendaModal').classList.add('hidden')" class="text-gray-400 hover:text-gray-600 p-2 rounded-lg transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Modal Body - Scrollable -->
+            <div class="overflow-y-auto flex-1">
+                <div class="p-6 space-y-4">
+                    @forelse($agendaHariIni as $agenda)
+                        <div class="bg-white border border-gray-200 rounded-lg p-5 hover:border-blue-300 hover:shadow-md transition-all duration-200">
+                            <!-- Top Row - Jam & Status -->
+                            <div class="flex items-start justify-between mb-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0">
+                                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <p class="font-semibold text-gray-900">
+                                            @if($agenda->startJampel && $agenda->endJampel)
+                                                {{ $agenda->startJampel->jam_mulai }} - {{ $agenda->endJampel->jam_selesai }}
+                                            @elseif($agenda->jampel)
+                                                {{ $agenda->jampel->jam_mulai }} - {{ $agenda->jampel->jam_selesai }}
+                                            @else
+                                                Jam Fleksibel
+                                            @endif
+                                        </p>
+                                        <p class="text-xs text-gray-500 mt-0.5">{{ $agenda->mata_pelajaran }}</p>
+                                    </div>
+                                </div>
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold {{ $agenda->status_ttd ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-yellow-50 text-yellow-700 border border-yellow-200' }}">
+                                    <span class="w-2 h-2 rounded-full {{ $agenda->status_ttd ? 'bg-green-500' : 'bg-yellow-500' }} mr-1.5"></span>
+                                    {{ $agenda->status_ttd ? 'Ditandatangani' : 'Menunggu TT' }}
+                                </span>
+                            </div>
+
+                            <!-- Guru Info -->
+                            <div class="mb-4 pb-4 border-b border-gray-200">
+                                <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Pengajar</p>
+                                <p class="font-medium text-gray-800">{{ $agenda->user?->guru?->nama ?? ($agenda->user?->name ?? 'Tidak ada guru') }}</p>
+                            </div>
+
+                            <!-- Details Grid -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                @if($agenda->materi)
+                                <div>
+                                    <p class="text-xs font-semibold text-gray-600 uppercase tracking-wider mb-1.5">Materi</p>
+                                    <p class="text-sm text-gray-700">{{ $agenda->materi }}</p>
+                                </div>
+                                @endif
+
+                                @if($agenda->kegiatan)
+                                <div>
+                                    <p class="text-xs font-semibold text-gray-600 uppercase tracking-wider mb-1.5">Kegiatan</p>
+                                    <p class="text-sm text-gray-700">{{ $agenda->kegiatan }}</p>
+                                </div>
+                                @endif
+                            </div>
+                        </div>
+                    @empty
+                        <div class="text-center py-16">
+                            <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                            </svg>
+                            <p class="text-gray-500 font-medium">Tidak ada agenda untuk hari ini</p>
+                        </div>
+                    @endforelse
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="bg-gray-50 px-6 py-4 border-t border-gray-200 flex justify-end gap-3">
+                <button onclick="document.getElementById('agendaModal').classList.add('hidden')" class="px-5 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors font-medium text-sm">
+                    Tutup
+                </button>
+            </div>
+        </div>
+    </div>
 @endsection

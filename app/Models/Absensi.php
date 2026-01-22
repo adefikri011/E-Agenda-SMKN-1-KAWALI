@@ -31,6 +31,11 @@ class Absensi extends Model
         'tanggal',
     ];
 
+    protected $casts = [
+    'tanggal' => 'date',
+];
+
+
     public function kelas()
     {
         return $this->belongsTo(Kelas::class);

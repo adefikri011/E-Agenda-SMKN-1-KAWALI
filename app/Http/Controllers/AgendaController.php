@@ -490,7 +490,7 @@ class AgendaController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
-        $agenda = Agenda::with(['user', 'kelas', 'jampel'])->findOrFail($id);
+        $agenda = Agenda::with(['user', 'kelas', 'jampel', 'detailAbsensi.siswa'])->findOrFail($id);
 
         // Cek apakah guru/walikelas berhak menandatangani agenda ini
         $guru = $this->getGuruFromUser();
@@ -509,55 +509,20 @@ class AgendaController extends Controller
                 ->with('error', 'Agenda ini sudah ditandatangani.');
         }
 
-        // Ambil data siswa tidak hadir untuk agenda ini
-        // Cari mata pelajaran berdasarkan nama di agenda
-        $mapel = \App\Models\MataPelajaran::where('nama', $agenda->mata_pelajaran)->first();
+        // Ambil data siswa tidak hadir dari detail absensi
+        $siswaTidakHadir = $agenda->detailAbsensi
+            ->where('keterangan', 'Tidak Hadir')
+            ->map(function ($detail) {
+                return [
+                    'id' => $detail->siswa->id,
+                    'nama' => $detail->siswa->nama_siswa,
+                    'nis' => $detail->siswa->nis,
+                    'status' => $detail->status,
+                ];
+            });
 
-        $siswaTidakHadir = collect();
-
-        if ($mapel) {
-            // Cari absensi untuk tanggal, kelas, dan mata pelajaran yang sama
-            $absensi = \App\Models\Absensi::where('tanggal', $agenda->tanggal)
-                ->where('kelas_id', $agenda->kelas_id)
-                ->where('mapel_id', $mapel->id)
-                ->first();
-
-            if ($absensi) {
-                // Jika ada absensi, ambil data siswa tidak hadir
-                $siswaTidakHadir = \App\Models\DetailAbsensi::where('absensi_id', $absensi->id)
-                    ->whereIn('status', ['alpha', 'sakit', 'izin'])
-                    ->with('siswa')
-                    ->get()
-                    ->map(function ($item) {
-                        return [
-                            'id' => $item->siswa->id,
-                            'nama' => $item->siswa->nama_siswa,
-                            'nis' => $item->siswa->nis,
-                            'status' => $item->status,
-                        ];
-                    });
-            }
-        }
-
-        // Jika tidak ada data absensi atau tidak ada siswa tidak hadir, ambil semua siswa di kelas tersebut
-        if ($siswaTidakHadir->isEmpty()) {
-            $siswaTidakHadir = \App\Models\Siswa::where('kelas_id', $agenda->kelas_id)
-                ->get()
-                ->map(function ($item) {
-                    return [
-                        'id' => $item->id,
-                        'nama' => $item->nama_siswa,
-                        'nis' => $item->nis,
-                        'status' => 'belum_input', // Status khusus untuk menandakan belum ada absensi
-                    ];
-                });
-        }
-
-        // Debug: Tampilkan jumlah siswa tidak hadir
-        \Log::info('Siswa tidak hadir for agenda ' . $id, [
-            'count' => $siswaTidakHadir->count(),
-            'data' => $siswaTidakHadir->toArray()
-        ]);
+        // Jika tidak ada siswa tidak hadir, tetap tampilkan pesan
+        $siswaTidakHadir = collect($siswaTidakHadir);
 
         return view('guru.agenda.sign-form', compact('agenda', 'siswaTidakHadir'));
     }
@@ -1022,7 +987,7 @@ class AgendaController extends Controller
             'kegiatan' => $kegiatan,
             'catatan' => 'Gabungan agenda terverifikasi',
             'users_id' => auth()->id(),
-            'pembuat' => 'gabungan',
+            'pembuat' => 'guru',
             'status_ttd' => $firstSignature ? 'sudah' : 'belum',
             'sudah_ttd' => $firstSignature ? true : false,
             'guru_ttd_id' => $firstGuruTtd ?? null,
@@ -1072,7 +1037,7 @@ class AgendaController extends Controller
             'kegiatan' => $kegiatan,
             'catatan' => 'Gabungan otomatis dari agenda bertanda-tangan',
             'users_id' => auth()->id(),
-            'pembuat' => 'gabungan',
+            'pembuat' => 'guru',
             'status_ttd' => $firstSignature ? 'sudah' : 'belum',
             'sudah_ttd' => $firstSignature ? true : false,
             'guru_ttd_id' => $firstGuruTtd ?? null,
@@ -1083,7 +1048,7 @@ class AgendaController extends Controller
         // Cek apakah sudah ada record gabungan untuk kelas+tanggal
         $existing = Agenda::where('kelas_id', $kelasId)
             ->where('tanggal', $tanggal)
-            ->where('pembuat', 'gabungan')
+            ->where('mata_pelajaran', 'like', 'Gabungan:%')
             ->first();
 
         if ($existing) {
@@ -1454,6 +1419,62 @@ class AgendaController extends Controller
                 'trace' => $e->getTraceAsString()
             ]);
             return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Get schedule detail untuk populate form agenda
+     * Called when user clicks "Buat Agenda" from jadwal-saya
+     */
+    public function getScheduleForAgenda($scheduleId)
+    {
+        try {
+            $guru = Guru::where('users_id', auth()->id())->first();
+
+            if (!$guru) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Guru tidak ditemukan'
+                ], 404);
+            }
+
+            // Fetch schedule dan validate ownership
+            $schedule = GuruMapel::with(['kelas', 'mapel', 'startJampel', 'endJampel', 'guru.user'])
+                ->where('id', $scheduleId)
+                ->where('guru_id', $guru->id)
+                ->firstOrFail();
+
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'id' => $schedule->id,
+                    'guru_id' => $schedule->guru_id,
+                    'guru_name' => $schedule->guru?->user?->name ?? $schedule->guru->nama ?? 'Guru',
+                    'kelas_id' => $schedule->kelas_id,
+                    'kelas_name' => $schedule->kelas?->nama_kelas ?? '-',
+                    'mapel_id' => $schedule->mapel_id,
+                    'mapel_name' => $schedule->mapel?->nama ?? '-',
+                    'start_jampel_id' => $schedule->start_jampel_id,
+                    'start_jampel_name' => $schedule->startJampel?->nama_jam ?? '-',
+                    'end_jampel_id' => $schedule->end_jampel_id,
+                    'end_jampel_name' => $schedule->endJampel?->nama_jam ?? '-',
+                    'hari_tipe' => $schedule->hari_tipe ?? 'senin',
+                ]
+            ]);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Jadwal tidak ditemukan'
+            ], 404);
+        } catch (\Exception $e) {
+            \Log::error('Error in getScheduleForAgenda', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Error: ' . $e->getMessage()
+            ], 500);
         }
     }
 

@@ -10,6 +10,8 @@ use App\Models\Siswa;
 use App\Models\Guru;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\RekapAbsensiExport;
 
 class RekapAbsensiController extends Controller
 {
@@ -26,7 +28,7 @@ class RekapAbsensiController extends Controller
         $selectedTanggal = $request->input('tanggal');
 
         // Base query untuk absensi
-        $query = Absensi::with(['siswa', 'guru', 'kelas', 'mapel', 'jampel', 'detailAbsensi']);
+        $query = Absensi::with(['kelas', 'guru', 'mapel', 'jampel', 'detailAbsensi.siswa']);
 
         // Filter by kelas jika dipilih
         if ($selectedKelas) {
@@ -66,9 +68,15 @@ class RekapAbsensiController extends Controller
     {
         $statistik = [];
 
+        // Jika tidak ada data absensi, kembalikan array kosong
+        if ($absensiData->isEmpty()) {
+            return $statistik;
+        }
+
         foreach ($absensiData as $absensi) {
             $kelasId = $absensi->kelas_id;
 
+            // Inisialisasi statistik untuk kelas jika belum ada
             if (!isset($statistik[$kelasId])) {
                 $statistik[$kelasId] = [
                     'kelas_nama' => $absensi->kelas->nama_kelas,
@@ -85,54 +93,74 @@ class RekapAbsensiController extends Controller
 
             $statistik[$kelasId]['total_absensi_record']++;
 
-            // Hitung dari detail_absensi
-            if ($absensi->detailAbsensi) {
-                foreach ($absensi->detailAbsensi as $detail) {
-                    $siswaId = $detail->siswa_id;
+            // Ambil detail absensi dengan eager load siswa
+            $detailAbsensi = $absensi->detailAbsensi;
 
-                    // Track siswa yang tidak hadir
-                    if ($detail->keterangan !== 'Hadir') {
-                        if (!isset($statistik[$kelasId]['siswa_tidak_hadir'][$siswaId])) {
-                            $statistik[$kelasId]['siswa_tidak_hadir'][$siswaId] = [
-                                'nama' => $detail->siswa->nama_siswa ?? 'N/A',
-                                'nis' => $detail->siswa->nis ?? 'N/A',
-                                'izin' => 0,
-                                'sakit' => 0,
-                                'alpha' => 0,
-                            ];
-                        }
+            if ($detailAbsensi && $detailAbsensi->count() > 0) {
+                // Update total siswa unik (ambil nilai tertinggi)
+                $statistik[$kelasId]['total_siswa_unik'] = max(
+                    $statistik[$kelasId]['total_siswa_unik'],
+                    $detailAbsensi->count()
+                );
+
+                // Proses setiap detail absensi
+                foreach ($detailAbsensi as $detail) {
+                    if (!$detail->siswa) {
+                        continue; // Skip jika siswa tidak ada
                     }
 
-                    // Count status
-                    switch ($detail->keterangan) {
-                        case 'Hadir':
+                    $siswaId = $detail->siswa_id;
+                    $status = strtolower($detail->status ?? 'alpha');
+
+                    // Hitung status
+                    switch ($status) {
+                        case 'hadir':
                             $statistik[$kelasId]['hadir']++;
                             break;
-                        case 'Tidak Hadir':
-                            $statistik[$kelasId]['tidak_hadir']++;
-                            $statistik[$kelasId]['siswa_tidak_hadir'][$siswaId]['alpha']++;
-                            break;
-                        case 'Izin':
+                        case 'izin':
                             $statistik[$kelasId]['izin']++;
+                            // Track siswa tidak hadir
+                            if (!isset($statistik[$kelasId]['siswa_tidak_hadir'][$siswaId])) {
+                                $statistik[$kelasId]['siswa_tidak_hadir'][$siswaId] = [
+                                    'nama' => $detail->siswa->nama_siswa ?? 'N/A',
+                                    'nis' => $detail->siswa->nis ?? 'N/A',
+                                    'izin' => 0,
+                                    'sakit' => 0,
+                                    'alpha' => 0,
+                                ];
+                            }
                             $statistik[$kelasId]['siswa_tidak_hadir'][$siswaId]['izin']++;
                             break;
-                        case 'Sakit':
+                        case 'sakit':
                             $statistik[$kelasId]['sakit']++;
+                            // Track siswa tidak hadir
+                            if (!isset($statistik[$kelasId]['siswa_tidak_hadir'][$siswaId])) {
+                                $statistik[$kelasId]['siswa_tidak_hadir'][$siswaId] = [
+                                    'nama' => $detail->siswa->nama_siswa ?? 'N/A',
+                                    'nis' => $detail->siswa->nis ?? 'N/A',
+                                    'izin' => 0,
+                                    'sakit' => 0,
+                                    'alpha' => 0,
+                                ];
+                            }
                             $statistik[$kelasId]['siswa_tidak_hadir'][$siswaId]['sakit']++;
                             break;
-                        case 'Alpha':
-                            $statistik[$kelasId]['alpha']++;
+                        case 'alpha':
+                        default:
+                            $statistik[$kelasId]['tidak_hadir']++;
+                            // Track siswa tidak hadir
+                            if (!isset($statistik[$kelasId]['siswa_tidak_hadir'][$siswaId])) {
+                                $statistik[$kelasId]['siswa_tidak_hadir'][$siswaId] = [
+                                    'nama' => $detail->siswa->nama_siswa ?? 'N/A',
+                                    'nis' => $detail->siswa->nis ?? 'N/A',
+                                    'izin' => 0,
+                                    'sakit' => 0,
+                                    'alpha' => 0,
+                                ];
+                            }
                             $statistik[$kelasId]['siswa_tidak_hadir'][$siswaId]['alpha']++;
                             break;
                     }
-                }
-
-                // Count total unique siswa
-                if ($absensi->detailAbsensi->count() > 0) {
-                    $statistik[$kelasId]['total_siswa_unik'] = max(
-                        $statistik[$kelasId]['total_siswa_unik'],
-                        $absensi->detailAbsensi->count()
-                    );
                 }
             }
         }

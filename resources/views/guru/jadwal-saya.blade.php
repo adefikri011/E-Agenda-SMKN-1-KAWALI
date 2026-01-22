@@ -365,7 +365,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             <a href="/absensi/${schedule.absensi_id}" class="text-center px-4 py-2.5 bg-gray-100 text-gray-900 text-sm font-medium rounded-lg hover:bg-gray-200 transition-colors duration-200">
                                 Lihat Presensi
                             </a>
-                            <a href="{{ route('agenda.index') }}" class="text-center px-4 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors duration-200">
+                            <a href="{{ route('agenda.create') }}?schedule_id=${schedule.id}" class="text-center px-4 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors duration-200">
                                 Buat Agenda
                             </a>
                         </div>
@@ -394,7 +394,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             <a href="/absensi/create?kelas_id=${schedule.kelas_id}&mapel_id=${schedule.mapel_id}&jampel_id=${schedule.start_jampel_id}&tanggal=${getTodayDate()}&pertemuan=1" class="text-center px-4 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors duration-200">
                                 Input Presensi
                             </a>
-                            <a href="{{ route('agenda.index') }}" class="text-center px-4 py-2.5 bg-gray-100 text-gray-900 text-sm font-medium rounded-lg hover:bg-gray-200 transition-colors duration-200">
+                            <a href="{{ route('agenda.create') }}?schedule_id=${schedule.id}" class="text-center px-4 py-2.5 bg-gray-100 text-gray-900 text-sm font-medium rounded-lg hover:bg-gray-200 transition-colors duration-200">
                                 Buat Agenda
                             </a>
                         </div>

@@ -42,11 +42,12 @@ class Agenda extends Model
     }
 
     /**
-     * Relasi ke guru yang membuat agenda
+     * Helper method untuk mendapatkan guru yang membuat agenda
+     * Gunakan ini sebagai pengganti relasi guru
      */
-    public function guru()
+    public function getGuru()
     {
-        return $this->belongsTo(Guru::class, 'users_id', 'users_id');
+        return $this->user?->guru;
     }
 
     /**

@@ -13,10 +13,6 @@
                 </div>
                 <p class="text-lg text-gray-600 ml-4">Kelola agenda pembelajaran harian</p>
             </div>
-            <div class="bg-blue-50 px-6 py-3 rounded-xl border border-blue-100">
-                <p class="text-sm text-blue-600 font-medium">Hari ini</p>
-                <p class="text-xl font-bold text-blue-800">{{ date('d F') }}</p>
-            </div>
         </div>
     </div>
 
@@ -36,7 +32,7 @@
             </a>
         @endif
 
-    
+
         <a href="{{ route('agenda.rekap') }}"
             class="px-4 py-2 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 transition-colors">
             <i class="fas fa-chart-bar mr-2"></i> Rekap Agenda
