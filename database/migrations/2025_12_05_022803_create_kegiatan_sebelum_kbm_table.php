@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::create('kegiatan_sebelum_kbm', function (Blueprint $table) {
             $table->id();
-            $table->enum('hari', ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat']);
+            $table->enum('hari', ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu']);
             $table->string('kegiatan');
             $table->timestamps();
         });

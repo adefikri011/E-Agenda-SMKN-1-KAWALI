@@ -41,8 +41,16 @@ class RekapController extends Controller
         }
         $allMapels = MataPelajaran::whereIn('id', $mapelIds)->get();
 
-        // Get selected mapel dari request (opsional, untuk filter tampilan)
+        // Get selected filters dari request
         $selectedMapelId = $request->get('mapel_id');
+        $selectedBulan = $request->get('bulan');
+        $selectedTahun = $request->get('tahun');
+
+        // Default: Gunakan bulan dan tahun saat ini jika tidak ada filter
+        if (!$selectedBulan || !$selectedTahun) {
+            $selectedBulan = $selectedBulan ?? date('m');
+            $selectedTahun = $selectedTahun ?? date('Y');
+        }
 
         // Filter siswa berdasarkan mapel yang dipilih
         $siswa = $allSiswa;
@@ -63,8 +71,9 @@ class RekapController extends Controller
         }
 
         // Get data absensi dan nilai untuk siswa di kelas ini
-        $absensiData = $this->getAbsensiData($siswa, $selectedMapelId);
-        $nilaiData = $this->getNilaiData($siswa, $selectedMapelId);
+        // Dengan filter bulan dan tahun
+        $absensiData = $this->getAbsensiData($siswa, $selectedMapelId, $selectedBulan, $selectedTahun);
+        $nilaiData = $this->getNilaiData($siswa, $selectedMapelId, $selectedBulan, $selectedTahun);
 
         // Prepare summary data
         $summaryData = $this->prepareSummaryData($siswa, $absensiData, $nilaiData);
@@ -79,6 +88,8 @@ class RekapController extends Controller
             'totalSiswa' => count($siswa),
             'mapelOptions' => $allMapels,
             'selectedMapelId' => $selectedMapelId,
+            'selectedBulan' => $selectedBulan,
+            'selectedTahun' => $selectedTahun,
         ]);
     }
 
@@ -96,37 +107,37 @@ class RekapController extends Controller
                     'start' => $today,
                     'end' => $today->copy()->endOfDay()
                 ];
-            
+
             case 'thisWeek':
                 return [
                     'start' => $now->copy()->startOfWeek(),
                     'end' => $now->copy()->endOfWeek()
                 ];
-            
+
             case 'lastWeek':
                 return [
                     'start' => $now->copy()->subWeek()->startOfWeek(),
                     'end' => $now->copy()->subWeek()->endOfWeek()
                 ];
-            
+
             case 'thisMonth':
                 return [
                     'start' => $now->copy()->startOfMonth(),
                     'end' => $now->copy()->endOfMonth()
                 ];
-            
+
             case 'lastMonth':
                 return [
                     'start' => $now->copy()->subMonth()->startOfMonth(),
                     'end' => $now->copy()->subMonth()->endOfMonth()
                 ];
-            
+
             case 'last3Months':
                 return [
                     'start' => $now->copy()->subMonths(3)->startOfMonth(),
                     'end' => $now->copy()->endOfMonth()
                 ];
-            
+
             case 'semester':
                 // Semester saat ini - Jan-Jun atau Jul-Des
                 $month = $now->month;
@@ -141,7 +152,7 @@ class RekapController extends Controller
                         'end' => $now->copy()->month(12)->endOfMonth()
                     ];
                 }
-            
+
             case 'lastSemester':
                 // Semester sebelumnya
                 $month = $now->month;
@@ -156,7 +167,7 @@ class RekapController extends Controller
                         'end' => $now->copy()->month(6)->endOfMonth()
                     ];
                 }
-            
+
             case 'custom':
                 if ($startDate && $endDate) {
                     return [
@@ -166,7 +177,7 @@ class RekapController extends Controller
                 }
                 // Fallback to all if custom but dates not provided
                 return ['start' => null, 'end' => null];
-            
+
             case 'all':
             default:
                 return ['start' => null, 'end' => null];
@@ -174,7 +185,7 @@ class RekapController extends Controller
     }
 
     // Get data absensi untuk siswa-siswa
-    private function getAbsensiData($siswa, $mapelId = null)
+    private function getAbsensiData($siswa, $mapelId = null, $bulan = null, $tahun = null)
     {
         $absensiData = [];
 
@@ -187,6 +198,12 @@ class RekapController extends Controller
             // Filter by mapel jika dipilih
             if ($mapelId) {
                 $query->where('mapel_id', $mapelId);
+            }
+
+            // Filter by bulan dan tahun jika dipilih
+            if ($bulan && $tahun) {
+                $query->whereMonth('tanggal', $bulan)
+                      ->whereYear('tanggal', $tahun);
             }
 
             $absensi = $query->get();
@@ -251,7 +268,7 @@ class RekapController extends Controller
     }
 
     // Get data nilai untuk siswa-siswa
-    private function getNilaiData($siswa, $mapelId = null)
+    private function getNilaiData($siswa, $mapelId = null, $bulan = null, $tahun = null)
     {
         $nilaiData = [];
 
@@ -262,6 +279,12 @@ class RekapController extends Controller
             // Filter by mapel jika dipilih
             if ($mapelId) {
                 $query->where('mapel_id', $mapelId);
+            }
+
+            // Filter by bulan dan tahun jika dipilih
+            if ($bulan && $tahun) {
+                $query->whereMonth('created_at', $bulan)
+                      ->whereYear('created_at', $tahun);
             }
 
             $nilai = $query->get();
@@ -330,23 +353,16 @@ class RekapController extends Controller
         $totalGrades = 0;
         $totalTugas = 0;
 
-        // Calculate dari absensi data
+        // Calculate dari absensi data yang sudah di-filter
         foreach ($absensiData as $data) {
             $totalHadir += $data['hadir'];
             $totalPossible += $data['totalPertemuan'];
         }
 
-        // Get unique meetings count
-        $totalPertemuan = $totalPossible > 0 ? count(array_unique(array_map(function($s) {
-            return $s['totalPertemuan'];
-        }, $absensiData))) : 0;
+        // Hitung total pertemuan unik dari data yang sudah di-filter
+        $totalPertemuan = $totalPossible > 0 ? max(array_column($absensiData, 'totalPertemuan')) : 0;
 
-        // Lebih akurat: ambil dari database
-        $totalPertemuan = Absensi::whereHas('siswa', function($query) use ($siswa) {
-            $query->whereIn('siswa.id', $siswa->pluck('id'));
-        })->count();
-
-        // Calculate dari nilai data
+        // Calculate dari nilai data yang sudah di-filter
         foreach ($nilaiData as $data) {
             $totalNilai += ($data['nilaiRataRata'] * $data['totalTugas']);
             $totalGrades += $data['totalTugas'];
@@ -410,8 +426,13 @@ class RekapController extends Controller
 
         $siswa = Siswa::where('kelas_id', $kelas->id)->orderBy('nama_siswa')->get();
 
-        $absensiData = $this->getAbsensiData($siswa);
-        $nilaiData = $this->getNilaiData($siswa);
+        // Get filter dari request
+        $mapelId = request('mapel_id');
+        $bulan = request('bulan', date('m'));
+        $tahun = request('tahun', date('Y'));
+
+        $absensiData = $this->getAbsensiData($siswa, $mapelId, $bulan, $tahun);
+        $nilaiData = $this->getNilaiData($siswa, $mapelId, $bulan, $tahun);
 
         // Build rows
         $rows = [];

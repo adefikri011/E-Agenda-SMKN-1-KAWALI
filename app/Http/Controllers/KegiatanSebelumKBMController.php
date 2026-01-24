@@ -24,8 +24,8 @@ class KegiatanSebelumKBMController extends Controller
             'Wednesday' => 'Rabu',
             'Thursday' => 'Kamis',
             'Friday' => 'Jumat',
-            'Saturday' => 'Senin',
-            'Sunday' => 'Senin',
+            'Saturday' => 'Sabtu',
+            'Sunday' => 'Minggu',
         ];
         $todayHari = $map[$englishDay] ?? now()->translatedFormat('l');
 
@@ -53,8 +53,8 @@ class KegiatanSebelumKBMController extends Controller
                 'Wednesday' => 'Rabu',
                 'Thursday' => 'Kamis',
                 'Friday' => 'Jumat',
-                'Saturday' => 'Senin',
-                'Sunday' => 'Senin',
+                'Saturday' => 'Sabtu',
+                'Sunday' => 'Minggu',
             ];
             $hari = $map[$englishDay] ?? now()->translatedFormat('l');
             // Cek apakah sudah ada kegiatan untuk kombinasi hari + jurusan

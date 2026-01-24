@@ -190,41 +190,35 @@
                 </div>
 
                 <div class="p-6">
-                    @if($kegiatanPreKBM)
-                        <div class="bg-orange-50 rounded-lg p-4 border border-orange-200">
-                            <div class="flex items-start gap-3 mb-3">
-                                <div class="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center flex-shrink-0">
-                                    <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
-                                </div>
-                                <div>
-                                    <h3 class="font-semibold text-gray-800">{{ $kegiatanPreKBM->kegiatan }}</h3>
-                                    <p class="text-sm text-gray-600">{{ $kegiatanPreKBM->hari }}</p>
-                                </div>
-                            </div>
-
-                            <div class="pt-3 border-t border-orange-200">
-                                <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Jurusan</p>
-                                @if($jurusan && $kegiatanPreKBM->jurusan_id)
-                                <p class="text-sm font-medium text-gray-800">{{ $jurusan->nama_jurusan }}</p>
-                                @elseif(!$kegiatanPreKBM->jurusan_id)
-                                <p class="text-sm font-medium text-gray-800">Semua Jurusan</p>
-                                @endif
-                            </div>
-                        </div>
-                    @else
-                        <div class="bg-gray-50 rounded-lg p-6 border border-gray-200 text-center">
-                            <div class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-3">
-                                <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    @if ($kegiatanSebelumKBMHariIni->isEmpty())
+                        <div class="bg-orange-50 rounded-lg p-6 border border-orange-200 text-center">
+                            <div class="w-12 h-12 rounded-full bg-orange-100 flex items-center justify-center mx-auto mb-3">
+                                <svg class="w-6 h-6 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
                             </div>
-                            <p class="text-gray-500 font-medium mb-1">Tidak ada kegiatan</p>
-                            <p class="text-sm text-gray-400">Tidak ada kegiatan sebelum KBM untuk hari ini</p>
-                            @if($jurusan)
-                            <p class="text-xs text-gray-500 mt-3">Jurusan: {{ $jurusan->nama_jurusan }}</p>
-                            @endif
+                            <p class="text-gray-600 font-medium mb-1">Tidak ada kegiatan</p>
+                            <p class="text-sm text-gray-500">Tidak ada kegiatan sebelum KBM untuk hari {{ $todayHari ?? 'ini' }}</p>
+                        </div>
+                    @else
+                        <div class="space-y-4">
+                            @foreach ($kegiatanSebelumKBMHariIni as $item)
+                                <div class="border border-orange-200 rounded-lg p-4 hover:shadow-md transition-shadow bg-orange-50">
+                                    <h4 class="text-sm font-semibold text-gray-800 mb-3">{{ $item['jurusan_name'] }}</h4>
+                                    <ul class="space-y-2">
+                                        @foreach ($item['kegiatans'] as $kegiatan)
+                                            <li class="flex items-start gap-2">
+                                                <span class="inline-flex items-center justify-center h-5 w-5 rounded-full bg-orange-300 flex-shrink-0 mt-0.5">
+                                                    <svg class="h-3 w-3 text-orange-700" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                                    </svg>
+                                                </span>
+                                                <span class="text-sm text-gray-700">{{ $kegiatan }}</span>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @endforeach
                         </div>
                     @endif
                 </div>

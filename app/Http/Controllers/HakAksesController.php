@@ -155,6 +155,52 @@ class HakAksesController extends Controller
     $kelasIds = GuruMapel::where('guru_id', $guru->id)->pluck('kelas_id')->unique()->toArray();
     $mapelIds = GuruMapel::where('guru_id', $guru->id)->pluck('mapel_id')->unique()->toArray();
 
+    // --- 0. KEGIATAN SEBELUM KBM HARI INI ---
+    // Ambil kegiatan sebelum KBM berdasarkan hari saat ini
+    $englishDay = now()->format('l');
+    $dayMap = [
+        'Monday' => 'Senin',
+        'Tuesday' => 'Selasa',
+        'Wednesday' => 'Rabu',
+        'Thursday' => 'Kamis',
+        'Friday' => 'Jumat',
+        'Saturday' => 'Sabtu',
+        'Sunday' => 'Minggu',
+    ];
+    $todayHari = $dayMap[$englishDay] ?? now()->translatedFormat('l');
+
+    // Ambil kegiatan untuk jurusan yang guru ajar (dari kelas yang dia ajar)
+    $kegiatanSebelumKBMHariIni = collect();
+    if (!empty($kelasIds)) {
+        $jurusanIds = Kelas::whereIn('id', $kelasIds)->pluck('jurusan_id')->unique()->toArray();
+
+        $kegiatanSebelumKBMHariIni = \App\Models\KegiatanSebelumKBM::where('hari', $todayHari)
+            ->where(function ($query) use ($jurusanIds) {
+                // Kegiatan tanpa jurusan spesifik (untuk semua) ATAU untuk jurusan yang guru ajar
+                $query->whereNull('jurusan_id')
+                      ->orWhereIn('jurusan_id', $jurusanIds);
+            })
+            ->orderBy('jurusan_id')
+            ->get()
+            ->groupBy('jurusan_id');
+
+        // Format data untuk display
+        $kegiatanSebelumKBMHariIni = $kegiatanSebelumKBMHariIni->map(function ($items, $jurusanId) {
+            if ($jurusanId === 'NULL' || is_null($jurusanId)) {
+                $jurusanName = 'Semua Jurusan';
+            } else {
+                $jurusan = \App\Models\Jurusan::find($jurusanId);
+                $jurusanName = $jurusan ? $jurusan->nama_jurusan : 'Jurusan Tidak Diketahui';
+            }
+
+            return [
+                'jurusan_id' => $jurusanId,
+                'jurusan_name' => $jurusanName,
+                'kegiatans' => $items->pluck('kegiatan')->toArray()
+            ];
+        })->values();
+    }
+
     // --- 1. DAFTAR SISWA TIDAK HADIR (Global untuk sidebar/notifikasi) ---
     $daftarKehadiranHariIni = collect();
     if (!empty($kelasIds)) {
@@ -261,7 +307,9 @@ class HakAksesController extends Controller
         'totalSiswa',
         'daftarKehadiranHariIni',
         'rekapPresensiPerMapel',
-        'presensiData' // Data untuk sidebar visualisasi presensi
+        'presensiData', // Data untuk sidebar visualisasi presensi
+        'kegiatanSebelumKBMHariIni', // Kegiatan sebelum KBM
+        'todayHari' // Nama hari hari ini
     ));
 }
 
@@ -370,7 +418,7 @@ class HakAksesController extends Controller
 
         $jumlahMapel = $guruMapelToday->count();
 
-        // Get kegiatan sebelum KBM based on kelas's jurusan
+        // Get kegiatan sebelum KBM based on kelas's jurusan (hanya hari ini)
         $englishDay = now()->format('l');
         $dayMap = [
             'Monday' => 'Senin',
@@ -378,17 +426,29 @@ class HakAksesController extends Controller
             'Wednesday' => 'Rabu',
             'Thursday' => 'Kamis',
             'Friday' => 'Jumat',
-            'Saturday' => 'Senin',
-            'Sunday' => 'Senin',
+            'Saturday' => 'Sabtu',
+            'Sunday' => 'Minggu',
         ];
-        $hari = $dayMap[$englishDay] ?? 'Senin';
+        $todayHari = $dayMap[$englishDay] ?? 'Senin';
 
-        $kegiatanPreKBM = \App\Models\KegiatanSebelumKBM::where('hari', $hari)
+        $kegiatanSebelumKBMHariIni = \App\Models\KegiatanSebelumKBM::where('hari', $todayHari)
             ->where(function ($query) use ($kelas) {
                 $query->whereNull('jurusan_id')
                     ->orWhere('jurusan_id', $kelas->jurusan_id);
             })
-            ->first();
+            ->get()
+            ->groupBy('jurusan_id')
+            ->map(function ($items, $jurusanId) {
+                $jurusanName = $jurusanId ? \App\Models\Jurusan::find($jurusanId)?->nama_jurusan : 'Semua Jurusan';
+                return [
+                    'jurusan_id' => $jurusanId,
+                    'jurusan_name' => $jurusanName,
+                    'kegiatans' => $items->pluck('kegiatan')->toArray()
+                ];
+            })->values();
+
+        // Keep old variable for backward compatibility
+        $kegiatanPreKBM = $kegiatanSebelumKBMHariIni->first();
 
         // Get jurusan data
         $jurusan = $kelas->jurusan ?? null;
@@ -403,7 +463,9 @@ class HakAksesController extends Controller
             'agendaPertama',
             'agendaLainnya',
             'guruMapelToday',
-            'kegiatanPreKBM'
+            'kegiatanPreKBM',
+            'kegiatanSebelumKBMHariIni',
+            'todayHari'
         ));
     }
 }

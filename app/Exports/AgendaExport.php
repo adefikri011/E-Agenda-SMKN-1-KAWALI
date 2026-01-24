@@ -21,7 +21,7 @@ class AgendaExport implements FromCollection, WithHeadings, ShouldAutoSize, With
         $this->agendas = $agendas;
     }
 
-    public function collection(): CollectionContract
+    public function collection(): Collection
     {
         $rows = [];
 
@@ -38,7 +38,7 @@ class AgendaExport implements FromCollection, WithHeadings, ShouldAutoSize, With
             ];
         }
 
-        return new Collection($rows);
+        return collect($rows);
     }
 
     public function headings(): array

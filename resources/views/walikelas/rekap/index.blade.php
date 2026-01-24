@@ -13,10 +13,7 @@
                 </div>
                 <p class="text-lg text-gray-600 ml-4">Rekap presensi dan nilai siswa per kelas</p>
             </div>
-            <div class="bg-blue-50 px-6 py-3 rounded-xl border border-blue-100">
-                <p class="text-sm text-blue-600 font-medium">Hari ini</p>
-                <p class="text-xl font-bold text-blue-800">{{ date('d F') }}</p>
-            </div>
+
         </div>
     </div>
 
@@ -147,16 +144,52 @@
                         </select>
                     </div>
 
-                    <!-- Tanggal Mulai -->
+                    <!-- Filter Bulan -->
                     <div class="border border-gray-300 rounded-lg p-4 bg-gray-50">
-                        <label class="block text-base font-semibold text-gray-700 mb-3">Dari Tanggal</label>
-                        <input type="date" name="start_date" class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg text-base focus:border-blue-500 focus:ring-blue-500 bg-white">
+                        <label class="block text-base font-semibold text-gray-700 mb-3">Bulan</label>
+                        <select name="bulan" class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg text-base focus:border-blue-500 focus:ring-blue-500 bg-white">
+                            <option value="">-- Pilih Bulan --</option>
+                            @php
+                                $currentMonth = request('bulan', date('m'));
+                                $months = [
+                                    '01' => 'Januari',
+                                    '02' => 'Februari',
+                                    '03' => 'Maret',
+                                    '04' => 'April',
+                                    '05' => 'Mei',
+                                    '06' => 'Juni',
+                                    '07' => 'Juli',
+                                    '08' => 'Agustus',
+                                    '09' => 'September',
+                                    '10' => 'Oktober',
+                                    '11' => 'November',
+                                    '12' => 'Desember',
+                                ];
+                            @endphp
+                            @foreach($months as $key => $month)
+                                <option value="{{ $key }}" {{ $currentMonth == $key ? 'selected' : '' }}>
+                                    {{ $month }}
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
 
-                    <!-- Tanggal Akhir -->
+                    <!-- Filter Tahun -->
                     <div class="border border-gray-300 rounded-lg p-4 bg-gray-50">
-                        <label class="block text-base font-semibold text-gray-700 mb-3">Sampai Tanggal</label>
-                        <input type="date" name="end_date" class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg text-base focus:border-blue-500 focus:ring-blue-500 bg-white">
+                        <label class="block text-base font-semibold text-gray-700 mb-3">Tahun</label>
+                        <select name="tahun" class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg text-base focus:border-blue-500 focus:ring-blue-500 bg-white">
+                            <option value="">-- Pilih Tahun --</option>
+                            @php
+                                $currentYear = request('tahun', date('Y'));
+                                $startYear = 2020;
+                                $endYear = date('Y');
+                            @endphp
+                            @for($year = $endYear; $year >= $startYear; $year--)
+                                <option value="{{ $year }}" {{ $currentYear == $year ? 'selected' : '' }}>
+                                    {{ $year }}
+                                </option>
+                            @endfor
+                        </select>
                     </div>
                 </div>
 
@@ -260,7 +293,16 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="9" class="px-6 py-8 text-center text-gray-500">Tidak ada data siswa</td>
+                                <td colspan="9" class="px-6 py-12 text-center">
+                                    <div class="mx-auto w-20 h-20 rounded-full bg-blue-50 flex items-center justify-center mb-4">
+                                        <svg class="w-10 h-10 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                    </div>
+                                    <p class="text-lg font-semibold text-gray-900 mb-2">Belum ada data presensi</p>
+                                    <p class="text-sm text-gray-500 mb-4">Tidak ada catatan presensi untuk periode yang dipilih</p>
+                                    <p class="text-xs text-gray-400">Mulai input data presensi melalui menu Input Presensi</p>
+                                </td>
                             </tr>
                             @endforelse
                         </tbody>
@@ -329,14 +371,15 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="7" class="px-6 py-8 text-center text-gray-500">
-                                    <div class="mx-auto w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mb-4">
-                                        <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                <td colspan="7" class="px-6 py-12 text-center">
+                                    <div class="mx-auto w-20 h-20 rounded-full bg-purple-50 flex items-center justify-center mb-4">
+                                        <svg class="w-10 h-10 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                                         </svg>
                                     </div>
-                                    <p class="text-base font-medium text-gray-700 mb-2">Belum ada data nilai</p>
-                                    <p class="text-sm text-gray-500">Guru akan menambahkan nilai melalui menu Input Nilai.</p>
+                                    <p class="text-lg font-semibold text-gray-900 mb-2">Belum ada data nilai</p>
+                                    <p class="text-sm text-gray-500 mb-4">Tidak ada nilai siswa untuk periode yang dipilih</p>
+                                    <p class="text-xs text-gray-400">Guru akan menambahkan nilai melalui menu Input Nilai</p>
                                 </td>
                             </tr>
                             @endforelse

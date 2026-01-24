@@ -3,7 +3,6 @@
 @section('title', 'Jadwal Mengajar Saya')
 
 @section('content')
-    <!-- Full Screen Header -->
     <div class="px-8 py-6 bg-white border-b border-gray-200">
         <div class="flex items-center justify-between">
             <div>

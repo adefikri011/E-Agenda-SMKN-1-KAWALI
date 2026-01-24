@@ -3,312 +3,210 @@
 @section('title', 'Input Agenda')
 
 @section('content')
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-
-        <!-- Header Minimalis -->
-        <div class="mb-8">
-            <h1 class="text-2xl font-light text-gray-900 tracking-tight">Input Agenda Mengajar</h1>
-            <p class="text-sm text-gray-500 mt-1 font-light">Isi detail pembelajaran harian Anda di bawah ini.</p>
+     <!-- Full Screen Header -->
+    <div class="px-8 py-6 bg-white border-b border-gray-200">
+        <div class="flex items-center justify-between">
+            <div>
+                <div class="flex items-center gap-3 mb-2">
+                    <div class="w-1 h-8 bg-blue-600 rounded-full"></div>
+                    <h1 class="text-3xl font-bold text-gray-900">Input Agenda</h1>
+                </div>
+                <p class="text-lg text-gray-600 ml-4">Isi detail pembelajaran harian di bawah ini.</p>
+            </div>
         </div>
+    </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+<!-- Full Screen Content -->
+    <div class="px-8 py-6 w-full">
+        <div class="w-full space-y-6">
 
-            <!-- Kolom Utama Form -->
-            <div class="lg:col-span-8 space-y-6">
+            <!-- Kartu Form Full Screen -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-10 w-full">
 
-                <!-- Kartu Form -->
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-10">
+                <!-- Pesan Error & Sukses (Desain Flat) -->
+                @if ($errors->any())
+                    <div class="mb-8 p-4 bg-red-50 text-red-800 rounded-lg text-sm border border-red-100 flex items-start">
+                        <svg class="w-5 h-5 mr-3 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <div>
+                            <p class="font-medium">Terjadi kesalahan pada input:</p>
+                            <ul class="mt-1 list-disc list-inside opacity-90">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    </div>
+                @endif
 
-                    <!-- Pesan Error & Sukses (Desain Flat) -->
-                    @if ($errors->any())
-                        <div class="mb-8 p-4 bg-red-50 text-red-800 rounded-lg text-sm border border-red-100 flex items-start">
-                            <svg class="w-5 h-5 mr-3 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            <div>
-                                <p class="font-medium">Terjadi kesalahan pada input:</p>
-                                <ul class="mt-1 list-disc list-inside opacity-90">
-                                    @foreach ($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
+                @if (session('success'))
+                    <div class="mb-8 p-4 bg-green-50 text-green-800 rounded-lg text-sm border border-green-100 flex items-center">
+                        <svg class="w-5 h-5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                        <p>{{ session('success') }}</p>
+                    </div>
+                @endif
+
+                <!-- Tab Navigasi (Sederhana) -->
+                <div class="border-b border-gray-100 mb-8">
+                    <button type="button" class="pb-3 text-sm font-medium text-gray-900 border-b-2 border-gray-900 focus:outline-none">
+                        Agenda
+                    </button>
+                </div>
+
+                <!-- FORM START -->
+                <form action="{{ route('agenda.store') }}" method="POST" id="agendaForm" class="space-y-6 w-full">
+                    @csrf
+                    <input type="hidden" name="tanda_tangan" id="tanda_tangan" value="">
+
+                    <!-- Section: Waktu & Kelas -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-y-6 gap-x-8 w-full">
+
+                        <!-- Tanggal -->
+                        <div class="lg:col-span-1">
+                            <label for="tanggal" class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Tanggal</label>
+                            <input type="date" name="tanggal"
+                                class="block w-full px-4 py-3 bg-gray-50 border border-gray-200 text-gray-900 rounded-lg focus:ring-1 focus:ring-gray-900 focus:border-gray-900 outline-none transition-all placeholder-gray-400"
+                                value="{{ date('Y-m-d') }}" required>
+                        </div>
+
+                        <!-- Jam Mulai -->
+                        <div class="lg:col-span-1">
+                            <label for="startJampelSelect" class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Jam Mulai <span class="text-red-500">*</span></label>
+                            <select name="start_jampel_id" id="startJampelSelect"
+                                class="block w-full px-4 py-3 bg-gray-50 border border-gray-200 text-gray-900 rounded-lg focus:ring-1 focus:ring-gray-900 focus:border-gray-900 outline-none transition-all cursor-pointer"
+                                required>
+                                <option value="">Pilih Jam Mulai</option>
+                                @foreach ($jampel as $item)
+                                    <option value="{{ $item->id }}" data-hari="{{ $item->hari_tipe }}">
+                                        Jam {{ $item->jam_ke }} - {{ $item->jam_mulai }} ({{ $item->nama_jam }})
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <!-- Jam Selesai -->
+                        <div class="lg:col-span-1">
+                            <label for="endJampelSelect" class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Jam Selesai <span class="text-red-500">*</span></label>
+                            <select name="end_jampel_id" id="endJampelSelect"
+                                class="block w-full px-4 py-3 bg-gray-50 border border-gray-200 text-gray-900 rounded-lg focus:ring-1 focus:ring-gray-900 focus:border-gray-900 outline-none transition-all cursor-pointer"
+                                required>
+                                <option value="">Pilih Jam Selesai</option>
+                                @foreach ($jampel as $item)
+                                    <option value="{{ $item->id }}" data-hari="{{ $item->hari_tipe }}">
+                                        Jam {{ $item->jam_ke }} - {{ $item->jam_selesai }} ({{ $item->nama_jam }})
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <!-- Kelas -->
+                        <div class="lg:col-span-1">
+                            <label for="kelasSelect" class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Kelas <span class="text-red-500">*</span></label>
+                            <select name="kelas_id" id="kelasSelect"
+                                class="block w-full px-4 py-3 bg-gray-50 border border-gray-200 text-gray-900 rounded-lg focus:ring-1 focus:ring-gray-900 focus:border-gray-900 outline-none transition-all cursor-pointer"
+                                required>
+                                <option value="">Pilih Kelas</option>
+                                @foreach ($kelas as $item)
+                                    <option value="{{ $item->id }}">{{ $item->nama_kelas }}</option>
+                                @endforeach
+                            </select>
+                            <p class="text-xs text-gray-400 mt-1.5 pl-1">Pilih kelas untuk memuat mata pelajaran.</p>
+                        </div>
+
+                        <!-- Mata Pelajaran -->
+                        <div class="lg:col-span-2">
+                            <label for="mapelSelect" class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Mata Pelajaran <span class="text-red-500">*</span></label>
+                            <select name="mata_pelajaran_id" id="mapelSelect"
+                                class="block w-full px-4 py-3 bg-gray-50 border border-gray-200 text-gray-900 rounded-lg focus:ring-1 focus:ring-gray-900 focus:border-gray-900 outline-none transition-all cursor-pointer"
+                                required disabled>
+                                <option value="">Pilih Kelas Terlebih Dahulu</option>
+                            </select>
+                            <input type="hidden" name="mata_pelajaran" id="mata_pelajaran_nama">
+                            <input type="hidden" name="guru_id" id="guru_id">
+                        </div>
+                    </div>
+
+                    <!-- Info Guru (Hidden by default) -->
+                    <div id="guruInfo" class="hidden bg-gray-50 rounded-lg p-4 border border-gray-100 flex items-center">
+                        <div class="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-500 mr-3">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-500 uppercase font-semibold">Pengampu Mata Pelajaran</p>
+                            <p id="guruNama" class="text-sm text-gray-900 font-medium">-</p>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-gray-100 my-6"></div>
+
+                    <!-- Section: Detail Pembelajaran -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- Materi -->
+                        <div>
+                            <label for="materi" class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Materi Pembelajaran</label>
+                            <input type="text" name="materi" placeholder="Contoh: Aljabar dan Persamaan Linear"
+                                class="block w-full px-4 py-3 bg-white border border-gray-200 text-gray-900 rounded-lg focus:ring-1 focus:ring-gray-900 focus:border-gray-900 outline-none transition-all"
+                                required>
+                        </div>
+
+                        <!-- Kegiatan -->
+                        <div>
+                            <label for="kegiatan" class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Kegiatan & Aktivitas</label>
+                            <textarea name="kegiatan" rows="4" placeholder="Jelaskan kegiatan pembelajaran yang dilakukan..."
+                                class="block w-full px-4 py-3 bg-white border border-gray-200 text-gray-900 rounded-lg focus:ring-1 focus:ring-gray-900 focus:border-gray-900 outline-none transition-all resize-none"
+                                required></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Tanda Tangan Digital (Conditional) -->
+                    @if (auth()->user()->hasRole('guru'))
+                        <div class="w-full">
+                            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Tanda Tangan Digital</label>
+                            <div class="bg-gray-50 rounded-xl p-1 border border-gray-200 w-full">
+                                <div class="relative bg-white rounded-lg overflow-hidden w-full" style="height: 250px;">
+                                    <canvas id="signatureCanvas"
+                                        class="cursor-crosshair w-full h-full touch-none"
+                                        width="1200" height="250"></canvas>
+                                    <div id="canvasPlaceholder"
+                                        class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                                        <svg class="w-8 h-8 text-gray-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                                        <p class="text-sm text-gray-400">Tanda tangan di area ini</p>
+                                    </div>
+                                </div>
+                                <div class="px-4 py-3 flex justify-between items-center bg-gray-50/50 rounded-b-lg">
+                                    <button type="button" id="clearSignature" class="text-xs text-gray-500 hover:text-red-500 transition-colors flex items-center font-medium">
+                                        <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                        Hapus
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                    @endif
-
-                    @if (session('success'))
-                        <div class="mb-8 p-4 bg-green-50 text-green-800 rounded-lg text-sm border border-green-100 flex items-center">
-                            <svg class="w-5 h-5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                            <p>{{ session('success') }}</p>
+                    @else
+                        <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 flex items-start text-sm text-gray-600">
+                            <svg class="w-5 h-5 text-gray-400 mr-3 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <p>Agenda yang Anda buat akan ditinjau dan ditandatangani oleh guru.</p>
                         </div>
                     @endif
 
-                    <!-- Tab Navigasi (Sederhana) -->
-                    <div class="border-b border-gray-100 mb-8">
-                        <button type="button" class="pb-3 text-sm font-medium text-gray-900 border-b-2 border-gray-900 focus:outline-none">
-                            Agenda Mengajar
+                    <!-- Catatan Tambahan -->
+                    <div>
+                        <label for="catatan" class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Catatan Tambahan (Opsional)</label>
+                        <textarea name="catatan" rows="2" placeholder="Catatan khusus..."
+                            class="block w-full px-4 py-3 bg-white border border-gray-200 text-gray-900 rounded-lg focus:ring-1 focus:ring-gray-900 focus:border-gray-900 outline-none transition-all resize-none"></textarea>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="flex items-center gap-4 pt-4">
+                        <button type="submit"
+                            class="flex-1 px-6 py-3.5 bg-gray-900 text-white rounded-lg font-medium hover:bg-gray-800 transition-all shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900">
+                            Simpan Agenda
+                        </button>
+                        <button type="reset"
+                            class="px-6 py-3.5 bg-white border border-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-50 hover:border-gray-300 transition-all focus:outline-none">
+                            Batal
                         </button>
                     </div>
 
-                    <!-- FORM START -->
-                    <form action="{{ route('agenda.store') }}" method="POST" id="agendaForm" class="space-y-6">
-                        @csrf
-                        <input type="hidden" name="tanda_tangan" id="tanda_tangan" value="">
-
-                        <!-- Section: Waktu & Kelas -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-8">
-
-                            <!-- Tanggal -->
-                            <div class="md:col-span-1">
-                                <label for="tanggal" class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Tanggal</label>
-                                <input type="date" name="tanggal"
-                                    class="block w-full px-4 py-3 bg-gray-50 border border-gray-200 text-gray-900 rounded-lg focus:ring-1 focus:ring-gray-900 focus:border-gray-900 outline-none transition-all placeholder-gray-400"
-                                    value="{{ date('Y-m-d') }}" required>
-                            </div>
-
-                            <!-- Jam Mulai -->
-                            <div>
-                                <label for="startJampelSelect" class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Jam Mulai <span class="text-red-500">*</span></label>
-                                <select name="start_jampel_id" id="startJampelSelect"
-                                    class="block w-full px-4 py-3 bg-gray-50 border border-gray-200 text-gray-900 rounded-lg focus:ring-1 focus:ring-gray-900 focus:border-gray-900 outline-none transition-all cursor-pointer"
-                                    required>
-                                    <option value="">Pilih Jam Mulai</option>
-                                    @foreach ($jampel as $item)
-                                        <option value="{{ $item->id }}" data-hari="{{ $item->hari_tipe }}">
-                                            Jam {{ $item->jam_ke }} - {{ $item->jam_mulai }} ({{ $item->nama_jam }})
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <!-- Jam Selesai -->
-                            <div>
-                                <label for="endJampelSelect" class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Jam Selesai <span class="text-red-500">*</span></label>
-                                <select name="end_jampel_id" id="endJampelSelect"
-                                    class="block w-full px-4 py-3 bg-gray-50 border border-gray-200 text-gray-900 rounded-lg focus:ring-1 focus:ring-gray-900 focus:border-gray-900 outline-none transition-all cursor-pointer"
-                                    required>
-                                    <option value="">Pilih Jam Selesai</option>
-                                    @foreach ($jampel as $item)
-                                        <option value="{{ $item->id }}" data-hari="{{ $item->hari_tipe }}">
-                                            Jam {{ $item->jam_ke }} - {{ $item->jam_selesai }} ({{ $item->nama_jam }})
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <!-- Kelas -->
-                            <div>
-                                <label for="kelasSelect" class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Kelas <span class="text-red-500">*</span></label>
-                                <select name="kelas_id" id="kelasSelect"
-                                    class="block w-full px-4 py-3 bg-gray-50 border border-gray-200 text-gray-900 rounded-lg focus:ring-1 focus:ring-gray-900 focus:border-gray-900 outline-none transition-all cursor-pointer"
-                                    required>
-                                    <option value="">Pilih Kelas</option>
-                                    @foreach ($kelas as $item)
-                                        <option value="{{ $item->id }}">{{ $item->nama_kelas }}</option>
-                                    @endforeach
-                                </select>
-                                <p class="text-xs text-gray-400 mt-1.5 pl-1">Pilih kelas untuk memuat mata pelajaran.</p>
-                            </div>
-
-                            <!-- Mata Pelajaran -->
-                            <div>
-                                <label for="mapelSelect" class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Mata Pelajaran <span class="text-red-500">*</span></label>
-                                <select name="mata_pelajaran_id" id="mapelSelect"
-                                    class="block w-full px-4 py-3 bg-gray-50 border border-gray-200 text-gray-900 rounded-lg focus:ring-1 focus:ring-gray-900 focus:border-gray-900 outline-none transition-all cursor-pointer"
-                                    required disabled>
-                                    <option value="">Pilih Kelas Terlebih Dahulu</option>
-                                </select>
-                                <input type="hidden" name="mata_pelajaran" id="mata_pelajaran_nama">
-                                <input type="hidden" name="guru_id" id="guru_id">
-                            </div>
-                        </div>
-
-                        <!-- Info Guru (Hidden by default) -->
-                        <div id="guruInfo" class="hidden bg-gray-50 rounded-lg p-4 border border-gray-100 flex items-center">
-                            <div class="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-500 mr-3">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-                            </div>
-                            <div>
-                                <p class="text-xs text-gray-500 uppercase font-semibold">Pengampu Mata Pelajaran</p>
-                                <p id="guruNama" class="text-sm text-gray-900 font-medium">-</p>
-                            </div>
-                        </div>
-
-                        <div class="border-t border-gray-100 my-6"></div>
-
-                        <!-- Section: Detail Pembelajaran -->
-                        <div class="space-y-6">
-                            <!-- Materi -->
-                            <div>
-                                <label for="materi" class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Materi Pembelajaran</label>
-                                <input type="text" name="materi" placeholder="Contoh: Aljabar dan Persamaan Linear"
-                                    class="block w-full px-4 py-3 bg-white border border-gray-200 text-gray-900 rounded-lg focus:ring-1 focus:ring-gray-900 focus:border-gray-900 outline-none transition-all"
-                                    required>
-                            </div>
-
-                            <!-- Kegiatan -->
-                            <div>
-                                <label for="kegiatan" class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Kegiatan & Aktivitas</label>
-                                <textarea name="kegiatan" rows="4" placeholder="Jelaskan kegiatan pembelajaran yang dilakukan..."
-                                    class="block w-full px-4 py-3 bg-white border border-gray-200 text-gray-900 rounded-lg focus:ring-1 focus:ring-gray-900 focus:border-gray-900 outline-none transition-all resize-none"
-                                    required></textarea>
-                            </div>
-                        </div>
-
-                        <!-- Tanda Tangan Digital (Conditional) -->
-                        @if (auth()->user()->hasRole('guru'))
-                            <div>
-                                <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Tanda Tangan Digital</label>
-                                <div class="bg-gray-50 rounded-xl p-1 border border-gray-200">
-                                    <div class="relative bg-white rounded-lg overflow-hidden" style="height: 250px;">
-                                        <canvas id="signatureCanvas"
-                                            class="cursor-crosshair w-full h-full touch-none"
-                                            width="600" height="250"></canvas>
-                                        <div id="canvasPlaceholder"
-                                            class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                                            <svg class="w-8 h-8 text-gray-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
-                                            <p class="text-sm text-gray-400">Tanda tangan di area ini</p>
-                                        </div>
-                                    </div>
-                                    <div class="px-4 py-3 flex justify-between items-center bg-gray-50/50 rounded-b-lg">
-                                        <button type="button" id="clearSignature" class="text-xs text-gray-500 hover:text-red-500 transition-colors flex items-center font-medium">
-                                            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                                            Hapus
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        @else
-                            <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 flex items-start text-sm text-gray-600">
-                                <svg class="w-5 h-5 text-gray-400 mr-3 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                <p>Agenda yang Anda buat akan ditinjau dan ditandatangani oleh guru.</p>
-                            </div>
-                        @endif
-
-                        <!-- Catatan Tambahan -->
-                        <div>
-                            <label for="catatan" class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Catatan Tambahan (Opsional)</label>
-                            <textarea name="catatan" rows="2" placeholder="Catatan khusus..."
-                                class="block w-full px-4 py-3 bg-white border border-gray-200 text-gray-900 rounded-lg focus:ring-1 focus:ring-gray-900 focus:border-gray-900 outline-none transition-all resize-none"></textarea>
-                        </div>
-
-                        <!-- Buttons -->
-                        <div class="flex items-center gap-4 pt-4">
-                            <button type="submit"
-                                class="flex-1 px-6 py-3.5 bg-gray-900 text-white rounded-lg font-medium hover:bg-gray-800 transition-all shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900">
-                                Simpan Agenda
-                            </button>
-                            <button type="reset"
-                                class="px-6 py-3.5 bg-white border border-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-50 hover:border-gray-300 transition-all focus:outline-none">
-                                Batal
-                            </button>
-                        </div>
-
-                    </form>
-                </div>
-            </div>
-
-            <!-- Sidebar (Simplified) -->
-            <div class="lg:col-span-4 space-y-6">
-                <!-- Stats Card - Enhanced -->
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                    <h3 class="text-sm font-semibold text-gray-900 mb-6 border-b border-gray-100 pb-2">📊 Statistik Hari Ini</h3>
-
-                    @php
-                        $today = date('Y-m-d');
-                        $userRole = auth()->user()->role;
-
-                        // Hitung statistik berdasarkan role
-                        if ($userRole === 'guru' || $userRole === 'walikelas') {
-                            // Untuk guru/walikelas
-                            $guru = auth()->user()->guru;
-                            if ($guru) {
-                                $kelasIds = \App\Models\GuruMapel::where('guru_id', $guru->id)
-                                    ->pluck('kelas_id')
-                                    ->unique();
-
-                                $agendaTodayCount = \App\Models\Agenda::whereIn('kelas_id', $kelasIds)
-                                    ->where('tanggal', $today)
-                                    ->count();
-
-                                $kelasAmpuCount = $kelasIds->count();
-
-                                $totalSiswaAmpus = \App\Models\Kelas::whereIn('id', $kelasIds)
-                                    ->withCount('siswa')
-                                    ->get()
-                                    ->sum('siswa_count');
-                            } else {
-                                $agendaTodayCount = 0;
-                                $kelasAmpuCount = 0;
-                                $totalSiswaAmpus = 0;
-                            }
-                        } elseif ($userRole === 'sekretaris') {
-                            // Untuk sekretaris
-                            $agendaTodayCount = \App\Models\Agenda::where('tanggal', $today)->count();
-                            $kelasAmpuCount = \App\Models\Kelas::count();
-                            $totalSiswaAmpus = \App\Models\Siswa::count();
-                        } else {
-                            // Default (siswa atau role lainnya)
-                            $agendaTodayCount = \App\Models\Agenda::where('users_id', auth()->id())
-                                ->where('tanggal', $today)
-                                ->count();
-                            $kelasAmpuCount = 0;
-                            $totalSiswaAmpus = 0;
-                        }
-                    @endphp
-
-                    <div class="grid grid-cols-1 gap-4">
-                        <!-- Card 1: Agenda Hari Ini -->
-                        <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 border border-blue-200">
-                            <div class="flex items-start justify-between">
-                                <div>
-                                    <p class="text-xs font-semibold text-blue-600 uppercase tracking-wide">Agenda Diisi</p>
-                                    <p class="text-2xl font-bold text-blue-900 mt-1">{{ $agendaTodayCount }}</p>
-                                    <p class="text-xs text-blue-600 mt-2">hari ini</p>
-                                </div>
-                                <div class="text-3xl">📝</div>
-                            </div>
-                        </div>
-
-                        <!-- Card 2: Kelas Diajar/Total Kelas -->
-                        <div class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-4 border border-purple-200">
-                            <div class="flex items-start justify-between">
-                                <div>
-                                    <p class="text-xs font-semibold text-purple-600 uppercase tracking-wide">
-                                        {{ $userRole === 'sekretaris' ? 'Total Kelas' : 'Kelas Diampu' }}
-                                    </p>
-                                    <p class="text-2xl font-bold text-purple-900 mt-1">{{ $kelasAmpuCount }}</p>
-                                    <p class="text-xs text-purple-600 mt-2">
-                                        {{ $userRole === 'sekretaris' ? 'aktif' : 'semester ini' }}
-                                    </p>
-                                </div>
-                                <div class="text-3xl">👥</div>
-                            </div>
-                        </div>
-
-                        <!-- Card 3: Total Siswa -->
-                        <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-4 border border-green-200">
-                            <div class="flex items-start justify-between">
-                                <div>
-                                    <p class="text-xs font-semibold text-green-600 uppercase tracking-wide">
-                                        {{ $userRole === 'sekretaris' ? 'Total Siswa' : 'Siswa Diampu' }}
-                                    </p>
-                                    <p class="text-2xl font-bold text-green-900 mt-1">{{ $totalSiswaAmpus }}</p>
-                                    <p class="text-xs text-green-600 mt-2">
-                                        {{ $userRole === 'sekretaris' ? 'sekolah' : 'di kelas' }}
-                                    </p>
-                                </div>
-                                <div class="text-3xl">🎓</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Info Tambahan -->
-                <div class="bg-gray-50 rounded-2xl p-6 border border-gray-100">
-                    <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Tips</h4>
-                    <p class="text-sm text-gray-600 leading-relaxed">
-                        Pastikan data kelas dan mata pelajaran sesuai dengan jadwal pengajaran hari ini untuk memudahkan penginputan.
-                    </p>
-                </div>
+                </form>
             </div>
         </div>
     </div>

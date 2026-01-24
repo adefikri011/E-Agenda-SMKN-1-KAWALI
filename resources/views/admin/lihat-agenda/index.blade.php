@@ -133,8 +133,8 @@
                 <select name="guru_id" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <option value="">-- Semua Guru --</option>
                     @foreach($gurus as $guru)
-                        <option value="{{ $guru->id }}" {{ $selectedGuru == $guru->id ? 'selected' : '' }}>
-                            {{ $guru->nama_guru }}
+                        <option value="{{ $guru->users_id }}" {{ $selectedGuru == $guru->users_id ? 'selected' : '' }}>
+                            {{ $guru->nama }}
                         </option>
                     @endforeach
                 </select>
@@ -146,7 +146,7 @@
                     <option value="">-- Semua Mapel --</option>
                     @foreach($mapels as $mapel)
                         <option value="{{ $mapel->id }}" {{ $selectedMapel == $mapel->id ? 'selected' : '' }}>
-                            {{ $mapel->nama_mapel }}
+                            {{ $mapel->nama }}
                         </option>
                     @endforeach
                 </select>

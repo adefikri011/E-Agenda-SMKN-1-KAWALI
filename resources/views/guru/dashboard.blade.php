@@ -79,6 +79,65 @@
                     </div>
                 </div>
 
+                <!-- KEGIATAN SEBELUM KBM -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-xl font-semibold text-gray-800">Kegiatan Sebelum KBM - Hari {{ $todayHari ?? 'Ini' }}</h3>
+                        <div
+                            class="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shadow-lg shadow-amber-500/30">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5h.01v.01H12v-.01z" />
+                            </svg>
+                        </div>
+                    </div>
+
+                    @if ($kegiatanSebelumKBMHariIni->isEmpty())
+                        <div class="text-center py-12 bg-amber-50 rounded-xl border border-amber-100">
+                            <div class="w-20 h-20 rounded-full bg-amber-100 flex items-center justify-center mx-auto mb-4">
+                                <svg class="w-10 h-10 text-amber-400" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                            <p class="text-lg font-medium text-gray-700 mb-2">Belum Ada Kegiatan Sebelum KBM</p>
+                            <p class="text-base text-gray-500">Tidak ada kegiatan yang ditentukan untuk hari {{ $todayHari ?? 'ini' }}</p>
+                        </div>
+                    @else
+                        <div class="space-y-5">
+                            @foreach ($kegiatanSebelumKBMHariIni as $item)
+                                <div class="border border-amber-200 rounded-lg p-5 hover:shadow-md transition-shadow bg-amber-50">
+                                    <div class="flex items-start gap-4">
+                                        <div class="flex-shrink-0">
+                                            <div class="flex items-center justify-center h-10 w-10 rounded-full bg-amber-100">
+                                                <svg class="h-6 w-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                        <div class="flex-1">
+                                            <h4 class="text-sm font-semibold text-gray-900 mb-3">{{ $item['jurusan_name'] }}</h4>
+                                            <ul class="space-y-2">
+                                                @foreach ($item['kegiatans'] as $kegiatan)
+                                                    <li class="flex items-start gap-2">
+                                                        <span class="inline-flex items-center justify-center h-5 w-5 rounded-full bg-amber-300 flex-shrink-0 mt-0.5">
+                                                            <svg class="h-3 w-3 text-amber-700" fill="currentColor" viewBox="0 0 20 20">
+                                                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                                            </svg>
+                                                        </span>
+                                                        <span class="text-base text-gray-700">{{ $kegiatan }}</span>
+                                                    </li>
+                                                @endforeach
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
+                </div>
+
                 <!-- KEHADIRAN CHART PER MAPEL -->
                 <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
                     <div class="flex items-center justify-between mb-6">
