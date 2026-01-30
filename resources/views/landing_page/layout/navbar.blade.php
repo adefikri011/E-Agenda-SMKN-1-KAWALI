@@ -95,7 +95,7 @@
     <div class="lg:hidden hidden bg-white/40 backdrop-blur-2xl border-t border-sky-100/30 shadow-2xl" id="mobile-menu">
         <div class="container mx-auto px-4 py-4 space-y-2">
             <a href="#beranda"
-                class="flex items-center justify-between px-5 py-3.5 text-gray-800 hover:text-sky-700 font-semibold rounded-xl hover:bg-gradient-to-r hover:from-sky-50/70 hover:to-cyan-50/70 transition-all duration-300 group drop-shadow-sm">
+                class="mobile-nav-link flex items-center justify-between px-5 py-3.5 text-gray-800 hover:text-sky-700 font-semibold rounded-xl hover:bg-gradient-to-r hover:from-sky-50/70 hover:to-cyan-50/70 transition-all duration-300 group drop-shadow-sm">
                 <span>Beranda</span>
                 <svg class="w-5 h-5 transform group-hover:translate-x-1 transition-transform text-sky-400"
                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -103,7 +103,7 @@
                 </svg>
             </a>
             <a href="#fitur"
-                class="flex items-center justify-between px-5 py-3.5 text-gray-800 hover:text-sky-700 font-semibold rounded-xl hover:bg-gradient-to-r hover:from-sky-50/70 hover:to-cyan-50/70 transition-all duration-300 group drop-shadow-sm">
+                class="mobile-nav-link flex items-center justify-between px-5 py-3.5 text-gray-800 hover:text-sky-700 font-semibold rounded-xl hover:bg-gradient-to-r hover:from-sky-50/70 hover:to-cyan-50/70 transition-all duration-300 group drop-shadow-sm">
                 <span>Fitur</span>
                 <svg class="w-5 h-5 transform group-hover:translate-x-1 transition-transform text-sky-400"
                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -111,7 +111,7 @@
                 </svg>
             </a>
             <a href="#manfaat"
-                class="flex items-center justify-between px-5 py-3.5 text-gray-800 hover:text-sky-700 font-semibold rounded-xl hover:bg-gradient-to-r hover:from-sky-50/70 hover:to-cyan-50/70 transition-all duration-300 group drop-shadow-sm">
+                class="mobile-nav-link flex items-center justify-between px-5 py-3.5 text-gray-800 hover:text-sky-700 font-semibold rounded-xl hover:bg-gradient-to-r hover:from-sky-50/70 hover:to-cyan-50/70 transition-all duration-300 group drop-shadow-sm">
                 <span>Manfaat</span>
                 <svg class="w-5 h-5 transform group-hover:translate-x-1 transition-transform text-sky-400"
                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -119,7 +119,7 @@
                 </svg>
             </a>
             <a href="#tim"
-                class="flex items-center justify-between px-5 py-3.5 text-gray-800 hover:text-sky-700 font-semibold rounded-xl hover:bg-gradient-to-r hover:from-sky-50/70 hover:to-cyan-50/70 transition-all duration-300 group drop-shadow-sm">
+                class="mobile-nav-link flex items-center justify-between px-5 py-3.5 text-gray-800 hover:text-sky-700 font-semibold rounded-xl hover:bg-gradient-to-r hover:from-sky-50/70 hover:to-cyan-50/70 transition-all duration-300 group drop-shadow-sm">
                 <span>Tim Kami</span>
                 <svg class="w-5 h-5 transform group-hover:translate-x-1 transition-transform text-sky-400"
                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -127,7 +127,7 @@
                 </svg>
             </a>
             <a href="#kontak"
-                class="flex items-center justify-between px-5 py-3.5 text-gray-800 hover:text-sky-700 font-semibold rounded-xl hover:bg-gradient-to-r hover:from-sky-50/70 hover:to-cyan-50/70 transition-all duration-300 group drop-shadow-sm">
+                class="mobile-nav-link flex items-center justify-between px-5 py-3.5 text-gray-800 hover:text-sky-700 font-semibold rounded-xl hover:bg-gradient-to-r hover:from-sky-50/70 hover:to-cyan-50/70 transition-all duration-300 group drop-shadow-sm">
                 <span>Kontak</span>
                 <svg class="w-5 h-5 transform group-hover:translate-x-1 transition-transform text-sky-400"
                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -175,6 +175,54 @@
 
     .nav-link:hover::after {
         width: 80%;
+    }
+
+    /* Active state untuk nav link */
+    .nav-link.active-nav {
+        background: linear-gradient(to right, rgba(14, 165, 233, 0.15), rgba(6, 182, 212, 0.15));
+        color: #0369a1;
+    }
+
+    .nav-link.active-nav::after {
+        width: 75%;
+    }
+
+    /* Active state untuk mobile nav link */
+    .mobile-nav-link.active-nav {
+        background: linear-gradient(to right, rgba(14, 165, 233, 0.2), rgba(6, 182, 212, 0.2));
+        color: #0369a1;
+        border-left: 3px solid #0ea5e9;
+    }
+
+    /* Nav links di section gelap (beranda) */
+    .nav-link.on-dark {
+        color: white;
+    }
+
+    .nav-link.on-dark:hover {
+        color: #7dd3fc;
+        background: linear-gradient(to right, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+    }
+
+    .nav-link.on-dark.active-nav {
+        background: linear-gradient(to right, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.1));
+        color: #7dd3fc;
+    }
+
+    /* Mobile nav links di section gelap */
+    .mobile-nav-link.on-dark {
+        color: white;
+    }
+
+    .mobile-nav-link.on-dark:hover {
+        color: #7dd3fc;
+        background: linear-gradient(to right, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+    }
+
+    .mobile-nav-link.on-dark.active-nav {
+        background: linear-gradient(to right, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.15));
+        color: #7dd3fc;
+        border-left-color: #7dd3fc;
     }
 </style>
 
@@ -236,6 +284,78 @@
         })();
     });
 
+    // Function untuk update active nav link berdasarkan scroll position
+    function updateActiveNavLink() {
+        const navLinks = document.querySelectorAll('.nav-link');
+        const mobileLinks = document.querySelectorAll('.mobile-nav-link');
+
+        // Ambil semua section yang ada di halaman
+        const sections = ['beranda', 'fitur', 'manfaat', 'tim', 'kontak'];
+        let currentSection = '';
+
+        // Cari section mana yang sedang terlihat
+        sections.forEach(sectionId => {
+            const section = document.getElementById(sectionId);
+            if (section) {
+                const rect = section.getBoundingClientRect();
+                // Section dianggap aktif jika berada di viewport bagian atas
+                // Menggunakan offset 150px dari top untuk mendeteksi section aktif
+                if (rect.top <= 150 && rect.bottom >= 150) {
+                    currentSection = sectionId;
+                }
+            }
+        });
+
+        // Hapus semua active state dan dark mode state
+        navLinks.forEach(link => {
+            link.classList.remove('active-nav', 'on-dark');
+        });
+        mobileLinks.forEach(link => {
+            link.classList.remove('active-nav', 'on-dark');
+        });
+
+        // Jika di section beranda (dark background), tambahkan class on-dark ke semua links
+        if (currentSection === 'beranda') {
+            navLinks.forEach(link => {
+                link.classList.add('on-dark');
+            });
+            mobileLinks.forEach(link => {
+                link.classList.add('on-dark');
+            });
+        }
+
+        // Tambahkan active state ke link yang sesuai
+        if (currentSection) {
+            navLinks.forEach(link => {
+                if (link.getAttribute('href') === `#${currentSection}`) {
+                    link.classList.add('active-nav');
+                }
+            });
+            mobileLinks.forEach(link => {
+                if (link.getAttribute('href') === `#${currentSection}`) {
+                    link.classList.add('active-nav');
+                }
+            });
+        }
+    }
+
+    // Jalankan saat scroll
+    window.addEventListener('scroll', () => {
+        updateActiveNavLink();
+
+        // Enhanced scroll effect dengan transparansi
+        const navbar = document.getElementById('navbar');
+        if (window.scrollY > 50) {
+            navbar.classList.add('scrolled');
+            navbar.style.padding = '0.5rem 0';
+        } else {
+            navbar.classList.remove('scrolled');
+            navbar.style.padding = '0.75rem 0';
+        }
+    });
+
+    // Jalankan saat halaman dimuat
+    document.addEventListener('DOMContentLoaded', updateActiveNavLink);
 
     // Mobile menu toggle (guard checks)
     const mobileMenuButton = document.getElementById('mobile-menu-button');
@@ -249,19 +369,6 @@
             mobileMenuButton.setAttribute('aria-expanded', String(!isHidden));
         });
     }
-
-    // Enhanced scroll effect dengan transparansi
-    window.addEventListener('scroll', () => {
-        const navbar = document.getElementById('navbar');
-
-        if (window.scrollY > 50) {
-            navbar.classList.add('scrolled');
-            navbar.style.padding = '0.5rem 0';
-        } else {
-            navbar.classList.remove('scrolled');
-            navbar.style.padding = '0.75rem 0';
-        }
-    });
 
     // Smooth scroll untuk semua anchor links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -277,7 +384,9 @@
             }
 
             // Tutup mobile menu setelah klik
-            mobileMenu.classList.add('hidden');
+            if (mobileMenu) {
+                mobileMenu.classList.add('hidden');
+            }
         });
     });
 </script>

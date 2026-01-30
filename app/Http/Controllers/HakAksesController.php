@@ -360,6 +360,35 @@ class HakAksesController extends Controller
         // 6. Menghitung jumlah siswa yang tidak hadir
         $siswaTidakHadir = $kehadiranIzin + $kehadiranSakit + $kehadiranAlpha;
 
+        // Get kegiatan sebelum KBM based on kelas's jurusan (hanya hari ini)
+        $englishDay = now()->format('l');
+        $dayMap = [
+            'Monday' => 'Senin',
+            'Tuesday' => 'Selasa',
+            'Wednesday' => 'Rabu',
+            'Thursday' => 'Kamis',
+            'Friday' => 'Jumat',
+            'Saturday' => 'Sabtu',
+            'Sunday' => 'Minggu',
+        ];
+        $todayHari = $dayMap[$englishDay] ?? 'Senin';
+
+        $kegiatanSebelumKBMHariIni = \App\Models\KegiatanSebelumKBM::where('hari', $todayHari)
+            ->where(function ($query) use ($kelas) {
+                $query->whereNull('jurusan_id')
+                    ->orWhere('jurusan_id', $kelas->jurusan_id);
+            })
+            ->get()
+            ->groupBy('jurusan_id')
+            ->map(function ($items, $jurusanId) {
+                $jurusanName = $jurusanId ? \App\Models\Jurusan::find($jurusanId)?->nama_jurusan : 'Semua Jurusan';
+                return [
+                    'jurusan_id' => $jurusanId,
+                    'jurusan_name' => $jurusanName,
+                    'kegiatans' => $items->pluck('kegiatan')->toArray()
+                ];
+            })->values();
+
         // 7. Kirim SEMUA data ke view
         return view('walikelas.dashboard', compact(
             'user',
@@ -370,7 +399,9 @@ class HakAksesController extends Controller
             'kehadiranIzin',
             'kehadiranSakit',
             'kehadiranAlpha',
-            'siswaTidakHadir'
+            'siswaTidakHadir',
+            'kegiatanSebelumKBMHariIni',
+            'todayHari'
         ));
 
     }

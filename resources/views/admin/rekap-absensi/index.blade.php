@@ -311,7 +311,7 @@
                                                                     {{ $stats['kelas_nama'] }}</h3>
                                                                 <p class="text-sm text-gray-600 mt-1">Data Absensi Kelas
                                                                 </p>
-                                                            </div>
+                                                            </div>  
                                                         </div>
                                                         <div
                                                             class="bg-blue-50 px-5 py-3 rounded-lg border border-blue-200 text-center">

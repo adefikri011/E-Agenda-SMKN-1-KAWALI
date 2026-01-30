@@ -59,64 +59,166 @@ class AgendaController extends Controller
         }
     }
 
-    public function index()
-    {
-        $jampel = Jampel::all();
+   public function index()
+{
+    $jampel = Jampel::all();
 
-        // Get kelas yang diampu oleh guru atau kelas siswa
-        $kelas = $this->getGuruKelas();
-        $kelasIds = $kelas->pluck('id');
+    // Get kelas yang diampu oleh guru atau kelas siswa
+    $kelas = $this->getGuruKelas();
+    $kelasIds = $kelas->pluck('id');
 
-        // Tampilkan kegiatan sebelum KBM hanya untuk hari ini
-        $englishDay = now()->format('l');
-        $dayMapForKegiatan = [
-            'Monday' => 'Senin',
-            'Tuesday' => 'Selasa',
-            'Wednesday' => 'Rabu',
-            'Thursday' => 'Kamis',
-            'Friday' => 'Jumat',
-            'Saturday' => 'Senin',
-            'Sunday' => 'Senin',
-        ];
-        $todayHariForKegiatan = $dayMapForKegiatan[$englishDay] ?? 'Senin';
-        $kegiatanSebelumKBM = KegiatanSebelumKBM::where('hari', $todayHariForKegiatan)->orderBy('created_at', 'desc')->get();
+    // Tampilkan kegiatan sebelum KBM hanya untuk hari ini
+    $englishDay = now()->format('l');
+    $dayMapForKegiatan = [
+        'Monday' => 'Senin',
+        'Tuesday' => 'Selasa',
+        'Wednesday' => 'Rabu',
+        'Thursday' => 'Kamis',
+        'Friday' => 'Jumat',
+        'Saturday' => 'Senin',
+        'Sunday' => 'Senin',
+    ];
+    $todayHariForKegiatan = $dayMapForKegiatan[$englishDay] ?? 'Senin';
+    $kegiatanSebelumKBM = KegiatanSebelumKBM::where('hari', $todayHariForKegiatan)->orderBy('created_at', 'desc')->get();
 
-        // Query berdasarkan role user
-        if (auth()->user()->hasRole('guru') || auth()->user()->hasRole('walikelas')) {
-            // Guru/Walikelas hanya bisa melihat agenda untuk kelas dan mapel yang diampu
-            $agendas = Agenda::with(['kelas', 'jampel', 'user', 'guruTtd'])
-                ->whereIn('kelas_id', $kelasIds)
-                ->orderBy('tanggal', 'desc')
-                ->orderBy('created_at', 'desc')
-                ->paginate(10);
-        } else {
-            // Siswa hanya bisa melihat agenda miliknya sendiri di kelasnya
-            $agendas = Agenda::with(['kelas', 'jampel', 'guruTtd'])
-                ->where('users_id', auth()->id())
-                ->where('kelas_id', auth()->user()->siswa->kelas_id)
-                ->orderBy('tanggal', 'desc')
-                ->orderBy('created_at', 'desc')
-                ->paginate(10);
-        }
+    // Filter untuk tanggal hari ini
+    $today = now()->format('Y-m-d');
 
-        // Ambil 5 agenda terbaru untuk sidebar
-        $recentAgendas = Agenda::with(['kelas', 'jampel'])
+    // Query berdasarkan role user - HANYA AGENDA HARI INI
+    if (auth()->user()->hasRole('guru') || auth()->user()->hasRole('walikelas')) {
+        // Guru/Walikelas hanya bisa melihat agenda untuk kelas dan mapel yang diampu
+        $agendas = Agenda::with(['kelas', 'jampel', 'user', 'guruTtd'])
             ->whereIn('kelas_id', $kelasIds)
+            ->where('tanggal', $today) // FILTER TAMBAHAN: Hanya agenda hari ini
             ->orderBy('tanggal', 'desc')
             ->orderBy('created_at', 'desc')
-            ->take(5)
-            ->get();
-
-        // Ambil data siswa tidak hadir (pastikan ini selalu terdefinisi)
-        $siswaTidakHadir = collect(); // Default collection kosong
-
-        // Untuk role guru dan walikelas
-        if (auth()->user()->hasRole('guru') || auth()->user()->hasRole('walikelas')) {
-            $siswaTidakHadir = $this->getSiswaTidakHadir();
-        }
-
-        return view('guru.agenda.index', compact('jampel', 'kelas', 'agendas', 'recentAgendas', 'kegiatanSebelumKBM', 'siswaTidakHadir'));
+            ->paginate(10);
+    } else {
+        // Siswa hanya bisa melihat agenda miliknya sendiri di kelasnya
+        $agendas = Agenda::with(['kelas', 'jampel', 'guruTtd'])
+            ->where('users_id', auth()->id())
+            ->where('kelas_id', auth()->user()->siswa->kelas_id)
+            ->where('tanggal', $today) // FILTER TAMBAHAN: Hanya agenda hari ini
+            ->orderBy('tanggal', 'desc')
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
     }
+
+    // Ambil 5 agenda terbaru untuk sidebar (TETAP SEMUA TANGGAL)
+    $recentAgendas = Agenda::with(['kelas', 'jampel'])
+        ->whereIn('kelas_id', $kelasIds)
+        ->orderBy('tanggal', 'desc')
+        ->orderBy('created_at', 'desc')
+        ->take(5)
+        ->get();
+
+    // Ambil data siswa tidak hadir (pastikan ini selalu terdefinisi)
+    $siswaTidakHadir = collect(); // Default collection kosong
+
+    // Untuk role guru dan walikelas
+    if (auth()->user()->hasRole('guru') || auth()->user()->hasRole('walikelas')) {
+        $siswaTidakHadir = $this->getSiswaTidakHadir();
+    }
+
+    return view('guru.agenda.index', compact('jampel', 'kelas', 'agendas', 'recentAgendas', 'kegiatanSebelumKBM', 'siswaTidakHadir'));
+}
+
+public function history(Request $request)
+{
+    // Get kelas yang diampu oleh guru atau kelas siswa
+    $kelas = $this->getGuruKelas();
+    $kelasIds = $kelas->pluck('id');
+
+    // Ambil parameter filter dari request
+    $filters = [
+        'start_date' => $request->input('start_date'),
+        'end_date' => $request->input('end_date'),
+        'kelas_id' => $request->input('kelas_id'),
+        'status_ttd' => $request->input('status_ttd'),
+        'pembuat' => $request->input('pembuat'),
+        'search' => $request->input('search'),
+    ];
+
+    // Query dasar
+    $query = Agenda::with(['kelas', 'jampel', 'user', 'guruTtd'])
+        ->whereIn('kelas_id', $kelasIds);
+
+    // Terapkan filter tanggal
+    if ($filters['start_date']) {
+        $query->whereDate('tanggal', '>=', $filters['start_date']);
+    }
+
+    if ($filters['end_date']) {
+        $query->whereDate('tanggal', '<=', $filters['end_date']);
+    }
+
+    // Jika tidak ada filter tanggal, default ke 30 hari terakhir
+    if (!$filters['start_date'] && !$filters['end_date']) {
+        $query->whereDate('tanggal', '>=', now()->subDays(30)->format('Y-m-d'));
+    }
+
+    // Filter kelas
+    if ($filters['kelas_id']) {
+        // Validasi apakah kelas ini termasuk yang diampu
+        if (in_array($filters['kelas_id'], $kelasIds->toArray())) {
+            $query->where('kelas_id', $filters['kelas_id']);
+        }
+    }
+
+    // Filter status tanda tangan
+    if ($filters['status_ttd']) {
+        $query->where('status_ttd', $filters['status_ttd']);
+    }
+
+    // Filter pembuat
+    if ($filters['pembuat']) {
+        $query->where('pembuat', $filters['pembuat']);
+    }
+
+    // Filter pencarian
+    if ($filters['search']) {
+        $query->where(function($q) use ($filters) {
+            $q->where('mata_pelajaran', 'like', '%' . $filters['search'] . '%')
+              ->orWhere('materi', 'like', '%' . $filters['search'] . '%')
+              ->orWhere('kegiatan', 'like', '%' . $filters['search'] . '%')
+              ->orWhere('catatan', 'like', '%' . $filters['search'] . '%')
+              ->orWhereHas('user', function($q) use ($filters) {
+                  $q->where('name', 'like', '%' . $filters['search'] . '%');
+              });
+        });
+    }
+
+    // Urutkan dan paginasi
+    $agendas = $query->orderBy('tanggal', 'desc')
+        ->orderBy('created_at', 'desc')
+        ->paginate(15)
+        ->withQueryString();
+
+    // Hitung statistik
+    $stats = [
+        'total' => $agendas->total(),
+        'sudah_ttd' => $query->clone()->where('status_ttd', 'sudah')->count(),
+        'belum_ttd' => $query->clone()->where('status_ttd', 'belum')->count(),
+        'by_guru' => $query->clone()->where('pembuat', 'guru')->count(),
+        'by_siswa' => $query->clone()->where('pembuat', 'siswa')->count(),
+    ];
+
+    // Ambil 5 agenda terbaru untuk sidebar
+    $recentAgendas = Agenda::with(['kelas', 'jampel'])
+        ->whereIn('kelas_id', $kelasIds)
+        ->orderBy('tanggal', 'desc')
+        ->orderBy('created_at', 'desc')
+        ->take(5)
+        ->get();
+
+    return view('guru.agenda.history', compact(
+        'kelas',
+        'agendas',
+        'filters',
+        'stats',
+        'recentAgendas'
+    ));
+}
 
     public function create()
     {

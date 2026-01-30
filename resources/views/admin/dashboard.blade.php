@@ -247,11 +247,11 @@
                 </div>
             </div>
 
-            <!-- Agenda Today -->
+           <!-- Agenda Today -->
             <div class="bg-gradient-to-br from-gray-50 to-white rounded-xl p-6 border border-gray-200">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-base font-bold text-gray-900">Agenda Hari Ini</p>
+                        <p class="text-base font-bold text-gray-900">Kegiatan Positif Hari Ini</p>
                         <p class="text-sm text-gray-500 mt-1">{{ $agendaHariIni }} kegiatan dijadwalkan</p>
                     </div>
                     <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg">

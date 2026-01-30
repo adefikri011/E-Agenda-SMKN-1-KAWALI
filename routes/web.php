@@ -194,6 +194,8 @@ Route::middleware(['auth', 'role:guru,sekretaris,walikelas'])->group(function ()
     Route::get('/agenda/{id}/edit', [AgendaController::class, 'edit'])->whereNumber('id')->name('agenda.edit');
     Route::put('/agenda/{id}', [AgendaController::class, 'update'])->whereNumber('id')->name('agenda.update');
     Route::delete('/agenda/{id}', [AgendaController::class, 'destroy'])->whereNumber('id')->name('agenda.destroy');
+    Route::get('agenda/history', [AgendaController::class, 'history'])->name('agenda.history');
+
 
     // Route untuk tanda tangan agenda
     Route::get('/agenda/need-signature', [AgendaController::class, 'needSignature'])->name('agenda.need-signature');
