@@ -203,9 +203,6 @@ Route::middleware(['auth', 'role:guru,sekretaris,walikelas'])->group(function ()
     Route::post('/agenda/{id}/sign', [AgendaController::class, 'sign'])->whereNumber('id')->name('agenda.sign');
 
     Route::get('/agenda/rekap', [AgendaController::class, 'rekap'])->name('agenda.rekap');
-    // Consolidated agendas (merge signed agendas per class/date)
-    Route::get('/agenda/consolidated', [AgendaController::class, 'consolidated'])->name('agenda.consolidated');
-    Route::post('/agenda/consolidate-save', [AgendaController::class, 'consolidateSave'])->name('agenda.consolidate.save');
     Route::get('/agenda/export-pdf', [AgendaController::class, 'exportPdf'])->name('agenda.export-pdf');
     Route::get('/agenda/export-excel', [AgendaController::class, 'exportExcel'])->name('agenda.export-excel');
 

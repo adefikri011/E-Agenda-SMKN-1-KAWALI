@@ -90,6 +90,7 @@ class AgendaController extends Controller
         $agendas = Agenda::with(['kelas', 'jampel', 'user', 'guruTtd'])
             ->whereIn('kelas_id', $kelasIds)
             ->where('tanggal', $today) // FILTER TAMBAHAN: Hanya agenda hari ini
+            ->where('mata_pelajaran', 'not like', 'Gabungan:%')
             ->orderBy('tanggal', 'desc')
             ->orderBy('created_at', 'desc')
             ->paginate(10);
@@ -99,6 +100,7 @@ class AgendaController extends Controller
             ->where('users_id', auth()->id())
             ->where('kelas_id', auth()->user()->siswa->kelas_id)
             ->where('tanggal', $today) // FILTER TAMBAHAN: Hanya agenda hari ini
+            ->where('mata_pelajaran', 'not like', 'Gabungan:%')
             ->orderBy('tanggal', 'desc')
             ->orderBy('created_at', 'desc')
             ->paginate(10);
@@ -373,15 +375,6 @@ public function history(Request $request)
             \Log::info('Creating Agenda with data', ['data_keys' => array_keys($data)]);
 
             Agenda::create($data);
-
-            // Jika agenda yang dibuat sudah bertanda_tangan (guru langsung ttd), lakukan auto-consolidate
-            try {
-                if (($data['status_ttd'] ?? 'belum') === 'sudah') {
-                    $this->consolidateForClassDate($data['kelas_id'], $data['tanggal']);
-                }
-            } catch (\Exception $e) {
-                \Log::error('Auto Consolidate after store failed', ['message' => $e->getMessage()]);
-            }
 
             \Log::info('Agenda created successfully');
             return redirect()->route('agenda.index')
@@ -676,13 +669,6 @@ public function history(Request $request)
             $agenda->guru_ttd_id = auth()->id();
             $agenda->waktu_ttd = now();
             $agenda->save();
-
-            // Setelah ditandatangani, coba gabungkan agenda otomatis untuk kelas/tanggal ini
-            try {
-                $this->consolidateForClassDate($agenda->kelas_id, $agenda->tanggal);
-            } catch (\Exception $e) {
-                Log::error('Auto Consolidate after sign failed', ['message' => $e->getMessage()]);
-            }
 
             // Debug log
             Log::info('After signing agenda', [
@@ -1009,158 +995,6 @@ public function history(Request $request)
     }
 
 
-
-
-    // Consolidated view: group signed agendas by kelas for a given date
-    public function consolidated(Request $request)
-    {
-        $tanggal = $request->input('tanggal', now()->format('Y-m-d'));
-
-        $query = Agenda::with(['kelas','jampel','user','guruTtd'])
-            ->where('tanggal', $tanggal)
-            ->where('status_ttd', 'sudah');
-
-        if (auth()->user()->hasRole('guru') || auth()->user()->hasRole('walikelas')) {
-            $guru = $this->getGuruFromUser();
-            if ($guru) {
-                $kelasIds = GuruMapel::where('guru_id', $guru->id)->pluck('kelas_id');
-                $query->whereIn('kelas_id', $kelasIds);
-            }
-        } elseif (auth()->user()->hasRole('siswa')) {
-            $query->where('users_id', auth()->id())
-                ->where('kelas_id', auth()->user()->siswa->kelas_id);
-        }
-
-        $groups = $query->get()->groupBy('kelas_id')->map(function ($items) {
-            $kelas = $items->first()->kelas;
-            $entries = $items->map(function ($a) {
-                return [
-                    'id' => $a->id,
-                    'mapel' => $a->mata_pelajaran,
-                    'materi' => $a->materi,
-                    'kegiatan' => $a->kegiatan,
-                    'guru' => $a->guruTtd?->nama ?? $a->user?->name ?? '',
-                    'waktu_ttd' => $a->waktu_ttd,
-                    'tanda_tangan' => $a->tanda_tangan
-                ];
-            })->values();
-
-            return [
-                'kelas' => $kelas,
-                'entries' => $entries
-            ];
-        })->values();
-
-        return view('guru.agenda.consolidated', compact('groups', 'tanggal'));
-    }
-
-    public function consolidateSave(Request $request)
-    {
-        $validated = $request->validate([
-            'kelas_id' => 'required|integer|exists:kelas,id',
-            'tanggal' => 'required|date'
-        ]);
-
-        $kelasId = $validated['kelas_id'];
-        $tanggal = $validated['tanggal'];
-
-        $agendas = Agenda::where('kelas_id', $kelasId)
-            ->where('tanggal', $tanggal)
-            ->where('status_ttd', 'sudah')
-            ->get();
-
-        if ($agendas->isEmpty()) {
-            return redirect()->back()->with('error', 'Tidak ada agenda bertanda tangan untuk digabung pada tanggal ini.');
-        }
-
-        $mapels = $agendas->pluck('mata_pelajaran')->unique()->implode('; ');
-        $materi = $agendas->pluck('materi')->filter()->implode("\n\n---\n\n");
-        $kegiatan = $agendas->pluck('kegiatan')->filter()->implode("\n\n---\n\n");
-        $firstSignature = $agendas->pluck('tanda_tangan')->filter()->first();
-        $firstGuruTtd = $agendas->pluck('guru_ttd_id')->filter()->first();
-
-        $data = [
-            'tanggal' => $tanggal,
-            'start_jampel_id' => $agendas->first()->start_jampel_id ?? null,
-            'end_jampel_id' => $agendas->first()->end_jampel_id ?? null,
-            'kelas_id' => $kelasId,
-            'mata_pelajaran' => 'Gabungan: ' . $mapels,
-            'materi' => $materi,
-            'kegiatan' => $kegiatan,
-            'catatan' => 'Gabungan agenda terverifikasi',
-            'users_id' => auth()->id(),
-            'pembuat' => 'guru',
-            'status_ttd' => $firstSignature ? 'sudah' : 'belum',
-            'sudah_ttd' => $firstSignature ? true : false,
-            'guru_ttd_id' => $firstGuruTtd ?? null,
-            'waktu_ttd' => $firstSignature ? now() : null,
-            'tanda_tangan' => $firstSignature ?? null,
-        ];
-
-        try {
-            Agenda::create($data);
-            return redirect()->route('agenda.consolidated', ['tanggal' => $tanggal])->with('success', 'Gabungan agenda berhasil disimpan.');
-        } catch (\Exception $e) {
-            \Log::error('Consolidate Save Error', ['message' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
-            return redirect()->back()->with('error', 'Gagal menyimpan gabungan agenda: ' . $e->getMessage());
-        }
-    }
-
-    /**
-     * Private helper: consolidate agendas automatically for a class and date.
-     * It will create or update a single "gabungan" agenda record that
-     * summarizes all signed agendas for that class on that date.
-     */
-    private function consolidateForClassDate($kelasId, $tanggal)
-    {
-        // Ambil semua agenda yang sudah ditandatangani untuk kelas dan tanggal ini
-        $agendas = Agenda::where('kelas_id', $kelasId)
-            ->where('tanggal', $tanggal)
-            ->where('status_ttd', 'sudah')
-            ->get();
-
-        if ($agendas->isEmpty()) {
-            return null; // nothing to consolidate
-        }
-
-        $mapels = $agendas->pluck('mata_pelajaran')->unique()->implode('; ');
-        $materi = $agendas->pluck('materi')->filter()->implode("\n\n---\n\n");
-        $kegiatan = $agendas->pluck('kegiatan')->filter()->implode("\n\n---\n\n");
-        $firstSignature = $agendas->pluck('tanda_tangan')->filter()->first();
-        $firstGuruTtd = $agendas->pluck('guru_ttd_id')->filter()->first();
-
-        $data = [
-            'tanggal' => $tanggal,
-            'start_jampel_id' => $agendas->first()->start_jampel_id ?? null,
-            'end_jampel_id' => $agendas->first()->end_jampel_id ?? null,
-            'kelas_id' => $kelasId,
-            'mata_pelajaran' => 'Gabungan: ' . $mapels,
-            'materi' => $materi,
-            'kegiatan' => $kegiatan,
-            'catatan' => 'Gabungan otomatis dari agenda bertanda-tangan',
-            'users_id' => auth()->id(),
-            'pembuat' => 'guru',
-            'status_ttd' => $firstSignature ? 'sudah' : 'belum',
-            'sudah_ttd' => $firstSignature ? true : false,
-            'guru_ttd_id' => $firstGuruTtd ?? null,
-            'waktu_ttd' => $firstSignature ? now() : null,
-            'tanda_tangan' => $firstSignature ?? null,
-        ];
-
-        // Cek apakah sudah ada record gabungan untuk kelas+tanggal
-        $existing = Agenda::where('kelas_id', $kelasId)
-            ->where('tanggal', $tanggal)
-            ->where('mata_pelajaran', 'like', 'Gabungan:%')
-            ->first();
-
-        if ($existing) {
-            // Update existing
-            $existing->update($data);
-            return $existing;
-        }
-
-        return Agenda::create($data);
-    }
 
     public function getMapelByKelas($kelasId)
     {

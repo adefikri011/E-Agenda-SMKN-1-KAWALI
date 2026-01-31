@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes; // // TAMBAHAN: 1. Import SoftDeletes trait
 
 class Agenda extends Model
 {
+    use SoftDeletes; // TAMBAHAN: 2. Gunakan trait ini
+
     protected $table = 'agenda';
 
     protected $fillable = [
@@ -31,6 +34,7 @@ class Agenda extends Model
     protected $casts = [
         'tanggal' => 'date',
         'waktu_ttd' => 'datetime',
+        'deleted_at' => 'datetime', // TAMBAHAN: 3. Cast deleted_at agar dianggap datetime
     ];
 
     /**
